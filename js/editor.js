@@ -1,0 +1,408 @@
+const Editor = (() => {
+  const EXAMPLES = {
+    binarySearch: `let arr = [10, 20, 30, 40, 50];
+let target = 40;
+let low = 0;
+let high = arr.length - 1;
+
+while (low <= high) {
+  let mid = Math.floor((low + high) / 2);
+  if (arr[mid] === target) {
+    console.log("Found at index", mid);
+    break;
+  }
+  if (arr[mid] < target) {
+    low = mid + 1;
+  } else {
+    high = mid - 1;
+  }
+}`,
+
+    bubbleSort: `let arr = [5, 2, 9, 1, 5, 6];
+let n = arr.length;
+
+for (let i = 0; i < n - 1; i++) {
+  for (let j = 0; j < n - 1 - i; j++) {
+    if (arr[j] > arr[j + 1]) {
+      let temp = arr[j];
+      arr[j] = arr[j + 1];
+      arr[j + 1] = temp;
+    }
+  }
+}
+console.log("Sorted:", arr);`,
+
+    factorial: `function factorial(n) {
+  if (n <= 1) {
+    return 1;
+  }
+  return n * factorial(n - 1);
+}
+
+let result = factorial(5);
+console.log("5! =", result);`,
+
+    arraySum: `let nums = [1, 2, 3, 4, 5];
+let sum = 0;
+
+for (let i = 0; i < nums.length; i++) {
+  sum = sum + nums[i];
+}
+
+console.log("Sum:", sum);
+console.log("Average:", sum / nums.length);`,
+
+    errorDemo: `let arr = [1, 2, 3];
+
+for (let i = 0; i < arr.length; i++) {
+  console.log(arr[i + 1]);
+}`,
+
+    linearSearch: `let arr = [10, 20, 30, 40, 50];
+let target = 30;
+let found = -1;
+
+for (let i = 0; i < arr.length; i++) {
+  if (arr[i] === target) {
+    found = i;
+    break;
+  }
+}
+
+if (found !== -1) {
+  console.log("Found at index", found);
+} else {
+  console.log("Not found");
+}`,
+
+    objectDemo: `let person = {
+  name: "Alice",
+  age: 25,
+  city: "NYC"
+};
+
+console.log("Name:", person.name);
+console.log("Age:", person.age);
+
+person.age = 26;
+console.log("Updated age:", person.age);`,
+
+    fibonacci: `let n = 10;
+let fib = [0, 1];
+
+for (let i = 2; i < n; i++) {
+  fib[i] = fib[i - 1] + fib[i - 2];
+}
+
+console.log("Fibonacci sequence:", fib);
+console.log("10th number:", fib[9]);`
+  };
+
+  const META = [
+    { key: 'binarySearch', title: 'Binary Search', tag: 'O(log n)', desc: 'Divide & conquer search on sorted array' },
+    { key: 'bubbleSort', title: 'Bubble Sort', tag: 'O(n²)', desc: 'Sort by swapping adjacent elements' },
+    { key: 'factorial', title: 'Factorial (Recursion)', tag: 'O(n)', desc: 'Classic recursive function' },
+    { key: 'arraySum', title: 'Array Sum', tag: 'O(n)', desc: 'Loop through array to compute sum' },
+    { key: 'errorDemo', title: 'Bug Demo (Error)', tag: 'Debug', desc: 'See how errors are caught and explained' },
+    { key: 'linearSearch', title: 'Linear Search', tag: 'O(n)', desc: 'Sequential scan of array' },
+    { key: 'objectDemo', title: 'Object Demo', tag: 'O(1)', desc: 'Work with objects and properties' },
+    { key: 'fibonacci', title: 'Fibonacci Sequence', tag: 'O(n)', desc: 'Generate Fibonacci numbers with loop' }
+  ];
+
+  const undoStack = [];
+  const redoStack = [];
+  const MAX_HISTORY = 100;
+
+  function pushHistory(value, cursorStart, cursorEnd) {
+    if (undoStack.length && undoStack[undoStack.length - 1].value === value) return;
+    undoStack.push({ value, cursorStart: cursorStart ?? 0, cursorEnd: cursorEnd ?? 0 });
+    if (undoStack.length > MAX_HISTORY) undoStack.shift();
+    redoStack.length = 0;
+  }
+
+  function undo() {
+    const ed = document.getElementById('codeEditor');
+    if (undoStack.length <= 1) {
+      toast('Nothing to undo', 'err');
+      return;
+    }
+    const current = undoStack.pop();
+    redoStack.push(current);
+    const prev = undoStack[undoStack.length - 1];
+    if (prev) {
+      ed.value = prev.value;
+      ed.selectionStart = prev.cursorStart;
+      ed.selectionEnd = prev.cursorEnd;
+      AppState.code = prev.value;
+      updateLineNumbers();
+      if (!AppState.steps?.length) {
+        const heatmap = Analyzer.getLineHeatmap(ed.value);
+        Visualizer.renderCodeTrace(ed.value.split('\n'), null, null, heatmap);
+      }
+      toast('Undo', 'ok');
+    }
+  }
+
+  function redo() {
+    const ed = document.getElementById('codeEditor');
+    if (!redoStack.length) {
+      toast('Nothing to redo', 'err');
+      return;
+    }
+    const next = redoStack.pop();
+    undoStack.push(next);
+    ed.value = next.value;
+    ed.selectionStart = next.cursorStart;
+    ed.selectionEnd = next.cursorEnd;
+    AppState.code = next.value;
+    updateLineNumbers();
+    if (!AppState.steps?.length) {
+      const heatmap = Analyzer.getLineHeatmap(ed.value);
+      Visualizer.renderCodeTrace(ed.value.split('\n'), null, null, heatmap);
+    }
+    toast('Redo', 'ok');
+  }
+
+  function load(key) {
+    const editor = document.getElementById('codeEditor');
+    editor.value = EXAMPLES[key] || '';
+    AppState.code = editor.value;
+    pushHistory(editor.value, 0, 0);
+    updateLineNumbers();
+    if (!AppState.steps?.length) {
+      const heatmap = Analyzer.getLineHeatmap(editor.value);
+      Visualizer.renderCodeTrace(editor.value.split('\n'), null, null, heatmap);
+    }
+  }
+
+  function getCode() { return document.getElementById('codeEditor').value; }
+  function setCode(s) {
+    const editor = document.getElementById('codeEditor');
+    editor.value = s;
+    AppState.code = s;
+    pushHistory(editor.value, 0, 0);
+    updateLineNumbers();
+    if (!AppState.steps?.length) {
+      const heatmap = Analyzer.getLineHeatmap(editor.value);
+      Visualizer.renderCodeTrace(editor.value.split('\n'), null, null, heatmap);
+    }
+  }
+
+  function updateLineNumbers() {
+    const editor = document.getElementById('codeEditor');
+    const lnEl = document.getElementById('lineNumbers');
+    if (!editor || !lnEl) return;
+    const val = editor.value;
+    const lines = val.split('\n').length;
+    
+    let heatmap = {};
+    try {
+      heatmap = Analyzer.getLineHeatmap(val) || {};
+    } catch {
+      heatmap = {};
+    }
+
+    let html = '';
+    for (let i = 1; i <= lines; i++) {
+      const bp = AppState.breakpoints.has(i) ? ' bp' : '';
+      let heatCls = '';
+      let title = 'Click to toggle breakpoint';
+      if (heatmap[i] === 'yellow') {
+        heatCls = ' heat-yellow';
+        title = 'Linear Loop [O(n)]';
+      } else if (heatmap[i] === 'red') {
+        heatCls = ' heat-red';
+        title = 'Nested Loop [O(n²)+]';
+      } else if (heatmap[i] === 'green') {
+        heatCls = ' heat-green';
+        title = 'Branch Condition [O(1)]';
+      } else if (heatmap[i] === 'blue') {
+        heatCls = ' heat-blue';
+        title = 'Divide & Conquer / Halving [O(log n)]';
+      } else if (heatmap[i] === 'purple') {
+        heatCls = ' heat-purple';
+        title = 'Sorting / Linearithmic [O(n log n)]';
+      } else if (heatmap[i] === 'magenta') {
+        heatCls = ' heat-magenta';
+        title = 'Recursive Branching [O(2ⁿ)]';
+      }
+
+      html += `<span class="ln${bp}${heatCls}" data-line="${i}" title="${title}">${i}</span>`;
+    }
+    lnEl.innerHTML = html;
+
+    lnEl.querySelectorAll('.ln').forEach(ln => {
+      ln.onclick = (e) => {
+        const line = parseInt(ln.dataset.line);
+        if (AppState.breakpoints.has(line)) AppState.breakpoints.delete(line);
+        else AppState.breakpoints.add(line);
+        updateLineNumbers();
+      };
+    });
+  }
+
+  function init() {
+    const ed = document.getElementById('codeEditor');
+    ed.value = EXAMPLES.binarySearch;
+    AppState.code = ed.value;
+    pushHistory(ed.value, 0, 0);
+
+    let historyDebounce;
+    let heatmapDebounce;
+    ed.addEventListener('input', () => {
+      AppState.code = ed.value;
+      updateLineNumbers();
+      
+      clearTimeout(historyDebounce);
+      historyDebounce = setTimeout(() => {
+        pushHistory(ed.value, ed.selectionStart, ed.selectionEnd);
+      }, 400);
+
+      if (!AppState.steps?.length) {
+        clearTimeout(heatmapDebounce);
+        heatmapDebounce = setTimeout(() => {
+          const heatmap = Analyzer.getLineHeatmap(ed.value);
+          Visualizer.renderCodeTrace(ed.value.split('\n'), null, null, heatmap);
+        }, 150);
+      }
+    });
+
+    ed.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+        return;
+      }
+
+      if (((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') ||
+          ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'z')) {
+        e.preventDefault();
+        redo();
+        return;
+      }
+
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const start = ed.selectionStart, end = ed.selectionEnd;
+        const val = ed.value;
+        const lineStart = val.lastIndexOf('\n', start - 1) + 1;
+        let lineEnd = val.indexOf('\n', end);
+        if (lineEnd === -1) lineEnd = val.length;
+
+        if (start !== end || e.shiftKey) {
+          const selectedText = val.substring(lineStart, lineEnd);
+          const lines = selectedText.split('\n');
+          const newLines = lines.map(l => {
+            if (e.shiftKey) {
+              return l.startsWith('  ') ? l.substring(2) : (l.startsWith(' ') ? l.substring(1) : l);
+            } else {
+              return '  ' + l;
+            }
+          });
+          const replacement = newLines.join('\n');
+          ed.value = val.substring(0, lineStart) + replacement + val.substring(lineEnd);
+          ed.selectionStart = lineStart;
+          ed.selectionEnd = lineStart + replacement.length;
+        } else {
+          ed.value = val.substring(0, start) + '  ' + val.substring(end);
+          ed.selectionStart = ed.selectionEnd = start + 2;
+        }
+        AppState.code = ed.value;
+        updateLineNumbers();
+        return;
+      }
+
+      if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+        e.preventDefault();
+        const start = ed.selectionStart, end = ed.selectionEnd;
+        const val = ed.value;
+        const lineStart = val.lastIndexOf('\n', start - 1) + 1;
+        let lineEnd = val.indexOf('\n', end);
+        if (lineEnd === -1) lineEnd = val.length;
+
+        const selectedText = val.substring(lineStart, lineEnd);
+        const lines = selectedText.split('\n');
+        const allCommented = lines.every(l => l.trimStart().startsWith('//'));
+
+        const newLines = lines.map(l => {
+          if (allCommented) {
+            return l.replace(/(\s*)\/\/\s?/, '$1');
+          } else {
+            return l.replace(/^(\s*)/, '$1// ');
+          }
+        });
+
+        const replacement = newLines.join('\n');
+        ed.value = val.substring(0, lineStart) + replacement + val.substring(lineEnd);
+        ed.selectionStart = lineStart;
+        ed.selectionEnd = lineStart + replacement.length;
+        AppState.code = ed.value;
+        updateLineNumbers();
+        return;
+      }
+
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('runBtn').click();
+        return;
+      }
+
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        document.getElementById('saveBtn').click();
+        return;
+      }
+
+      if (e.key === 'F9' || ((e.ctrlKey || e.metaKey) && e.key === 'b')) {
+        e.preventDefault();
+        const textBefore = ed.value.substring(0, ed.selectionStart);
+        const curLine = textBefore.split('\n').length;
+        if (AppState.breakpoints.has(curLine)) {
+          AppState.breakpoints.delete(curLine);
+          toast('Removed breakpoint at line ' + curLine);
+        } else {
+          AppState.breakpoints.add(curLine);
+          toast('Set breakpoint at line ' + curLine, 'ok');
+        }
+        updateLineNumbers();
+        return;
+      }
+
+      if (e.altKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+        e.preventDefault();
+        const start = ed.selectionStart;
+        const val = ed.value;
+        const lines = val.split('\n');
+        const lineIdx = val.substring(0, start).split('\n').length - 1;
+
+        if (e.key === 'ArrowUp' && lineIdx > 0) {
+          const temp = lines[lineIdx];
+          lines[lineIdx] = lines[lineIdx - 1];
+          lines[lineIdx - 1] = temp;
+          ed.value = lines.join('\n');
+          ed.selectionStart = ed.selectionEnd = lines.slice(0, lineIdx - 1).join('\n').length + 1;
+        } else if (e.key === 'ArrowDown' && lineIdx < lines.length - 1) {
+          const temp = lines[lineIdx];
+          lines[lineIdx] = lines[lineIdx + 1];
+          lines[lineIdx + 1] = temp;
+          ed.value = lines.join('\n');
+          ed.selectionStart = ed.selectionEnd = lines.slice(0, lineIdx + 1).join('\n').length + 1;
+        }
+        AppState.code = ed.value;
+        updateLineNumbers();
+        return;
+      }
+    });
+
+    ed.addEventListener('scroll', () => {
+      document.getElementById('lineNumbers').scrollTop = ed.scrollTop;
+    });
+
+    updateLineNumbers();
+
+    const initialHeatmap = Analyzer.getLineHeatmap(ed.value);
+    Visualizer.renderCodeTrace(ed.value.split('\n'), null, null, initialHeatmap);
+  }
+
+  return { EXAMPLES, META, load, getCode, setCode, init, updateLineNumbers };
+})();
