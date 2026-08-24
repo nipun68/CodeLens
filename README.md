@@ -2,9 +2,9 @@
 
 <div align="center">
 
-[![Live Demo - Vercel](https://img.shields.io/badge/Deploy%20with-Vercel-black?style=for-the-badge&logo=vercel)](https://codelens-platform.vercel.app)
-[![Live Demo - Netlify](https://img.shields.io/badge/Deploy%20with-Netlify-00C7B7?style=for-the-badge&logo=netlify)](https://codelens-ai.netlify.app)
 [![Live Demo - GitHub Pages](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-brightgreen?style=for-the-badge&logo=github)](https://nipun68.github.io/CodeLens/)
+[![Architecture](https://img.shields.io/badge/Architecture-AST%20Virtual%20Machine-blueviolet?style=for-the-badge)](https://github.com/nipun68/CodeLens)
+[![Language](https://img.shields.io/badge/Core-Vanilla%20JS%20(ES2020)-yellow?style=for-the-badge&logo=javascript)](https://github.com/nipun68/CodeLens)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 **A high-performance, client-side JavaScript execution engine, AST virtual machine, and real-time algorithmic telemetry platform engineered in pure Vanilla ECMAScript 2020.**
@@ -15,15 +15,11 @@
 
 ---
 
-## 🌐 Production Deployments & Live Mirrors
+## 🌐 Production Deployment
 
-Access the deployed application instantly across any of the following live mirrors:
-
-| Platform | Deployment Status | Live Access URL |
-| :--- | :---: | :--- |
-| **Vercel Production** | ![Vercel](https://img.shields.io/badge/Production-Live-success?style=flat-square&logo=vercel) | 👉 **[codelens-platform.vercel.app](https://codelens-platform.vercel.app)** *(or import via [vercel.json](./vercel.json))* |
-| **Netlify Production** | ![Netlify](https://img.shields.io/badge/Production-Live-00C7B7?style=flat-square&logo=netlify) | 👉 **[codelens-ai.netlify.app](https://codelens-ai.netlify.app)** *(or import via [netlify.toml](./netlify.toml))* |
-| **GitHub Pages** | ![GitHub Pages](https://img.shields.io/badge/Deployment-Active-blue?style=flat-square&logo=github) | 👉 **[https://nipun68.github.io/CodeLens/](https://nipun68.github.io/CodeLens/)** |
+The project is deployed and accessible online:
+* 🚀 **Live Application (GitHub Pages):** 👉 **[https://nipun68.github.io/CodeLens/](https://nipun68.github.io/CodeLens/)**
+* 📁 **Official Repository:** 👉 **[https://github.com/nipun68/CodeLens](https://github.com/nipun68/CodeLens)**
 
 ---
 
