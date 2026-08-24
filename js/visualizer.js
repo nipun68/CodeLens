@@ -1,5 +1,62 @@
 const Visualizer = (() => {
 
+  function highlightSyntax(code) {
+    if (code === undefined || code === null) return '';
+    if (code === '') return '';
+
+    const tokenRegex = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|(`(?:\\.|[^`\\])*`|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|(\b(?:let|const|var|function|return|if|else|while|for|break|continue|new|typeof|instanceof|class|extends|this|super|import|export|from|default|async|await|try|catch|finally|throw|switch|case|do|in|of|void|yield|delete)\b)|(\b(?:true|false|null|undefined|NaN|Infinity)\b)|(\b(?:console|Math|JSON|Object|Array|String|Number|Boolean|Date|RegExp|Map|Set|Promise|Symbol|Error|window|document|parseInt|parseFloat|isNaN|isFinite)\b)|(\b(?:0x[0-9a-fA-F]+|0b[01]+|0o[0-7]+|\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)\b)|(\.[a-zA-Z_$][a-zA-Z0-9_$]*)|(\b[a-zA-Z_$][a-zA-Z0-9_$]*(?=\s*\())|(===|!==|==|!=|<=|>=|=>|\+\+|--|\+=|-=|\*=|\/=|%=|&&|\|\||\?\?|\*\*|[+\-*/%<>=!&|^~?:])|([{}[\](),;])|([a-zA-Z_$][a-zA-Z0-9_$]*)/g;
+
+    let lastIndex = 0;
+    let html = '';
+    let match;
+
+    while ((match = tokenRegex.exec(code)) !== null) {
+      if (match.index > lastIndex) {
+        html += escapeHtml(code.slice(lastIndex, match.index));
+      }
+
+      const [full, comment, str, keyword, bool, builtin, num, prop, fnCall, op, punct, id] = match;
+
+      if (comment) {
+        html += `<span class="syn-comment">${escapeHtml(comment)}</span>`;
+      } else if (str) {
+        html += `<span class="syn-string">${escapeHtml(str)}</span>`;
+      } else if (keyword) {
+        html += `<span class="syn-keyword">${escapeHtml(keyword)}</span>`;
+      } else if (bool) {
+        html += `<span class="syn-boolean">${escapeHtml(bool)}</span>`;
+      } else if (builtin) {
+        html += `<span class="syn-builtin">${escapeHtml(builtin)}</span>`;
+      } else if (num) {
+        html += `<span class="syn-number">${escapeHtml(num)}</span>`;
+      } else if (prop) {
+        html += `<span class="syn-operator">.</span><span class="syn-property">${escapeHtml(prop.slice(1))}</span>`;
+      } else if (fnCall) {
+        html += `<span class="syn-function">${escapeHtml(fnCall)}</span>`;
+      } else if (op) {
+        html += `<span class="syn-operator">${escapeHtml(op)}</span>`;
+      } else if (punct) {
+        html += `<span class="syn-punctuation">${escapeHtml(punct)}</span>`;
+      } else if (id) {
+        html += `<span class="syn-plain">${escapeHtml(id)}</span>`;
+      } else {
+        html += escapeHtml(full);
+      }
+
+      lastIndex = tokenRegex.lastIndex;
+    }
+
+    if (lastIndex < code.length) {
+      html += escapeHtml(code.slice(lastIndex));
+    }
+
+    if (code.endsWith('\n')) {
+      html += ' ';
+    }
+
+    return html;
+  }
+
   function renderCodeTrace(codeLines, currentLine, errorLine, heatmap = {}) {
     const el = document.getElementById('codeTraceView');
     if (!codeLines.length) {
@@ -20,8 +77,8 @@ const Visualizer = (() => {
       if (errorLine === lineNum) cls += ' error';
       else if (currentLine === lineNum) cls += ' active';
       
-      const escaped = escapeHtml(line || ' ');
-      return `<div class="${cls}"><span class="ln">${lineNum}</span><span class="lc">${escaped}</span></div>`;
+      const highlighted = highlightSyntax(line || ' ');
+      return `<div class="${cls}"><span class="ln">${lineNum}</span><span class="lc">${highlighted}</span></div>`;
     }).join('');
 
     const active = el.querySelector('.code-line.active, .code-line.error');
@@ -162,5 +219,7 @@ const Visualizer = (() => {
     return s.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
   }
 
-  return { renderCodeTrace, renderVariables, renderVarTimeline, renderCallStack, renderStepNote, renderAlgorithm, renderAlgoStats };
+  window.highlightSyntax = highlightSyntax;
+
+  return { highlightSyntax, renderCodeTrace, renderVariables, renderVarTimeline, renderCallStack, renderStepNote, renderAlgorithm, renderAlgoStats };
 })();

@@ -363,6 +363,7 @@ body {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 18px;
+  cursor: pointer;
   will-change: transform;
   transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease
 }
@@ -500,25 +501,30 @@ body {
 
 .line-numbers {
   background: var(--code-bg);
-  color: #555;
-  padding: 16px 8px 16px 12px;
+  color: #64748b;
+  padding: 16px 8px 16px 14px;
   text-align: right;
-  font-family: 'Fira Code', 'Consolas', monospace;
-  font-size: .86rem;
-  line-height: 1.55;
+  font-family: 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 14px;
+  line-height: 24px;
   user-select: none;
   min-width: 50px;
   overflow: hidden;
-  cursor: pointer
+  cursor: pointer;
+  box-sizing: border-box;
 }
 
 .line-numbers .ln {
   display: block;
-  min-height: 1.55em;
+  height: 24px;
+  line-height: 24px;
+  font-size: 14px;
+  font-family: 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
   position: relative;
   transition: color .12s ease, background .12s ease;
   border-right: 2px solid transparent;
-  padding-right: 4px;
+  padding-right: 6px;
+  box-sizing: border-box;
 }
 
 .line-numbers .ln.heat-green {
@@ -583,58 +589,75 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 16px;
-  font-family: 'Fira Code', 'Consolas', monospace;
-  font-size: .86rem;
-  line-height: 1.55;
-  tab-size: 2;
-  white-space: pre;
-  overflow: hidden;        /* textarea handles scroll */
-  pointer-events: none;    /* clicks pass through to textarea */
-  box-sizing: border-box;
-  color: transparent;      /* only spans have color */
+  padding: 16px !important;
+  font-family: 'Fira Code', 'JetBrains Mono', 'Consolas', monospace !important;
+  font-size: 14px !important;
+  line-height: 24px !important;
+  tab-size: 2 !important;
+  white-space: pre !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+  box-sizing: border-box !important;
+  color: var(--syn-plain, #cdd6f4) !important;
+  background: transparent !important;
   z-index: 0;
+  margin: 0 !important;
+  border: 0 !important;
 }
 
 /* Token colors — resolve via CSS vars, update instantly on theme switch */
-#syntaxOverlay .syn-keyword    { color: var(--syn-keyword); }
-#syntaxOverlay .syn-builtin    { color: var(--syn-builtin); }
-#syntaxOverlay .syn-function   { color: var(--syn-function); }
-#syntaxOverlay .syn-string     { color: var(--syn-string); }
-#syntaxOverlay .syn-number     { color: var(--syn-number); }
-#syntaxOverlay .syn-comment    { color: var(--syn-comment); font-style: italic; }
-#syntaxOverlay .syn-operator   { color: var(--syn-operator); }
-#syntaxOverlay .syn-punctuation{ color: var(--syn-punctuation); }
-#syntaxOverlay .syn-property   { color: var(--syn-property); }
-#syntaxOverlay .syn-boolean    { color: var(--syn-boolean); }
-#syntaxOverlay .syn-plain      { color: var(--syn-plain); }
+.syn-keyword, #syntaxOverlay .syn-keyword       { color: var(--syn-keyword, #c792ea); font-weight: 600; }
+.syn-builtin, #syntaxOverlay .syn-builtin       { color: var(--syn-builtin, #82aaff); font-weight: 500; }
+.syn-function, #syntaxOverlay .syn-function     { color: var(--syn-function, #82cfff); font-weight: 500; }
+.syn-string, #syntaxOverlay .syn-string         { color: var(--syn-string, #c3e88d); }
+.syn-number, #syntaxOverlay .syn-number         { color: var(--syn-number, #f78c6c); }
+.syn-comment, #syntaxOverlay .syn-comment       { color: var(--syn-comment, #546e7a); font-style: italic; opacity: 0.85; }
+.syn-operator, #syntaxOverlay .syn-operator     { color: var(--syn-operator, #89ddff); }
+.syn-punctuation, #syntaxOverlay .syn-punctuation { color: var(--syn-punctuation, #bfc7d5); opacity: 0.9; }
+.syn-property, #syntaxOverlay .syn-property     { color: var(--syn-property, #f07178); }
+.syn-boolean, #syntaxOverlay .syn-boolean       { color: var(--syn-boolean, #ff9cac); font-weight: 600; }
+.syn-plain, #syntaxOverlay .syn-plain           { color: var(--syn-plain, #cdd6f4); }
 
 #codeEditor {
   position: relative;
-  z-index: 1;              /* sits above the overlay */
+  z-index: 1;
   flex: 1;
-  border: none;
-  background: transparent;
-  color: transparent;      /* overlay renders the colored text */
-  caret-color: var(--code-text);
-  -webkit-text-fill-color: transparent;
-  padding: 16px;
-  font-family: 'Fira Code', 'Consolas', monospace;
-  font-size: .86rem;
-  resize: none;
-  outline: none;
-  line-height: 1.55;
-  tab-size: 2;
-  white-space: pre;
-  overflow: auto;
+  border: none !important;
+  background: transparent !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  caret-color: var(--accent, #a855f7) !important;
+  padding: 16px !important;
+  font-family: 'Fira Code', 'JetBrains Mono', 'Consolas', monospace !important;
+  font-size: 14px !important;
+  line-height: 24px !important;
+  resize: none !important;
+  outline: none !important;
+  tab-size: 2 !important;
+  white-space: pre !important;
+  overflow: auto !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  font-variant-ligatures: normal !important;
+}
+
+#codeEditor::selection {
+  background: rgba(168, 85, 247, 0.4) !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+#codeEditor::-moz-selection {
+  background: rgba(168, 85, 247, 0.4) !important;
+  color: transparent !important;
 }
 
 .editor-hint {
   padding: 8px 14px;
-  font-size: .72rem;
-  color: #ffffff;
+  font-size: .74rem;
+  color: var(--muted, #94a3b8);
   background: var(--panel-2);
-  border-top: 1px solid var(--border)
+  border-top: 1px solid var(--border);
 }
 
 [data-theme="light"] .editor-hint {
@@ -4920,18 +4943,26 @@ body {
 #view-workspace .line-numbers {
   position: relative;
   min-width: 54px;
-  padding: 18px 10px 18px 21px;
+  padding: 16px 8px 16px 14px !important;
   border-right: 1px solid rgba(192, 151, 255, .13);
   background: linear-gradient(90deg, rgba(139, 92, 246, .07), transparent), var(--code-bg);
   color: #665b79;
-  font-size: .78rem;
+  font-family: 'Fira Code', 'JetBrains Mono', 'Consolas', monospace !important;
+  font-size: 14px !important;
+  line-height: 24px !important;
+  box-sizing: border-box !important;
 }
 
 #view-workspace .line-numbers .ln {
-  min-height: 1.65em;
-  padding-right: 3px;
+  display: block !important;
+  height: 24px !important;
+  line-height: 24px !important;
+  font-size: 14px !important;
+  font-family: 'Fira Code', 'JetBrains Mono', 'Consolas', monospace !important;
+  padding-right: 6px !important;
   border-right: 2px solid transparent;
-  transition: color .2s ease, border-color .2s ease, text-shadow .2s ease;
+  transition: color .2s ease, border-color .2s ease;
+  box-sizing: border-box !important;
 }
 
 #view-workspace .line-numbers .ln.bp::after {
@@ -4950,38 +4981,43 @@ body {
 }
 
 #view-workspace #codeEditor {
-  caret-color: var(--code-text);
+  caret-color: var(--accent, #a855f7) !important;
   color: transparent !important;
   -webkit-text-fill-color: transparent !important;
   background: transparent !important;
-  font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace !important;
+  font-family: 'Fira Code', 'JetBrains Mono', 'Consolas', monospace !important;
   font-size: 14px !important;
   line-height: 24px !important;
   padding: 16px !important;
   margin: 0 !important;
   border: 0 !important;
-  tab-size: 2;
-  font-variant-ligatures: none !important;
-  font-feature-settings: "liga" 0, "calt" 0, "dlig" 0 !important;
+  tab-size: 2 !important;
+  font-variant-ligatures: normal !important;
+  box-sizing: border-box !important;
+  position: relative;
+  z-index: 1;
 }
 
 #view-workspace #codeEditor::selection {
-  background: rgba(139, 92, 246, 0.45) !important;
+  background: rgba(168, 85, 247, 0.4) !important;
   color: transparent !important;
   -webkit-text-fill-color: transparent !important;
 }
 
 #view-workspace #codeEditor::-moz-selection {
-  background: rgba(139, 92, 246, 0.45) !important;
+  background: rgba(168, 85, 247, 0.4) !important;
   color: transparent !important;
 }
 
 #view-workspace .editor-hint {
-  min-height: 38px;
-  border-top-color: rgba(192, 151, 255, .14);
- background: rgb(255, 255, 255);
-
-  font-size: .68rem;
+  min-height: 36px;
+  border-top: 1px solid var(--border);
+  background: var(--panel-2) !important;
+  color: var(--muted, #94a3b8);
+  font-size: .74rem;
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
 }
 
 #view-workspace .editor-hint strong {
@@ -5175,39 +5211,50 @@ body {
 }
 
 #view-workspace .code-line .ln {
-  color: #625674;
-  font-size: .74rem;
+  color: #94a3b8;
+  font-size: .78rem;
+  font-family: 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+  min-width: 36px;
+  user-select: none;
 }
 
 #view-workspace .code-line .lc {
-  color: #e5d9f4;
-  padding-top: 4px;
-  padding-bottom: 4px;
+  color: #f1f5f9;
+  padding: 4px 12px;
+  font-family: 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 0.86rem;
+  line-height: 1.6;
+  white-space: pre;
 }
 
 #view-workspace .code-line.active {
-  border-left-color: #22d3ee !important;
-  background: linear-gradient(90deg, rgba(34, 211, 238, .14), rgba(139, 92, 246, .055) 55%, transparent) !important;
-  animation: traceLinePulse 1.55s ease-in-out infinite;
+  border-left-color: #38bdf8 !important;
+  background: linear-gradient(90deg, rgba(56, 189, 248, 0.22), rgba(139, 92, 246, 0.08) 60%, transparent) !important;
 }
 
 #view-workspace .code-line.active .ln {
-  color: #22d3ee !important;
-  text-shadow: 0 0 10px rgba(34, 211, 238, .72);
+  color: #38bdf8 !important;
+  font-weight: 700;
 }
 
 #view-workspace .code-line.active .lc {
-  color: #fff !important;
-  text-shadow: 0 0 14px rgba(255, 255, 255, .13);
+  color: #ffffff !important;
+  font-weight: 600;
 }
 
 #view-workspace .code-line.error {
-  border-left-color: #ff4d8d !important;
-  background: linear-gradient(90deg, rgba(255, 77, 141, .18), transparent 80%) !important;
+  border-left-color: #ef4444 !important;
+  background: linear-gradient(90deg, rgba(239, 68, 68, 0.22), transparent 80%) !important;
 }
 
 #view-workspace .code-line.error .ln {
-  color: #ff75a8 !important;
+  color: #f87171 !important;
+  font-weight: 700;
+}
+
+#view-workspace .code-line.error .lc {
+  color: #fecaca !important;
+  font-weight: 600;
 }
 
 #view-workspace .step-note {

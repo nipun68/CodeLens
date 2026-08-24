@@ -5,6 +5,7 @@ const Storage = (() => {
     LEARNING: 'codelens.learning',
     THEME: 'codelens.theme',
     EXAMPLES: 'codelens.examples',
+    EXEC_COUNTS: 'codelens.execCounts',
     SESSION: 'codelens.session'
   };
 
@@ -30,10 +31,14 @@ const Storage = (() => {
     saveHistory: (arr) => write(KEYS.HISTORY, arr),
     getSettings: () => read(KEYS.SETTINGS, { aiProvider:'rule', aiKey:'' }),
     saveSettings: (obj) => write(KEYS.SETTINGS, obj),
-    getLearning: () => read(KEYS.LEARNING, CodeLensLearning.defaultLearning()),
+    getLearning: () => read(KEYS.LEARNING, typeof CodeLensLearning !== 'undefined' && CodeLensLearning.defaultLearning ? CodeLensLearning.defaultLearning() : { topics: {}, totalRuns: 0 }),
     saveLearning: (obj) => write(KEYS.LEARNING, obj),
     getTheme: () => read(KEYS.THEME, 'dark'),
     saveTheme: (t) => write(KEYS.THEME, t),
+    getExamples: () => read(KEYS.EXAMPLES, []),
+    saveExamples: (arr) => write(KEYS.EXAMPLES, arr),
+    getExecCounts: () => read(KEYS.EXEC_COUNTS, {}),
+    saveExecCounts: (obj) => write(KEYS.EXEC_COUNTS, obj),
     getSession: () => readSession(KEYS.SESSION, { lastCode:'', lastLang:'javascript' }),
     saveSession: (s) => writeSession(KEYS.SESSION, s),
     clearAll: () => Object.values(KEYS).forEach(remove)

@@ -95,7 +95,41 @@ for (let i = 2; i < n; i++) {
 }
 
 console.log("Fibonacci sequence:", fib);
-console.log("10th number:", fib[9]);`
+console.log("10th number:", fib[9]);`,
+
+    selectionSort: `let arr = [64, 25, 12, 22, 11];
+let n = arr.length;
+
+for (let i = 0; i < n - 1; i++) {
+  let minIdx = i;
+  for (let j = i + 1; j < n; j++) {
+    if (arr[j] < arr[minIdx]) {
+      minIdx = j;
+    }
+  }
+  if (minIdx !== i) {
+    let temp = arr[i];
+    arr[i] = arr[minIdx];
+    arr[minIdx] = temp;
+  }
+}
+
+console.log("Sorted:", arr);`,
+
+    insertionSort: `let arr = [12, 11, 13, 5, 6];
+let n = arr.length;
+
+for (let i = 1; i < n; i++) {
+  let key = arr[i];
+  let j = i - 1;
+  while (j >= 0 && arr[j] > key) {
+    arr[j + 1] = arr[j];
+    j = j - 1;
+  }
+  arr[j + 1] = key;
+}
+
+console.log("Sorted:", arr);`
   };
 
   const META = [
@@ -106,7 +140,9 @@ console.log("10th number:", fib[9]);`
     { key: 'errorDemo', title: 'Bug Demo (Error)', tag: 'Debug', desc: 'See how errors are caught and explained' },
     { key: 'linearSearch', title: 'Linear Search', tag: 'O(n)', desc: 'Sequential scan of array' },
     { key: 'objectDemo', title: 'Object Demo', tag: 'O(1)', desc: 'Work with objects and properties' },
-    { key: 'fibonacci', title: 'Fibonacci Sequence', tag: 'O(n)', desc: 'Generate Fibonacci numbers with loop' }
+    { key: 'fibonacci', title: 'Fibonacci Sequence', tag: 'O(n)', desc: 'Generate Fibonacci numbers with loop' },
+    { key: 'selectionSort', title: 'Selection Sort', tag: 'O(n²)', desc: 'Find minimum element and place at front' },
+    { key: 'insertionSort', title: 'Insertion Sort', tag: 'O(n²)', desc: 'Build sorted subarray incrementally' }
   ];
 
   const undoStack = [];
@@ -118,6 +154,16 @@ console.log("10th number:", fib[9]);`
     undoStack.push({ value, cursorStart: cursorStart ?? 0, cursorEnd: cursorEnd ?? 0 });
     if (undoStack.length > MAX_HISTORY) undoStack.shift();
     redoStack.length = 0;
+  }
+
+  function updateSyntaxOverlay() {
+    const overlay = document.getElementById('syntaxOverlay');
+    const ed = document.getElementById('codeEditor');
+    if (!overlay || !ed) return;
+    const highlighter = window.highlightSyntax || (typeof Visualizer !== 'undefined' && Visualizer.highlightSyntax);
+    if (highlighter) {
+      overlay.innerHTML = highlighter(ed.value);
+    }
   }
 
   function undo() {
@@ -135,6 +181,7 @@ console.log("10th number:", fib[9]);`
       ed.selectionEnd = prev.cursorEnd;
       AppState.code = prev.value;
       updateLineNumbers();
+      updateSyntaxOverlay();
       if (!AppState.steps?.length) {
         const heatmap = Analyzer.getLineHeatmap(ed.value);
         Visualizer.renderCodeTrace(ed.value.split('\n'), null, null, heatmap);
@@ -156,6 +203,7 @@ console.log("10th number:", fib[9]);`
     ed.selectionEnd = next.cursorEnd;
     AppState.code = next.value;
     updateLineNumbers();
+    updateSyntaxOverlay();
     if (!AppState.steps?.length) {
       const heatmap = Analyzer.getLineHeatmap(ed.value);
       Visualizer.renderCodeTrace(ed.value.split('\n'), null, null, heatmap);
@@ -169,6 +217,7 @@ console.log("10th number:", fib[9]);`
     AppState.code = editor.value;
     pushHistory(editor.value, 0, 0);
     updateLineNumbers();
+    updateSyntaxOverlay();
     if (!AppState.steps?.length) {
       const heatmap = Analyzer.getLineHeatmap(editor.value);
       Visualizer.renderCodeTrace(editor.value.split('\n'), null, null, heatmap);
@@ -182,6 +231,7 @@ console.log("10th number:", fib[9]);`
     AppState.code = s;
     pushHistory(editor.value, 0, 0);
     updateLineNumbers();
+    updateSyntaxOverlay();
     if (!AppState.steps?.length) {
       const heatmap = Analyzer.getLineHeatmap(editor.value);
       Visualizer.renderCodeTrace(editor.value.split('\n'), null, null, heatmap);
@@ -252,6 +302,7 @@ console.log("10th number:", fib[9]);`
     ed.addEventListener('input', () => {
       AppState.code = ed.value;
       updateLineNumbers();
+      updateSyntaxOverlay();
       
       clearTimeout(historyDebounce);
       historyDebounce = setTimeout(() => {
@@ -424,10 +475,11 @@ console.log("10th number:", fib[9]);`
     });
 
     updateLineNumbers();
+    updateSyntaxOverlay();
 
     const initialHeatmap = Analyzer.getLineHeatmap(ed.value);
     Visualizer.renderCodeTrace(ed.value.split('\n'), null, null, initialHeatmap);
   }
 
-  return { EXAMPLES, META, load, getCode, setCode, init, updateLineNumbers };
+  return { EXAMPLES, META, load, getCode, setCode, init, updateLineNumbers, updateSyntaxOverlay };
 })();
