@@ -500,14 +500,10 @@ function traceNext() {
     const nextIdx = AppState.currentStep + 1;
     renderStep(nextIdx);
     if (nextIdx === AppState.steps.length - 1 && !AppState.isPlaying) {
-      setTimeout(() => {
-        showOutputTab();
-        toast('Program completed — Viewing output', 'ok');
-      }, 400);
+      toast('Reached last step (end of trace)', 'ok');
     }
   } else if (AppState.steps.length > 0 && !AppState.isPlaying) {
-    showOutputTab();
-    toast('Program completed — Viewing output', 'ok');
+    toast('Already at the last step', 'ok');
   }
 }
 function tracePrev() { if (AppState.currentStep > 0) renderStep(AppState.currentStep - 1); }
@@ -515,10 +511,7 @@ function traceFirst() { if (AppState.steps.length) renderStep(0); }
 function traceLast() {
   if (AppState.steps.length) {
     renderStep(AppState.steps.length - 1);
-    setTimeout(() => {
-      showOutputTab();
-      toast('Jumped to program end — Viewing output', 'ok');
-    }, 300);
+    toast('Jumped to last step', 'ok');
   }
 }
 function traceReset() { if (AppState.steps.length) renderStep(0); pauseTrace(); }
@@ -528,10 +521,6 @@ function playTrace() {
   if (!AppState.steps.length) { toast('Run code first', 'err'); return; }
   if (AppState.currentStep >= AppState.steps.length - 1) {
     renderStep(0);
-    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-    document.querySelector('.tab[data-tab="trace"]').classList.add('active');
-    document.querySelector('.tab-pane[data-pane="trace"]').classList.add('active');
   }
 
   AppState.isPlaying = true;
@@ -539,8 +528,7 @@ function playTrace() {
   AppState.playTimer = setInterval(() => {
     if (AppState.currentStep >= AppState.steps.length - 1) {
       pauseTrace();
-      showOutputTab();
-      toast('Execution completed — Viewing output', 'ok');
+      toast('Execution trace complete ✓', 'ok');
       return;
     }
     const nextStep = AppState.currentStep + 1;
@@ -550,7 +538,7 @@ function playTrace() {
       pauseTrace();
       return;
     }
-    traceNext();
+    renderStep(nextStep);
   }, 600);
 }
 function pauseTrace() {
