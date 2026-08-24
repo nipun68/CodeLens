@@ -1,161 +1,158 @@
 # CodeLens — Program Intelligence & Algorithmic Execution Platform
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-brightgreen?style=for-the-badge&logo=github)](https://nipun68.github.io/CodeLens/)
-[![Architecture](https://img.shields.io/badge/Architecture-AST%20Virtual%20Machine-blueviolet?style=for-the-badge)](https://github.com/nipun68/CodeLens)
-[![Language](https://img.shields.io/badge/Core-Vanilla%20JS%20(ES2020)-yellow?style=for-the-badge&logo=javascript)](https://github.com/nipun68/CodeLens)
-[![License: MIT](https://img.shields.io/badge/License-MIT-orange.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+<div align="center">
 
-> **An interactive, zero-dependency client-side JavaScript execution engine, AST virtual machine, and algorithmic telemetry platform engineered from the ground up in pure Vanilla ECMAScript 2020.**
+[![Live Demo - Vercel](https://img.shields.io/badge/Deploy%20with-Vercel-black?style=for-the-badge&logo=vercel)](https://codelens-platform.vercel.app)
+[![Live Demo - Netlify](https://img.shields.io/badge/Deploy%20with-Netlify-00C7B7?style=for-the-badge&logo=netlify)](https://codelens-ai.netlify.app)
+[![Live Demo - GitHub Pages](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-brightgreen?style=for-the-badge&logo=github)](https://nipun68.github.io/CodeLens/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+
+**A high-performance, client-side JavaScript execution engine, AST virtual machine, and real-time algorithmic telemetry platform engineered in pure Vanilla ECMAScript 2020.**
+
+[Explore Live Demo](https://nipun68.github.io/CodeLens/) • [Report Bug](https://github.com/nipun68/CodeLens/issues) • [Request Feature](https://github.com/nipun68/CodeLens/issues)
+
+</div>
 
 ---
 
-## 🌐 Live Production Deployment
+## 🌐 Production Deployments & Live Mirrors
 
-* 🚀 **Production Application:** **[https://nipun68.github.io/CodeLens/](https://nipun68.github.io/CodeLens/)**
-* 📁 **Official Repository:** **[https://github.com/nipun68/CodeLens](https://github.com/nipun68/CodeLens)**
+Access the deployed application instantly across any of the following live mirrors:
+
+| Platform | Deployment Status | Live Access URL |
+| :--- | :---: | :--- |
+| **Vercel Production** | ![Vercel](https://img.shields.io/badge/Production-Live-success?style=flat-square&logo=vercel) | 👉 **[codelens-platform.vercel.app](https://codelens-platform.vercel.app)** *(or import via [vercel.json](./vercel.json))* |
+| **Netlify Production** | ![Netlify](https://img.shields.io/badge/Production-Live-00C7B7?style=flat-square&logo=netlify) | 👉 **[codelens-ai.netlify.app](https://codelens-ai.netlify.app)** *(or import via [netlify.toml](./netlify.toml))* |
+| **GitHub Pages** | ![GitHub Pages](https://img.shields.io/badge/Deployment-Active-blue?style=flat-square&logo=github) | 👉 **[https://nipun68.github.io/CodeLens/](https://nipun68.github.io/CodeLens/)** |
 
 ---
 
-## 🏛️ Lead Architect & System Ownership
+## 🏛️ System Ownership & Architectural Leadership
 
 | Role | Engineer | Core Responsibilities & Architectural Ownership |
 | :--- | :--- | :--- |
-| 👑 **Lead Architect & System Designer** | **Nipun Kalra** ([@nipun68](https://github.com/nipun68)) | **End-to-End System Architecture**, AST Virtual Machine Execution Engine, Static Complexity & Big-O Analyzer (`js/analyzer.js`), Reactive State & Memory Visualizer (`js/visualizer.js`), REST API Integration (`js/api.js`), and Pedagogical Alignment. |
+| 👑 **Lead Architect & System Designer** | **Nipun Kalra** ([@nipun68](https://github.com/nipun68)) | **End-to-End System Architecture**, AST Virtual Machine Execution Engine, Static Complexity & Big-O Analyzer (`js/analyzer.js`), Reactive State & Memory Visualizer (`js/visualizer.js`), REST API Integration (`js/api.js`), and Telemetry Architecture. |
 | 💻 **Core Subsystems Engineer** | **Nikhil** ([@nikhill91](https://github.com/nikhill91)) | AST Interpreter Runtime (`js/interpreter.js`), Editor Hotkeys Subsystem (`js/editor.js`), Storage Manager (`js/storage.js`), UI Layout & Theme Engine (`index.html`, `script.js`, `style.css`). |
-| 📊 **Algorithms & Telemetry Engineer** | **Sameer Verma** ([@Sameerverma2303](https://github.com/Sameerverma2303)) | Algorithm Step Generators (`js/algorithms.js`), Data Structure Sandboxes, Learning Telemetry & Mastery Engine (`js/learning.js`). |
+| 📊 **Algorithms & Data Structures Engineer** | **Sameer Verma** ([@Sameerverma2303](https://github.com/Sameerverma2303)) | Algorithm Step Generators (`js/algorithms.js`), Data Structure Sandboxes, Learning Telemetry & Mastery Engine (`js/learning.js`). |
 
 ---
 
-## 💡 Engineering Motivation & High-Level Design
+## 🌟 Executive Summary
 
-Standard web execution environments treat code as a black box: source code goes in, stdout comes out. **CodeLens** was designed to solve the cognitive disconnect in program understanding by transforming raw JavaScript into a deterministic, **statement-by-statement observable virtual runtime**.
+Traditional code sandboxes treat execution as a black box: source code goes in, stdout comes out. **CodeLens** bridges the cognitive gap in algorithmic comprehension by transforming arbitrary JavaScript code into an **observable, statement-by-statement virtual runtime**.
 
-### Key Technical Achievements
-1. **Zero `eval()` / Zero `Function()` Execution**: Implemented a custom Abstract Syntax Tree (AST) tree-walking interpreter using Acorn parsing, eliminating arbitrary execution vulnerabilities.
-2. **Pre-Execution Static Heatmap ($O(1)$ to $O(2^n)$)**: Developed a two-pass AST visitor that pre-computes asymptotic time/space bounds before running a single statement.
-3. **Enterprise Code Quality Engine**: Built real-time static code analysis calculating McCabe Cyclomatic Complexity ($M = \text{Decisions} + 1$), SEI Maintainability Index, and SonarQube-style cognitive load.
-4. **Reactive Memory Snapshots**: Continuous capture of variable scopes, activation records (call stack), and array heap mutations without UI frame drops.
+By converting code into an **Abstract Syntax Tree (AST)** via Acorn, CodeLens intercepts control flow, tracks variable mutation timelines, renders activation records on the call stack, and pre-computes asymptotic time/space bounds before running a single instruction.
 
 ---
 
 ## 🏗️ System Architecture & Dataflow Pipeline
 
 ```
-                     ┌───────────────────────────────┐
-                     │   Raw JavaScript Source Code  │
-                     └───────────────┬───────────────┘
-                                     │
-                                     ▼
-                     ┌───────────────────────────────┐
-                     │   Acorn Lexer & AST Parser    │ (ECMAScript 2020)
-                     └───────┬───────────────┬───────┘
-                             │               │
-            ┌────────────────┘               └────────────────┐
-            ▼                                                 ▼
-┌──────────────────────────────┐              ┌──────────────────────────────┐
-│   Static Analysis Pipeline   │              │   Virtual Execution Engine   │
-├──────────────────────────────┤              ├──────────────────────────────┤
-│ • 6-Tier Asymptotic Heatmap  │              │ • Statement Evaluator Loop   │
-│ • Cyclomatic Complexity (M)  │              │ • Scope Tree & Frame Manager │
-│ • Cognitive Load Penalty     │              │ • Breakpoint Interceptor (F9)│
-│ • SEI Maintainability (0-100)│              │ • Step Snapshot Generator    │
-└──────────────┬───────────────┘              └──────────────┬───────────────┘
-               │                                             │
-               └──────────────────────┬──────────────────────┘
-                                      │
-                                      ▼
-                      ┌──────────────────────────────┐
-                      │    Reactive UI Controller    │
-                      ├──────────────────────────────┤
-                      │ • Step-by-step Trace Slider  │
-                      │ • Dynamic Scope Grid         │
-                      │ • Call Stack Frame Visualizer│
-                      │ • Real-time Output Streaming │
-                      └──────────────────────────────┘
+                     ┌───────────────────────────────────┐
+                     │    Raw JavaScript Source Code     │
+                     └─────────────────┬─────────────────┘
+                                       │
+                                       ▼
+                     ┌───────────────────────────────────┐
+                     │     Acorn Lexer & AST Parser      │ (ECMAScript 2020)
+                     └─────────┬───────────────────┬─────┘
+                               │                   │
+            ┌──────────────────┘                   └──────────────────┐
+            ▼                                                         ▼
+┌──────────────────────────────┐                          ┌──────────────────────────────┐
+│   Static Analysis Pipeline   │                          │   Virtual Execution Engine   │
+├──────────────────────────────┤                          ├──────────────────────────────┤
+│ • 6-Tier Asymptotic Heatmap  │                          │ • Statement Evaluator Loop   │
+│ • Cyclomatic Complexity (M)  │                          │ • Lexical Scope Chain Tree   │
+│ • Cognitive Load Penalty     │                          │ • Breakpoint Interceptor(F9) │
+│ • SEI Maintainability (0-100)│                          │ • Step Snapshot Generator    │
+│ • SonarQube Code Smell Audit │                          │ • Execution Timeout Guard    │
+└──────────────┬───────────────┘                          └──────────────┬───────────────┘
+               │                                                         │
+               └──────────────────────────┬──────────────────────────────┘
+                                          │
+                                          ▼
+                          ┌──────────────────────────────┐
+                          │    Reactive UI Controller    │
+                          ├──────────────────────────────┤
+                          │ • Trace Timeline Scrubber    │
+                          │ • Heap & Scope Variable Grid │
+                          │ • Call Stack Frame Visualizer│
+                          │ • Multi-Stream Stdout/Stderr │
+                          └──────────────────────────────┘
 ```
 
 ---
 
-## 🎨 6-Tier Static Asymptotic Heatmap
+## ⚡ Core Engineering Subsystems
 
-Before execution begins, the static analyzer performs recursive AST pattern matching to classify each line's computational complexity:
+### 1. 🔬 AST Virtual Machine & Execution Sandbox
+* **Zero `eval()` / Zero `Function()`**: Complete execution security using an internal tree-walking virtual machine.
+* **Non-Blocking Step Engine**: Captures deep-cloned state snapshots at each statement boundary without blocking the browser event loop.
+* **Deterministic Call Stack**: Tracks recursive function frames, activation records, and return value resolution in real time.
+* **Infinite Loop & Recursion Protection**: Automatic execution bounds guard against runaway loops.
 
-| Tier | Complexity | Color Indicator | AST Node Trigger / Heuristic |
+### 2. 🎨 6-Tier Static Asymptotic Heatmap
+Before execution, CodeLens parses the AST to classify control-flow structures by asymptotic time complexity:
+
+| Tier | Asymptotic Bound | Color Accent | AST Classification Heuristic |
 | :---: | :---: | :---: | :--- |
-| **1** | **$O(1)$** | 🟩 Emerald | Deterministic statement sequence, branch conditions (`IfStatement`) |
-| **2** | **$O(\log n)$** | 🟦 Sky Blue | Divide-and-conquer index halving (`mid = (low + high) / 2`) |
-| **3** | **$O(n)$** | 🟨 Amber | Single linear loop construct (`ForStatement`, `WhileStatement`) |
+| **1** | **$O(1)$** | 🟩 Emerald | Deterministic statement sequence, branch condition (`IfStatement`) |
+| **2** | **$O(\log n)$** | 🟦 Sky Blue | Divide-and-conquer binary search index halving (`mid = (low + high) / 2`) |
+| **3** | **$O(n)$** | 🟨 Amber | Single linear loop construct (`ForStatement`, `WhileStatement`, `ForOfStatement`) |
 | **4** | **$O(n \log n)$** | 🟪 Violet | Built-in `.sort()` invocations (Dual-Pivot Quicksort / Timsort) |
-| **5** | **$O(n^2)+$** | 🟥 Crimson | Nested loop iterations ($depth \ge 2$) |
-| **6** | **$O(2^n)$** | 🟪 Fuchsia | Branching self-recursive function calls (`fn(n-1) + fn(n-2)`) |
+| **5** | **$O(n^2)+$** | 🟥 Crimson | Nested iteration loops with depth $\ge 2$ |
+| **6** | **$O(2^n)$** | 🟪 Fuchsia | Branching self-recursive function invocations (`fib(n-1) + fib(n-2)`) |
 
----
+### 3. 🛡️ Enterprise Code Quality & Architectural Health
+* **McCabe Cyclomatic Complexity ($M = \text{Decisions} + 1$)**: Measures independent execution paths to evaluate unit-testability risk.
+* **SEI Maintainability Index (0–100)**: Multi-variable software metric factoring Cyclomatic Complexity, Halstead volume, and lines of code (LOC).
+* **Cognitive Load Analysis**: Penalizes deeply nested structures ($depth \ge 2$) that increase human comprehension difficulty.
+* **Clean Code & Smell Detector**: Identifies non-idiomatic single-letter identifiers, missing `try/catch` exception boundaries, and DRY pattern violations.
 
-## 🛡️ Enterprise Code Quality & Architectural Health Matrix
+### 4. 📦 Data Structures & Algorithm Visualizer
+* **Classic Algorithms**: Step-by-step generator animations for Binary Search, Linear Search, Bubble Sort, Selection Sort, and Insertion Sort.
+* **Interactive Memory Sandboxes**: Real-time visual manipulation of Arrays, Stacks (LIFO), Queues (FIFO), and Singly Linked Lists.
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│ 🛡️ ENTERPRISE STATIC ANALYSIS REPORT                       │
-├──────────────────────────────┬──────────────────────────────┤
-│ Maintainability Index: 88/100│ Architectural Grade: A+      │
-├──────────────────────────────┼──────────────────────────────┤
-│ Cyclomatic Complexity: M = 4 │ Cognitive Load: 5 pts        │
-│ Risk Level: Low (Testable)   │ Max Nesting Depth: 1         │
-└──────────────────────────────┴──────────────────────────────┘
-```
-
-- **Cyclomatic Complexity ($M = E - N + 2P$)**: Quantifies the number of linearly independent paths through the program.
-- **SEI Maintainability Index**: Normalized polynomial metric factoring in Cyclomatic Complexity, Halstead volume, and source lines of code (LOC).
-- **Clean Code & Smell Detection**: Proactively flags single-letter non-idiomatic variables, missing exception boundaries (`try/catch`), and duplicate patterns for strict **DRY compliance**.
-
----
-
-## 🎓 30-Lecture Curriculum & Pedagogical Alignment
-
-CodeLens is engineered strictly with **100% Vanilla JavaScript**, demonstrating direct real-world mastery over fundamental and advanced ECMAScript concepts:
-
-| Lecture Phase | Syllabus Topics | CodeLens Architectural Implementation |
-| :--- | :--- | :--- |
-| **Lectures 1–6** | Variables, Scoping, Operators, Conditionals & Loops | AST variable resolution, branch condition evaluations, sorting loop generators. |
-| **Lectures 7–12** | Functions, Scope Chains, Arrays & High-Order Methods | Activation record tracking, call stack frame resolution, `.map()/.filter()/.reduce()` history telemetry. |
-| **Lectures 13–16** | Objects, Destructuring, JSON & Deep State Clones | Immutable execution state snapshots, report exports, nested object dereferencing. |
-| **Lectures 17–22** | DOM Selection, Traversal, Mutations & Event Loop | Reactive UI updates, custom line-gutter rendering, keyboard shortcut listeners ($F5$, $F9$, $F10$, $Ctrl+Enter$). |
-| **Lectures 23–24** | `localStorage`, `sessionStorage` & Modern ES6+ Features | Execution history persistence, theme preference memory, ES6 `Set` for $O(1)$ breakpoint lookups. |
-| **Lectures 25–30** | Async JavaScript, Promises, REST APIs & Mini-Project Integration | External code execution fallback API, loading states, full end-to-end integration. |
+### 5. 🏆 Algorithmic Mastery & Telemetry Dashboard
+* **Telemetry Analytics**: Tracks executed runs, total trace steps analyzed, error rates, and algorithmic competency scores.
+* **Adaptive Practice Vectors**: Recommends algorithm drills based on user history and identified weakness areas.
+* **Client-Side Persistence**: Stores execution history and user preferences via `localStorage`.
 
 ---
 
 ## ⌨️ IDE Keyboard Shortcuts Reference
 
-| Key Combination | Action | Subsystem |
+| Shortcut | Function | Context |
 | :--- | :--- | :--- |
 | `Ctrl + Enter` / `Cmd + Enter` | Run & Trace Code | Editor |
-| `F9` / `Ctrl + B` | Toggle Breakpoint on Current Line | Editor Gutter |
-| `F5` | Play / Pause Continuous Execution Trace | Trace Controls |
+| `F9` / `Ctrl + B` | Toggle Breakpoint on Line | Editor Gutter |
+| `F5` | Play / Pause Trace | Workspace |
 | `F10` / `→` / `Space` | Step Next Statement | Trace Controls |
 | `F11` / `←` | Step Previous Statement | Trace Controls |
-| `Home` / `End` | Jump to First / Last Execution Step | Trace Controls |
-| `Ctrl + Z` / `Ctrl + Y` | Undo / Redo Source Code Edit | Editor |
-| `Ctrl + S` | Persist Current Snippet to Local History | Storage Engine |
-| `Shift + F5` | Full Workspace & Trace Reset | Workspace |
+| `Home` / `End` | Jump to First / Last Step | Trace Controls |
+| `Ctrl + Z` / `Ctrl + Y` | Undo / Redo Source Code | Editor |
+| `Ctrl + S` | Persist Current Snippet | Storage |
+| `Shift + F5` | Full Workspace Reset | Workspace |
+| `Escape` | Pause Trace / Close Modals | Global |
 
 ---
 
-## 🚀 Quickstart & Local Installation
+## 🚀 Local Development Setup
 
-CodeLens has **zero build steps** and requires no compilation or package installation:
+CodeLens is **100% zero-dependency** and requires no build tools or package installations:
 
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/nipun68/CodeLens.git
    cd CodeLens
    ```
-2. **Launch directly in your browser:**
+2. **Launch directly in any modern browser:**
    ```bash
-   # Option 1: Open directly
+   # Direct launch (Windows)
    start index.html
 
-   # Option 2: Run with any local server
+   # Or run via any local server
    npx serve .
    ```
 
@@ -163,4 +160,4 @@ CodeLens has **zero build steps** and requires no compilation or package install
 
 ## 📄 License
 
-Distributed under the **MIT License**. Free for academic, educational, and commercial use.
+Distributed under the **MIT License**. Free for educational, academic, and commercial use.
