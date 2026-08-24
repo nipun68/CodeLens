@@ -6206,25 +6206,202 @@ body {
   box-shadow: 0 0 9px rgba(255, 77, 141, .72);
 }
 
+/* ══════════════════════════════════════════════════════════════════════════════
+   HELP VIEW STYLING (Dark & Light Mode Polish)
+   ══════════════════════════════════════════════════════════════════════════════ */
+#view-help {
+  padding-bottom: 40px;
+}
+
 #view-help .help-hero {
-  border-color: rgba(236, 72, 153, .30);
-  background: linear-gradient(120deg, rgba(139, 92, 246, .18), rgba(35, 17, 53, .68));
+  position: relative;
+  overflow: hidden;
+  padding: 32px 28px;
+  border-radius: 18px;
+  border: 1px solid rgba(168, 85, 247, 0.28);
+  background: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.22), transparent 45%),
+              radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.18), transparent 45%),
+              linear-gradient(135deg, rgba(35, 17, 53, 0.85), rgba(17, 8, 28, 0.92));
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-#view-help .help-hero p {
-  max-width: 960px;
+#view-help .help-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #c7d2fe;
+  background: rgba(99, 102, 241, 0.16);
+  border: 1px solid rgba(99, 102, 241, 0.32);
+  margin-bottom: 14px;
 }
 
+#view-help .pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 10px #38bdf8;
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 14px #38bdf8; }
+}
+
+#view-help .help-hero-title {
+  font-size: 1.85rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 10px;
+  color: #ffffff;
+}
+
+#view-help .help-hero-desc {
+  max-width: 980px;
+  font-size: 0.94rem;
+  line-height: 1.65;
+  color: var(--muted);
+  margin: 0 0 22px;
+}
+
+#view-help .help-stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+#view-help .help-stat-pill {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  transition: transform 0.22s ease, border-color 0.22s ease;
+}
+
+#view-help .help-stat-pill:hover {
+  transform: translateY(-2px);
+  border-color: rgba(168, 85, 247, 0.4);
+}
+
+#view-help .help-stat-pill strong {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #f1f5f9;
+}
+
+#view-help .help-stat-pill span {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+#view-help .help-hero-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Pipeline Flowchart Grid */
+#view-help .help-pipeline-container {
+  padding: 24px 20px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+#view-help .help-pipeline-grid {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+#view-help .pipeline-step-card {
+  flex: 1 1 180px;
+  min-width: 170px;
+  padding: 18px 16px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(35, 17, 53, 0.75), rgba(17, 8, 28, 0.88));
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+#view-help .pipeline-step-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(56, 189, 248, 0.45);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+}
+
+#view-help .pipeline-step-num {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #38bdf8;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+#view-help .pipeline-step-icon {
+  font-size: 1.6rem;
+  margin-bottom: 10px;
+}
+
+#view-help .pipeline-step-card h4 {
+  font-size: 0.92rem;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: #f8fafc;
+}
+
+#view-help .pipeline-step-card p {
+  font-size: 0.78rem;
+  line-height: 1.48;
+  color: var(--muted);
+  margin: 0;
+}
+
+#view-help .pipeline-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #a855f7;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+/* Feature Grid */
 #view-help .help-grid {
-  gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
 }
 
 #view-help .help-card {
   position: relative;
   overflow: hidden;
-  min-height: 205px;
-  border-color: rgba(192, 151, 255, .18);
-  background: linear-gradient(145deg, rgba(35, 17, 53, .70), rgba(17, 8, 28, .78));
+  padding: 22px;
+  border-radius: 14px;
+  border: 1px solid rgba(168, 85, 247, 0.22);
+  background: linear-gradient(145deg, rgba(35, 17, 53, 0.72), rgba(17, 8, 28, 0.85));
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.28s ease, box-shadow 0.28s ease;
 }
 
 #view-help .help-card::before {
@@ -6233,9 +6410,9 @@ body {
   inset: 0 0 auto;
   height: 3px;
   background: var(--accent-grad);
-  transform: scaleX(.18);
+  transform: scaleX(0.2);
   transform-origin: left;
-  transition: transform .35s ease;
+  transition: transform 0.35s ease;
 }
 
 #view-help .help-card:hover::before {
@@ -6243,73 +6420,349 @@ body {
 }
 
 #view-help .help-card:hover {
-  border-color: rgba(34, 211, 238, .35);
-  box-shadow: 0 18px 36px rgba(4, 1, 12, .22), 0 0 22px rgba(34, 211, 238, .08);
+  transform: translateY(-3px);
+  border-color: rgba(168, 85, 247, 0.45);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(168, 85, 247, 0.12);
+}
+
+#view-help .help-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
 }
 
 #view-help .help-icon {
-  filter: drop-shadow(0 0 10px rgba(236, 72, 153, .25));
+  font-size: 1.6rem;
 }
 
-#view-help .help-card code,
-#view-help .feature-check code {
-  color: #22d3ee;
-  border: 1px solid rgba(34, 211, 238, .16);
-  background: rgba(34, 211, 238, .08);
+#view-help .help-card-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  color: #c084fc;
+  background: rgba(192, 132, 252, 0.12);
+  border: 1px solid rgba(192, 132, 252, 0.24);
+  letter-spacing: 0.02em;
+}
+
+#view-help .help-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 8px;
+  color: #f8fafc;
+}
+
+#view-help .help-card p {
+  font-size: 0.86rem;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0;
+}
+
+#view-help .help-card code {
+  color: #38bdf8;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+/* Keyboard Shortcuts & Tables */
+#view-help .help-table-panel {
+  padding: 8px;
+  border-radius: 14px;
+  overflow: hidden;
 }
 
 #view-help .comparison-table {
-  border: 1px solid rgba(192, 151, 255, .18);
-  border-collapse: separate;
+  width: 100%;
+  border-collapse: collapse;
   border-spacing: 0;
-  border-radius: 12px;
-  overflow: hidden;
-  background: rgba(17, 8, 28, .36);
+  font-size: 0.86rem;
 }
 
 #view-help .comparison-table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  color: #f8f0ff;
-  border-bottom-color: rgba(34, 211, 238, .28);
-  background: linear-gradient(100deg, rgba(139, 92, 246, .42), rgba(236, 72, 153, .23));
-  backdrop-filter: blur(14px);
+  text-align: left;
+  padding: 13px 18px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #e2e8f0;
+  background: rgba(35, 17, 53, 0.9);
+  border-bottom: 1px solid rgba(168, 85, 247, 0.25);
 }
 
-#view-help .comparison-table tbody tr:nth-child(even) td {
-  background: rgba(139, 92, 246, .045);
+#view-help .comparison-table tbody tr {
+  transition: background 0.15s ease;
 }
 
-#view-help .comparison-table tbody tr:nth-child(odd) td {
-  background: rgba(34, 211, 238, .018);
+#view-help .comparison-table tbody td {
+  padding: 12px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: #cbd5e1;
+  vertical-align: middle;
 }
 
 #view-help .comparison-table tbody tr:hover td {
-  background: rgba(236, 72, 153, .09);
+  background: rgba(168, 85, 247, 0.08);
 }
 
-#view-help .comparison-table td {
-  border-bottom-color: rgba(192, 151, 255, .12);
+#view-help .kbd {
+  display: inline-block;
+  padding: 3px 7px;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  background: #1e152a;
+  border: 1px solid #4a3b68;
+  border-radius: 6px;
+  box-shadow: 0 2px 0 #3b2c57;
+}
+
+#view-help .scope-chip {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--muted);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#view-help .status-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+#view-help .status-tag.live {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+#view-help .status-tag.progress {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+#view-help .status-tag.future {
+  background: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+/* Feature List */
+#view-help .help-feature-panel {
+  padding: 20px;
+  border-radius: 14px;
 }
 
 #view-help .feature-list {
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
 }
 
 #view-help .feature-check {
-  padding: 10px 12px;
-  border: 1px solid rgba(192, 151, 255, .13);
-  border-radius: 9px;
-  background: rgba(35, 17, 53, .34);
-  color: #e9dff3;
-  transition: transform .22s ease, border-color .22s ease, background .22s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: rgba(35, 17, 53, 0.6);
+  border: 1px solid rgba(168, 85, 247, 0.18);
+  color: #f1f5f9;
+  font-size: 0.86rem;
+  transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease;
 }
 
 #view-help .feature-check:hover {
   transform: translateX(4px);
-  border-color: rgba(212, 255, 0, .28);
-  background: rgba(212, 255, 0, .06);
+  border-color: rgba(56, 189, 248, 0.4);
+  background: rgba(56, 189, 248, 0.08);
+}
+
+#view-help .check-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.15);
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   LIGHT MODE OVERRIDES FOR HELP VIEW
+   ══════════════════════════════════════════════════════════════════════════════ */
+[data-theme="light"] #view-help .help-hero {
+  border-color: #e2e8f0;
+  background: radial-gradient(circle at 10% 20%, rgba(224, 231, 255, 0.75), transparent 50%),
+              radial-gradient(circle at 90% 80%, rgba(253, 242, 248, 0.75), transparent 50%),
+              #ffffff;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] #view-help .help-hero-badge {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  color: #4338ca;
+}
+
+[data-theme="light"] #view-help .help-hero-title {
+  color: #0f172a;
+}
+
+[data-theme="light"] #view-help .help-hero-desc {
+  color: #475569;
+}
+
+[data-theme="light"] #view-help .help-stat-pill {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="light"] #view-help .help-stat-pill:hover {
+  border-color: #a5b4fc;
+}
+
+[data-theme="light"] #view-help .help-stat-pill strong {
+  color: #0f172a;
+}
+
+[data-theme="light"] #view-help .help-stat-pill span {
+  color: #64748b;
+}
+
+[data-theme="light"] #view-help .help-pipeline-container {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] #view-help .pipeline-step-card {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="light"] #view-help .pipeline-step-card:hover {
+  background: #ffffff;
+  border-color: #818cf8;
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.12);
+}
+
+[data-theme="light"] #view-help .pipeline-step-card h4 {
+  color: #0f172a;
+}
+
+[data-theme="light"] #view-help .pipeline-step-card p {
+  color: #64748b;
+}
+
+[data-theme="light"] #view-help .pipeline-step-num {
+  color: #4f46e5;
+}
+
+[data-theme="light"] #view-help .pipeline-arrow {
+  color: #6366f1;
+}
+
+[data-theme="light"] #view-help .help-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] #view-help .help-card:hover {
+  border-color: #a5b4fc;
+  box-shadow: 0 12px 28px rgba(99, 102, 241, 0.1);
+}
+
+[data-theme="light"] #view-help .help-card h3 {
+  color: #0f172a;
+}
+
+[data-theme="light"] #view-help .help-card p {
+  color: #475569;
+}
+
+[data-theme="light"] #view-help .help-card-tag {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  color: #4338ca;
+}
+
+[data-theme="light"] #view-help .help-card code {
+  color: #0369a1;
+  background: #e0f2fe;
+  border-color: #bae6fd;
+}
+
+[data-theme="light"] #view-help .help-table-panel,
+[data-theme="light"] #view-help .help-feature-panel {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="light"] #view-help .comparison-table thead th {
+  background: #f1f5f9;
+  color: #1e293b;
+  border-bottom-color: #cbd5e1;
+}
+
+[data-theme="light"] #view-help .comparison-table tbody tr:nth-child(even) td {
+  background: #f8fafc;
+}
+
+[data-theme="light"] #view-help .comparison-table tbody tr:hover td {
+  background: #eef2ff;
+}
+
+[data-theme="light"] #view-help .comparison-table tbody td {
+  border-bottom-color: #e2e8f0;
+  color: #334155;
+}
+
+[data-theme="light"] #view-help .kbd {
+  color: #0f172a;
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 0 #94a3b8;
+}
+
+[data-theme="light"] #view-help .scope-chip {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: #e2e8f0;
+}
+
+[data-theme="light"] #view-help .feature-check {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #1e293b;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="light"] #view-help .feature-check:hover {
+  background: #ffffff;
+  border-color: #a5b4fc;
 }
 
 @keyframes dsItemIn {
@@ -6816,4 +7269,401 @@ body {
   font-size: .78rem !important;
   font-weight: 600;
   border-radius: 8px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   LIVE CODE MEMORY VISUALIZER (Stack vs Heap Architecture)
+   ══════════════════════════════════════════════════════════════════════════════ */
+.memory-view {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 4px 0 16px;
+}
+
+.mem-telemetry-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 10px;
+}
+
+.mem-stat-chip {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+}
+
+.mem-stat-chip .lbl {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.mem-stat-chip .val {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.mem-stat-chip .val small {
+  font-size: 0.75rem;
+  font-weight: normal;
+  color: var(--muted);
+}
+
+.mem-stat-chip .status-ok {
+  color: #22c55e !important;
+}
+
+/* 2-Column Stack vs Heap Visualizer Grid */
+.mem-visualizer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .mem-visualizer-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mem-col {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.mem-col-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.mem-col-header .col-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.98rem;
+  color: var(--text);
+}
+
+.mem-col-header .col-title .icon {
+  font-size: 1.2rem;
+}
+
+.frame-tag,
+.heap-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  color: #c084fc;
+  background: rgba(192, 132, 252, 0.12);
+  border: 1px solid rgba(192, 132, 252, 0.24);
+}
+
+.mem-col-desc {
+  font-size: 0.76rem;
+  color: var(--muted);
+  margin: 0 0 14px;
+  line-height: 1.4;
+}
+
+/* Call Stack Slots */
+.stack-slots-container {
+  display: flex;
+  flex-direction: column-reverse; /* Stack grows upwards */
+  gap: 8px;
+}
+
+.stack-slot-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.stack-slot-card:hover {
+  transform: translateX(3px);
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.stack-slot-card.ref-slot {
+  border-left: 3px solid #ec4899;
+}
+
+.stack-slot-card.prim-slot {
+  border-left: 3px solid #38bdf8;
+}
+
+.slot-addr {
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.15);
+  letter-spacing: 0.02em;
+}
+
+.slot-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.slot-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.84rem;
+}
+
+.slot-var-name {
+  color: var(--text);
+  font-family: 'Fira Code', 'Consolas', monospace;
+}
+
+.slot-type-badge {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.slot-type-badge.prim {
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.22);
+}
+
+.slot-type-badge.ref {
+  color: #f472b6;
+  background: rgba(244, 114, 182, 0.12);
+  border: 1px solid rgba(244, 114, 182, 0.22);
+}
+
+.slot-size {
+  margin-left: auto;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+.slot-value-row {
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 0.8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ptr-badge {
+  color: #ec4899;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.val-pill {
+  color: #34d399;
+}
+
+/* Dynamic Heap Blocks */
+.heap-blocks-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.heap-block-card {
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.heap-block-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(236, 72, 153, 0.4);
+}
+
+.heap-block-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.heap-addr-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.74rem;
+  color: #ec4899;
+  background: rgba(236, 72, 153, 0.1);
+  border: 1px solid rgba(236, 72, 153, 0.25);
+}
+
+.heap-addr-pill .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ec4899;
+  box-shadow: 0 0 6px #ec4899;
+}
+
+.heap-type-pill {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.heap-size-pill {
+  margin-left: auto;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+.heap-cells-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.heap-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 5px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  font-family: 'Fira Code', monospace;
+  font-size: 0.76rem;
+}
+
+.heap-cell .cell-key {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.heap-cell .cell-val {
+  color: #38bdf8;
+}
+
+.heap-block-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--muted);
+  padding-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.heap-block-footer code {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.gc-live {
+  color: #22c55e !important;
+  font-weight: 600;
+}
+
+/* Educational Card */
+.mem-educational-card {
+  padding: 16px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.06));
+  border: 1px solid rgba(99, 102, 241, 0.22);
+}
+
+.edu-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.92rem;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.edu-icon {
+  font-size: 1.2rem;
+}
+
+.edu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.edu-item h5 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: var(--text);
+}
+
+.edu-item p {
+  font-size: 0.74rem;
+  line-height: 1.45;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* Light Theme Polish for Memory View */
+[data-theme="light"] .slot-addr {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+[data-theme="light"] .heap-cells-grid {
+  background: #f1f5f9;
+}
+
+[data-theme="light"] .heap-cell {
+  background: #ffffff;
+  border-color: #cbd5e1;
+}
+
+[data-theme="light"] .heap-cell .cell-val {
+  color: #0284c7;
+}
+
+[data-theme="light"] .val-pill {
+  color: #059669;
+}
+
+[data-theme="light"] .mem-educational-card {
+  background: #f8fafc;
+  border-color: #e2e8f0;
 }

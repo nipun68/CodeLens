@@ -193,15 +193,204 @@ const Visualizer = (() => {
     }).join('') + `<div style="width:100%;text-align:center;margin-top:24px;color:var(--muted);font-size:.88rem;line-height:1.5">${step.note || ''}</div>`;
   }
 
-  function renderAlgoStats(step, type) {
-    const meta = Algorithms.META[type];
-    const el = document.getElementById('algoStats');
+  function renderMemoryMap(vars, callStack, step) {
+    const el = document.getElementById('memoryView');
+    if (!el) return;
+    if (!vars || !Object.keys(vars).length) {
+      el.innerHTML = `
+        <div style="text-align:center;padding:36px 16px;">
+          <div style="font-size:2.2rem;margin-bottom:10px;opacity:0.85">🧠</div>
+          <h4 style="margin:0 0 6px;font-size:1rem;color:var(--text)">Live Stack & Heap Memory Visualizer</h4>
+          <p class="muted" style="max-width:380px;margin:0 auto 16px;font-size:0.82rem;line-height:1.5">
+            Run code to capture live Call Stack memory frames, stack primitive allocations, and dynamic Heap reference objects.
+          </p>
+        </div>`;
+      return;
+    }
+
+    const entries = Object.entries(vars).filter(([k, v]) => !v?.__isFunc && typeof v !== 'function');
+    
+    let stackBytes = 0;
+    let heapBytes = 0;
+    let heapAllocations = 0;
+
+    const stackItems = [];
+    const heapItems = [];
+
+    entries.forEach(([name, val], i) => {
+      const stackAddr = '0x7FFD' + (0x20 + i * 8).toString(16).toUpperCase();
+      const isRef = Array.isArray(val) || (typeof val === 'object' && val !== null);
+
+      if (!isRef) {
+        let size = 8;
+        if (typeof val === 'string') size = Math.max(8, val.length * 2);
+        else if (typeof val === 'boolean') size = 4;
+        else if (val === null || val === undefined) size = 4;
+        
+        stackBytes += size;
+        stackItems.push({
+          name,
+          addr: stackAddr,
+          type: typeof val,
+          isRef: false,
+          size: `${size} B`,
+          displayVal: `<span class="val-pill">${formatVal(val)}</span>`,
+          desc: 'Primitive value stored in stack slot'
+        });
+      } else {
+        stackBytes += 8;
+        heapAllocations++;
+        const heapAddr = '0xHEAP_' + (0x4A0 + i * 0x38).toString(16).toUpperCase();
+
+        stackItems.push({
+          name,
+          addr: stackAddr,
+          type: Array.isArray(val) ? `Array[${val.length}] *` : 'Object *',
+          isRef: true,
+          size: '8 B (ptr)',
+          displayVal: `<span class="ptr-badge">──► ${heapAddr}</span>`,
+          desc: `Reference pointer to heap memory block`
+        });
+
+        let hSize = 16;
+        let elements = [];
+        if (Array.isArray(val)) {
+          hSize += val.length * 8;
+          elements = val.map((item, idx) => ({ key: `[${idx}]`, val: formatVal(item) }));
+        } else {
+          const keys = Object.keys(val);
+          hSize += keys.length * 16;
+          elements = keys.map(k => ({ key: `.${k}`, val: formatVal(val[k]) }));
+        }
+        heapBytes += hSize;
+
+        heapItems.push({
+          name,
+          addr: heapAddr,
+          type: Array.isArray(val) ? `Array (${val.length} items)` : 'Object Record',
+          size: `${hSize} Bytes`,
+          elements,
+          refs: 1
+        });
+      }
+    });
+
+    const activeFrame = callStack && callStack.length ? callStack[callStack.length - 1] : { name: 'global', line: step?.line || 1 };
+
     el.innerHTML = `
-      <p><strong>Algorithm:</strong> ${meta.name}</p>
-      <p><strong>Time Complexity:</strong> ${meta.time}</p>
-      <p><strong>Space Complexity:</strong> ${meta.space}</p>
-      <p><strong>Comparisons so far:</strong> ${step?.comparisons || 0}</p>
-      <p><strong>Step note:</strong> ${step?.note || '—'}</p>
+      <div class="mem-telemetry-bar">
+        <div class="mem-stat-chip">
+          <span class="lbl">⚡ Call Stack Size</span>
+          <span class="val">${stackBytes} Bytes <small>(${stackItems.length} slots)</small></span>
+        </div>
+        <div class="mem-stat-chip">
+          <span class="lbl">📦 Dynamic Heap Size</span>
+          <span class="val">${heapBytes} Bytes <small>(${heapAllocations} allocs)</small></span>
+        </div>
+        <div class="mem-stat-chip">
+          <span class="lbl">💾 Estimated Virtual RAM</span>
+          <span class="val">${stackBytes + heapBytes} Bytes</span>
+        </div>
+        <div class="mem-stat-chip">
+          <span class="lbl">🛡️ GC Status</span>
+          <span class="val status-ok">Active · 0 Leaks</span>
+        </div>
+      </div>
+
+      <div class="mem-visualizer-grid">
+        <div class="mem-col stack-col">
+          <div class="mem-col-header">
+            <div class="col-title">
+              <span class="icon">🥞</span>
+              <strong>Execution Call Stack</strong>
+            </div>
+            <span class="frame-tag">Frame: ${activeFrame.name || 'global'}() · Line ${activeFrame.line || 1}</span>
+          </div>
+          <p class="mem-col-desc">Fixed-size, contiguous memory storing primitive values and 64-bit reference pointers.</p>
+          
+          <div class="stack-slots-container">
+            ${stackItems.length ? stackItems.map(item => `
+              <div class="stack-slot-card ${item.isRef ? 'ref-slot' : 'prim-slot'}">
+                <div class="slot-addr">${item.addr}</div>
+                <div class="slot-info">
+                  <div class="slot-name-row">
+                    <strong class="slot-var-name">${item.name}</strong>
+                    <span class="slot-type-badge ${item.isRef ? 'ref' : 'prim'}">${item.type}</span>
+                    <span class="slot-size">${item.size}</span>
+                  </div>
+                  <div class="slot-value-row">
+                    ${item.displayVal}
+                  </div>
+                </div>
+              </div>
+            `).join('') : '<p class="muted">No stack slots allocated yet.</p>'}
+          </div>
+        </div>
+
+        <div class="mem-col heap-col">
+          <div class="mem-col-header">
+            <div class="col-title">
+              <span class="icon">📦</span>
+              <strong>Dynamic Object Heap</strong>
+            </div>
+            <span class="heap-tag">${heapItems.length} Structure${heapItems.length === 1 ? '' : 's'}</span>
+          </div>
+          <p class="mem-col-desc">Dynamic allocation space for expandable arrays, objects, and reference structures.</p>
+
+          <div class="heap-blocks-container">
+            ${heapItems.length ? heapItems.map(h => `
+              <div class="heap-block-card">
+                <div class="heap-block-header">
+                  <div class="heap-addr-pill">
+                    <span class="dot"></span>
+                    <strong>${h.addr}</strong>
+                  </div>
+                  <span class="heap-type-pill">${h.type}</span>
+                  <span class="heap-size-pill">${h.size}</span>
+                </div>
+                <div class="heap-cells-grid">
+                  ${h.elements.map(e => `
+                    <div class="heap-cell">
+                      <span class="cell-key">${e.key}</span>
+                      <span class="cell-val">${e.val}</span>
+                    </div>
+                  `).join('')}
+                </div>
+                <div class="heap-block-footer">
+                  <span>Target: <code>${h.name}</code></span>
+                  <span>Ref Count: <strong>${h.refs}</strong></span>
+                  <span class="gc-live">● Reachable</span>
+                </div>
+              </div>
+            `).join('') : '<div class="empty-heap-note"><p class="muted">No objects or arrays in Heap.</p></div>'}
+          </div>
+        </div>
+      </div>
+
+      <div class="mem-educational-card">
+        <div class="edu-head">
+          <span class="edu-icon">💡</span>
+          <strong>How JavaScript Memory Architecture Works During Execution</strong>
+        </div>
+        <div class="edu-grid">
+          <div class="edu-item">
+            <h5>1. Primitives on Stack</h5>
+            <p>Numbers, booleans, and small strings live directly in contiguous stack frame slots with instant O(1) deallocation when the scope exits.</p>
+          </div>
+          <div class="edu-item">
+            <h5>2. Dynamic Objects on Heap</h5>
+            <p>Arrays and objects have variable sizes. They are stored in the Dynamic Heap and referenced via an 8-byte pointer address on the Stack.</p>
+          </div>
+          <div class="edu-item">
+            <h5>3. Pointer Copying (By Reference)</h5>
+            <p>Assigning <code>let b = a</code> copies the <em>pointer memory address</em>, not the array. Both variables point to the same Heap block.</p>
+          </div>
+          <div class="edu-item">
+            <h5>4. Mark-and-Sweep Garbage Collector</h5>
+            <p>Unreferenced heap allocations whose stack root pointers are removed get automatically reclaimed by the runtime memory manager.</p>
+          </div>
+        </div>
+      </div>
     `;
   }
 
@@ -230,5 +419,5 @@ const Visualizer = (() => {
 
   window.highlightSyntax = highlightSyntax;
 
-  return { highlightSyntax, renderCodeTrace, renderVariables, renderVarTimeline, renderCallStack, renderStepNote, renderAlgorithm, renderAlgoStats };
+  return { highlightSyntax, renderCodeTrace, renderVariables, renderVarTimeline, renderCallStack, renderStepNote, renderMemoryMap, renderAlgorithm, renderAlgoStats };
 })();
