@@ -16,15 +16,15 @@ The project is fully deployed and accessible in real-time:
 
 ---
 
-## 👥 Team Contributions & Branch Architecture
+## 👥 Team Contributions & Module Breakdown
 
-To demonstrate clear modularity and collaborative version control, the project utilizes individual dedicated feature branches:
+To demonstrate modular engineering and collaborative version control, specific subsystems are mapped to individual team members:
 
-| Team Member | GitHub Handle | Assigned Role & Module | Dedicated Branch |
+| Team Member | GitHub Handle | Key Modules & Files Developed | Dedicated Branch |
 | :--- | :--- | :--- | :--- |
-| **Nipun Kalra** *(Lead)* | [@nipun68](https://github.com/nipun68) | Core AST Virtual Interpreter Sandbox & Reactive Execution Engine | [`feature/ast-engine-core`](https://github.com/nipun68/CodeLens/tree/feature/ast-engine-core) |
-| **Nikhil** | [@nikhill91](https://github.com/nikhill91) | 6-Tier Static Heatmap, Asymptotic Big-O Engine & Enterprise Quality Audit | [`feature/static-analyzer-heuristics`](https://github.com/nipun68/CodeLens/tree/feature/static-analyzer-heuristics) |
-| **Sameer Verma** | [@Sameerverma2303](https://github.com/Sameerverma2303) | Algorithm Step Visualizer, Data Structures Sandbox & Telemetry Dashboard | [`feature/algo-visualizer-dom`](https://github.com/nipun68/CodeLens/tree/feature/algo-visualizer-dom) |
+| **Nikhil** | [@nikhill91](https://github.com/nikhill91) | AST Interpreter (`js/interpreter.js`), Code Editor & Hotkeys (`js/editor.js`), Storage Manager (`js/storage.js`), UI Layout & Styling (`index.html`, `script.js`, `style.css`) | [`feature/nikhil-core-modules`](https://github.com/nipun68/CodeLens/tree/feature/nikhil-core-modules) |
+| **Sameer Verma** | [@Sameerverma2303](https://github.com/Sameerverma2303) | Algorithm Step Generators (`js/algorithms.js`), Data Structure Sandboxes, Learning Mastery & Telemetry (`js/learning.js`) | [`feature/algo-visualizer-dom`](https://github.com/nipun68/CodeLens/tree/feature/algo-visualizer-dom) |
+| **Nipun Kalra** *(Lead)* | [@nipun68](https://github.com/nipun68) | Static Heatmap & Complexity Heuristics (`js/analyzer.js`), Reactive State Visualizer (`js/visualizer.js`), REST API Integration (`js/api.js`) | [`feature/ast-engine-core`](https://github.com/nipun68/CodeLens/tree/feature/ast-engine-core) |
 
 ---
 
