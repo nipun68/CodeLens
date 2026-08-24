@@ -1,6 +1,30 @@
 # CodeLens — Program Intelligence & Algorithmic Execution Platform
 
-> **An interactive, client-side JavaScript execution engine, AST visualizer, and algorithmic telemetry platform built with pure Vanilla ES2020.**
+[![Live Demo](https://img.shields.io/badge/Demo-Live%20Application-brightgreen?style=for-the-badge&logo=vercel)](https://nipun68.github.io/CodeLens/)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-CodeLens-blue?style=for-the-badge&logo=github)](https://github.com/nipun68/CodeLens)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+
+> **An interactive, client-side JavaScript execution engine, AST visualizer, and algorithmic telemetry platform built with pure Vanilla ECMAScript 2020.**
+
+---
+
+## 🌐 Live Deployment
+
+The project is fully deployed and accessible in real-time:
+* **Primary Deployment (GitHub Pages):** 👉 **[https://nipun68.github.io/CodeLens/](https://nipun68.github.io/CodeLens/)**
+* **Repository:** 👉 **[https://github.com/nipun68/CodeLens](https://github.com/nipun68/CodeLens)**
+
+---
+
+## 👥 Team Contributions & Branch Architecture
+
+To demonstrate clear modularity and collaborative version control, the project utilizes individual dedicated feature branches:
+
+| Team Member | GitHub Handle | Assigned Role & Module | Dedicated Branch |
+| :--- | :--- | :--- | :--- |
+| **Nipun Kalra** *(Lead)* | [@nipun68](https://github.com/nipun68) | Core AST Virtual Interpreter Sandbox & Reactive Execution Engine | [`feature/ast-engine-core`](https://github.com/nipun68/CodeLens/tree/feature/ast-engine-core) |
+| **Nikhil** | [@nikhill91](https://github.com/nikhill91) | 6-Tier Static Heatmap, Asymptotic Big-O Engine & Enterprise Quality Audit | [`feature/static-analyzer-heuristics`](https://github.com/nipun68/CodeLens/tree/feature/static-analyzer-heuristics) |
+| **Sameer Verma** | [@Sameerverma2303](https://github.com/Sameerverma2303) | Algorithm Step Visualizer, Data Structures Sandbox & Telemetry Dashboard | [`feature/algo-visualizer-dom`](https://github.com/nipun68/CodeLens/tree/feature/algo-visualizer-dom) |
 
 ---
 
@@ -61,7 +85,7 @@ By parsing source code into an **Abstract Syntax Tree (AST)** via Acorn, CodeLen
 
 ---
 
-## ⌨️ IDE Keyboard Shortcuts
+## ⌨️ IDE Keyboard Shortcuts Reference
 
 | Shortcut | Action | Scope |
 | :--- | :--- | :--- |
@@ -81,7 +105,7 @@ By parsing source code into an **Abstract Syntax Tree (AST)** via Acorn, CodeLen
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Local Development Setup
 
 CodeLens is **zero-dependency** and runs directly in any modern browser:
 
@@ -91,14 +115,6 @@ CodeLens is **zero-dependency** and runs directly in any modern browser:
    cd CodeLens
    ```
 2. Open `index.html` in your favorite web browser (or serve with any local HTTP server like Live Server or `npx serve`).
-
----
-
-## 👥 Contributors & Collaborators
-
-- **Nipun Kalra** ([@nipun68](https://github.com/nipun68))
-- **Nikhil** ([@nikhill91](https://github.com/nikhill91))
-- **Sameer Verma** ([@Sameerverma2303](https://github.com/Sameerverma2303))
 
 ---
 
