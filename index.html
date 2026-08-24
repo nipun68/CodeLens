@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=13" />
+  <link rel="stylesheet" href="style.css?v=11" />
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/acorn/8.11.0/acorn.min.js"></script>
 </head>
@@ -152,7 +152,6 @@ while (low <= high) {
             <button class="tab" data-tab="output">Output</button>
             <button class="tab" data-tab="variables">Variables</button>
             <button class="tab" data-tab="callstack">Call Stack</button>
-            <button class="tab" data-tab="memory">🧠 Memory</button>
             <button class="tab" data-tab="complexity">Complexity</button>
             <button class="tab" data-tab="quality">Quality</button>
             <button class="tab" data-tab="algorithm">Algorithm</button>
@@ -192,20 +191,6 @@ while (low <= high) {
             <div class="tab-pane" data-pane="callstack">
               <div id="callStackView" class="callstack-view">
                 <p class="muted">Call stack will appear here during execution.</p>
-              </div>
-            </div>
-
-            
-            <div class="tab-pane" data-pane="memory">
-              <div id="memoryView" class="memory-view">
-                <div style="text-align:center;padding:36px 16px;">
-                  <div style="font-size:2.2rem;margin-bottom:10px;opacity:0.85">🧠</div>
-                  <h4 style="margin:0 0 6px;font-size:1rem;color:var(--text)">Live Stack & Heap Memory Visualizer</h4>
-                  <p class="muted" style="max-width:380px;margin:0 auto 16px;font-size:0.82rem;line-height:1.5">
-                    Execute code or step through the trace to inspect live Call Stack memory slots, primitive allocations, Heap pointer references, and garbage collection metrics.
-                  </p>
-                  <button class="btn primary mini" onclick="document.getElementById('runBtn').click()">⚡ Run & Trace Code</button>
-                </div>
               </div>
             </div>
 
@@ -409,197 +394,133 @@ while (low <= high) {
     
     <section id="view-help" class="view">
       <div class="help-hero">
-        <div class="help-hero-badge">
-          <span class="pulse-dot"></span>
-          <span>Program Intelligence Platform · Architectural Whitepaper</span>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+          <span class="chip" style="background:var(--accent);color:#fff;font-weight:700">System Architecture Whitepaper</span>
+          <span class="chip">Zero-Dependency AST Engine</span>
+          <span class="chip">Deterministic Sandbox</span>
         </div>
-        <h2 class="help-hero-title">Inside CodeLens AI Architecture</h2>
-        <p class="help-hero-desc">
-          CodeLens AI is a client-side program visualization and runtime analysis platform. It executes JavaScript in real-time via an in-browser Abstract Syntax Tree (AST) evaluator without using unsafe <code>eval()</code>, capturing deterministic memory snapshots, scope chains, and call stack frames at every single statement.
+        <h3 style="font-size:1.4rem;margin:0 0 8px">CodeLens Program Intelligence Platform</h3>
+        <p style="font-size:0.92rem;line-height:1.6">
+          CodeLens AI is a client-side program visualization and runtime analysis platform. It executes JavaScript via an in-browser Abstract Syntax Tree (AST) evaluator without using unsafe <code>eval()</code>, capturing deterministic memory snapshots and call stack frames at every statement.
         </p>
-        <div class="help-stats-row">
-          <div class="help-stat-pill">
-            <strong>16</strong>
-            <span>Interactive Algorithms</span>
-          </div>
-          <div class="help-stat-pill">
-            <strong>4</strong>
-            <span>Visual Data Structures</span>
-          </div>
-          <div class="help-stat-pill">
-            <strong>100%</strong>
-            <span>Local & Offline Capable</span>
-          </div>
-          <div class="help-stat-pill">
-            <strong>0</strong>
-            <span>Server Dependencies</span>
-          </div>
-        </div>
-        <div class="help-hero-actions">
-          <button class="btn primary" data-goto="workspace">🚀 Open Workspace</button>
-          <button class="btn ghost" data-goto="algorithms">🔍 Explore Algorithms</button>
-          <button class="btn ghost" data-goto="structures">📦 Data Structures</button>
+      </div>
+
+      
+      <h3 class="section-title" style="margin-top:24px">🏗️ System Architecture & Data Flow</h3>
+      <div class="panel" style="padding:20px">
+        <div style="background:var(--code-bg);border:1px solid var(--border);border-radius:10px;padding:16px;font-family:'Fira Code','Consolas',monospace;font-size:0.8rem;line-height:1.5;overflow-x:auto;color:var(--code-text)">
+┌──────────────────┐      ┌──────────────────────────────┐      ┌──────────────────────────────────┐
+│   Source Code    │ ───► │ Acorn AST Lexer & Parser     │ ───► │ Statement-by-Statement Evaluator │
+│ (Editor Input)   │      │ (ECMAScript 2020 AST Tree)   │      │ (Custom Virtual AST Interpreter) │
+└──────────────────┘      └──────────────────────────────┘      └──────────────────────────────────┘
+                                                                                  │
+                                                                                  ▼
+┌───────────────────────────────┐      ┌──────────────────────────────┐      ┌──────────────────────────────────┐
+│  Reactive Visualizer DOM      │ ◄─── │ Execution Timeline & Stream  │ ◄─── │ Memory Snapshot & Call Frame     │
+│ (Trace, Variables, Stack, UI) │      │ (Deep-Cloned State Steps)    │      │ (Lexical Env + Signal Dispatch)  │
+└───────────────────────────────┘      └──────────────────────────────┘      └──────────────────────────────────┘
         </div>
       </div>
 
       
-      <h3 class="section-title" style="margin-top:32px">🏗️ System Architecture & AST Execution Pipeline</h3>
-      <div class="help-pipeline-container">
-        <div class="help-pipeline-grid">
-          <div class="pipeline-step-card">
-            <div class="pipeline-step-num">01</div>
-            <div class="pipeline-step-icon">📝</div>
-            <h4>Source Code Input</h4>
-            <p>Monospace editor with real-time token overlay, line tracking, and F9 non-blocking breakpoint triggers.</p>
-          </div>
-          <div class="pipeline-arrow">➔</div>
-          <div class="pipeline-step-card">
-            <div class="pipeline-step-num">02</div>
-            <div class="pipeline-step-icon">🌳</div>
-            <h4>Acorn AST Parser</h4>
-            <p>Parses modern ECMAScript 2020 grammar into an immutable, fully typed syntax tree nodes hierarchy.</p>
-          </div>
-          <div class="pipeline-arrow">➔</div>
-          <div class="pipeline-step-card">
-            <div class="pipeline-step-num">03</div>
-            <div class="pipeline-step-icon">⚡</div>
-            <h4>Virtual AST Evaluator</h4>
-            <p>Walks statements recursively, resolving lexical scopes, binary expressions, and flow control signals.</p>
-          </div>
-          <div class="pipeline-arrow">➔</div>
-          <div class="pipeline-step-card">
-            <div class="pipeline-step-num">04</div>
-            <div class="pipeline-step-icon">📸</div>
-            <h4>Deterministic Snapshotter</h4>
-            <p>Deep-clones variables, array memory blocks, and active call frames into an ordered time-travel stream.</p>
-          </div>
-          <div class="pipeline-arrow">➔</div>
-          <div class="pipeline-step-card">
-            <div class="pipeline-step-num">05</div>
-            <div class="pipeline-step-icon">🎨</div>
-            <h4>Reactive Visualizer DOM</h4>
-            <p>Renders statement highlights, complexity heatmaps, call stack cards, and variable state transitions.</p>
-          </div>
-        </div>
-      </div>
-
-      
-      <h3 class="section-title" style="margin-top:36px">⚡ Key Engineering Highlights & Technical Decisions</h3>
+      <h3 class="section-title" style="margin-top:28px">⚡ Key Engineering Highlights & Technical Decisions</h3>
       <div class="help-grid">
         <div class="panel help-card">
-          <div class="help-card-head">
-            <div class="help-icon">🧩</div>
-            <span class="help-card-tag">Sandbox Safety</span>
-          </div>
-          <h3>1. Custom AST Virtual Sandbox</h3>
+          <div class="help-icon">🧩</div>
+          <h3>1. Custom AST Interpreter Sandbox</h3>
           <p>Statements are evaluated through an AST traversal engine that handles scope resolution, binary operators, and control signals (<code>BreakSignal</code>, <code>ContinueSignal</code>, <code>ReturnSignal</code>) without any <code>eval()</code> or server dependencies.</p>
         </div>
 
         <div class="panel help-card">
-          <div class="help-card-head">
-            <div class="help-icon">📸</div>
-            <span class="help-card-tag">Time Travel</span>
-          </div>
+          <div class="help-icon">📸</div>
           <h3>2. Deterministic State Snapshotting</h3>
           <p>At every statement, the interpreter takes deep-cloned snapshots of all active variables and call stack frames, enabling full time-travel debugging (rewind, step-forward, jump to step, breakpoints).</p>
         </div>
 
         <div class="panel help-card">
-          <div class="help-card-head">
-            <div class="help-icon">🔥</div>
-            <span class="help-card-tag">Big-O Engine</span>
-          </div>
+          <div class="help-icon">🔥</div>
           <h3>3. Static Heatmap & Complexity Heuristics</h3>
           <p>Before execution, the AST walker pre-computes asymptotic time bounds (O(1) through O(2ⁿ)) and applies 6-tier visual gutter accents: 🟩 Green for O(1) branches, 🟦 Blue for O(log n) halving/binary search, 🟨 Yellow for O(n) loops, 🟪 Purple for O(n log n) sorting, 🟥 Red for O(n²) nested loops, and 🟪 Magenta for O(2ⁿ) recursive calls.</p>
         </div>
 
         <div class="panel help-card">
-          <div class="help-card-head">
-            <div class="help-icon">🔴</div>
-            <span class="help-card-tag">Debugging</span>
-          </div>
+          <div class="help-icon">🔴</div>
           <h3>4. Non-Blocking Breakpoint Engine</h3>
           <p>Breakpoints are evaluated during AST step traversal. When an active breakpoint line is encountered, the execution loop cleanly yields and synchronizes the UI without freezing browser thread execution.</p>
         </div>
 
         <div class="panel help-card">
-          <div class="help-card-head">
-            <div class="help-icon">📦</div>
-            <span class="help-card-tag">Memory Blocks</span>
-          </div>
+          <div class="help-icon">📦</div>
           <h3>5. Visual Memory Array Blocks</h3>
           <p>Array allocations and index updates are rendered as dedicated visual memory cells, giving learners and engineers direct insight into index-based mutations and array pointer movements.</p>
         </div>
 
         <div class="panel help-card">
-          <div class="help-card-head">
-            <div class="help-icon">🔒</div>
-            <span class="help-card-tag">Privacy</span>
-          </div>
+          <div class="help-icon">🔒</div>
           <h3>6. Local-First Client Privacy</h3>
           <p>All AST parsing, runtime execution, and history persistence run entirely client-side using LocalStorage and Web APIs. Zero code telemetry or private logic leaves the user's browser.</p>
         </div>
       </div>
 
       
-      <h3 class="section-title" style="margin-top:36px">⌨️ IDE Keyboard Shortcuts Reference</h3>
-      <div class="panel help-table-panel">
+      <h3 class="section-title" style="margin-top:28px">⌨️ IDE Keyboard Shortcuts Reference</h3>
+      <div class="panel" style="padding:16px">
         <table class="comparison-table">
           <thead>
             <tr><th>Shortcut</th><th>Action</th><th>Scope</th></tr>
           </thead>
           <tbody>
-            <tr><td><kbd class="kbd">Ctrl</kbd> + <kbd class="kbd">Enter</kbd></td><td>Run & Trace Program</td><td><span class="scope-chip">Editor</span></td></tr>
-            <tr><td><kbd class="kbd">Ctrl</kbd> + <kbd class="kbd">Z</kbd></td><td>Undo Code Change (History Stack)</td><td><span class="scope-chip">Editor</span></td></tr>
-            <tr><td><kbd class="kbd">Ctrl</kbd> + <kbd class="kbd">Y</kbd> / <kbd class="kbd">Ctrl</kbd> + <kbd class="kbd">Shift</kbd> + <kbd class="kbd">Z</kbd></td><td>Redo Code Change</td><td><span class="scope-chip">Editor</span></td></tr>
-            <tr><td><kbd class="kbd">Ctrl</kbd> + <kbd class="kbd">S</kbd></td><td>Save Code to Execution History</td><td><span class="scope-chip">Editor</span></td></tr>
-            <tr><td><kbd class="kbd">Ctrl</kbd> + <kbd class="kbd">/</kbd></td><td>Toggle Line Comment (<code>//</code>)</td><td><span class="scope-chip">Editor</span></td></tr>
-            <tr><td><kbd class="kbd">Tab</kbd> / <kbd class="kbd">Shift</kbd> + <kbd class="kbd">Tab</kbd></td><td>Indent / Outdent Selected Block</td><td><span class="scope-chip">Editor</span></td></tr>
-            <tr><td><kbd class="kbd">Alt</kbd> + <kbd class="kbd">↑</kbd> / <kbd class="kbd">Alt</kbd> + <kbd class="kbd">↓</kbd></td><td>Move Current Line Up / Down</td><td><span class="scope-chip">Editor</span></td></tr>
-            <tr><td><kbd class="kbd">F9</kbd> / <kbd class="kbd">Ctrl</kbd> + <kbd class="kbd">B</kbd></td><td>Toggle Breakpoint on Active Line</td><td><span class="scope-chip">Editor</span></td></tr>
-            <tr><td><kbd class="kbd">F5</kbd></td><td>Play / Pause Automatic Trace Playback</td><td><span class="scope-chip">Workspace</span></td></tr>
-            <tr><td><kbd class="kbd">F10</kbd> / <kbd class="kbd">→</kbd> / <kbd class="kbd">Space</kbd></td><td>Step Next Statement Forward</td><td><span class="scope-chip">Trace</span></td></tr>
-            <tr><td><kbd class="kbd">F11</kbd> / <kbd class="kbd">←</kbd></td><td>Step Previous Statement Backward</td><td><span class="scope-chip">Trace</span></td></tr>
-            <tr><td><kbd class="kbd">Home</kbd> / <kbd class="kbd">End</kbd></td><td>Jump to First / Last Execution Step</td><td><span class="scope-chip">Trace</span></td></tr>
-            <tr><td><kbd class="kbd">Shift</kbd> + <kbd class="kbd">F5</kbd></td><td>Full Workspace & Trace State Reset</td><td><span class="scope-chip">Workspace</span></td></tr>
-            <tr><td><kbd class="kbd">Escape</kbd></td><td>Pause Playback / Dismiss Modals</td><td><span class="scope-chip">Global</span></td></tr>
+            <tr><td><code>Ctrl + Enter</code> / <code>Cmd + Enter</code></td><td>Run & Trace Code</td><td>Editor</td></tr>
+            <tr><td><code>Ctrl + Z</code> / <code>Cmd + Z</code></td><td>Undo Code Change (History Stack)</td><td>Editor</td></tr>
+            <tr><td><code>Ctrl + Y</code> / <code>Ctrl + Shift + Z</code></td><td>Redo Code Change</td><td>Editor</td></tr>
+            <tr><td><code>Ctrl + S</code> / <code>Cmd + S</code></td><td>Save Code to History</td><td>Editor</td></tr>
+            <tr><td><code>Ctrl + /</code></td><td>Toggle Line Comment (<code>//</code>)</td><td>Editor</td></tr>
+            <tr><td><code>Tab</code> / <code>Shift + Tab</code></td><td>Indent / Outdent Selection</td><td>Editor</td></tr>
+            <tr><td><code>Alt + ↑</code> / <code>Alt + ↓</code></td><td>Move Line Up / Down</td><td>Editor</td></tr>
+            <tr><td><code>F9</code> / <code>Ctrl + B</code></td><td>Toggle Breakpoint on Current Line</td><td>Editor</td></tr>
+            <tr><td><code>F5</code></td><td>Play / Pause Execution Trace</td><td>Workspace</td></tr>
+            <tr><td><code>F10</code> / <code>→</code> / <code>Space</code></td><td>Step Next Statement</td><td>Trace Controls</td></tr>
+            <tr><td><code>F11</code> / <code>←</code></td><td>Step Previous Statement</td><td>Trace Controls</td></tr>
+            <tr><td><code>Home</code> / <code>End</code></td><td>Jump to First / Last Execution Step</td><td>Trace Controls</td></tr>
+            <tr><td><code>Shift + F5</code></td><td>Full Workspace & Trace Reset</td><td>Workspace</td></tr>
+            <tr><td><code>Escape</code></td><td>Pause Execution / Close Modals</td><td>Workspace</td></tr>
           </tbody>
         </table>
       </div>
 
       
-      <h3 class="section-title" style="margin-top:36px">🔧 Supported ECMAScript Language Subset</h3>
-      <div class="panel help-feature-panel">
+      <h3 class="section-title" style="margin-top:28px">🔧 Supported ECMAScript Language Subset</h3>
+      <div class="panel" style="padding:16px">
         <div class="feature-list">
-          <div class="feature-check"><span class="check-icon">✓</span> <span><code>let</code>, <code>const</code>, <code>var</code> Lexical Declarations & Scoping</span></div>
-          <div class="feature-check"><span class="check-icon">✓</span> <span>Arithmetic, Bitwise, Comparison & Logical Operators</span></div>
-          <div class="feature-check"><span class="check-icon">✓</span> <span><code>if</code> / <code>else if</code> / <code>else</code> Conditional Branching</span></div>
-          <div class="feature-check"><span class="check-icon">✓</span> <span><code>for</code>, <code>while</code>, <code>do-while</code> Loop Constructs</span></div>
-          <div class="feature-check"><span class="check-icon">✓</span> <span>Function Declarations, Function Expressions & Arrow Functions</span></div>
-          <div class="feature-check"><span class="check-icon">✓</span> <span>Recursive Function Stacks & Return Frame Resolution</span></div>
-          <div class="feature-check"><span class="check-icon">✓</span> <span>Arrays, Nested Arrays & Dynamic Index Operations</span></div>
-          <div class="feature-check"><span class="check-icon">✓</span> <span>Objects, Key-Value Access & Property Assignment</span></div>
-          <div class="feature-check"><span class="check-icon">✓</span> <span><code>console.log()</code> Multi-Argument Streaming</span></div>
-          <div class="feature-check"><span class="check-icon">✓</span> <span>Built-in Math Library (<code>Math.floor</code>, <code>Math.max</code>, <code>Math.min</code>, etc.)</span></div>
-          <div class="feature-check"><span class="check-icon">✓</span> <span>Template Literals with Variable Interpolation <code>`...${val}...`</code></span></div>
-          <div class="feature-check"><span class="check-icon">✓</span> <span>Ternary Conditional Expressions <code>condition ? a : b</code></span></div>
+          <div class="feature-check">✅ <code>let</code>, <code>const</code>, <code>var</code> Lexical Declarations & Scoping</div>
+          <div class="feature-check">✅ Arithmetic, Bitwise, Comparison & Logical Operators</div>
+          <div class="feature-check">✅ <code>if</code> / <code>else if</code> / <code>else</code> Conditional Branching</div>
+          <div class="feature-check">✅ <code>for</code>, <code>while</code>, <code>do-while</code> Loop Constructs</div>
+          <div class="feature-check">✅ Function Declarations, Function Expressions & Arrow Functions</div>
+          <div class="feature-check">✅ Recursive Function Stacks & Return Frame Resolution</div>
+          <div class="feature-check">✅ Arrays, Nested Arrays & Dynamic Index Operations</div>
+          <div class="feature-check">✅ Objects, Key-Value Access & Property Assignment</div>
+          <div class="feature-check">✅ <code>console.log()</code> Multi-Argument Streaming</div>
+          <div class="feature-check">✅ Built-in Math Functions (<code>Math.floor</code>, <code>Math.max</code>, <code>Math.min</code>, etc.)</div>
+          <div class="feature-check">✅ Template Literals with Variable Interpolation <code>`...${val}...`</code></div>
+          <div class="feature-check">✅ Ternary Conditional Expressions <code>a ? b : c</code></div>
         </div>
       </div>
 
       
-      <h3 class="section-title" style="margin-top:36px">🚀 Production Roadmap & Engineering Milestones</h3>
-      <div class="panel help-table-panel">
+      <h3 class="section-title" style="margin-top:28px">🚀 Production Roadmap & Engineering Milestones</h3>
+      <div class="panel" style="padding:16px">
         <table class="comparison-table">
           <thead>
-            <tr><th>Component</th><th>Current Architecture (Phase 1 MVP)</th><th>Target Production (Phase 2 Roadmap)</th><th>Status</th></tr>
+            <tr><th>Component</th><th>Current Architecture (Phase 1 MVP)</th><th>Target Production (Phase 2 Roadmap)</th></tr>
           </thead>
           <tbody>
-            <tr><td><strong>Execution Engine</strong></td><td>Client-side Acorn AST Virtual Interpreter</td><td>Sandboxed Web Workers + Dockerized Backend Workers</td><td><span class="status-tag live">✅ Live MVP</span></td></tr>
-            <tr><td><strong>Language Coverage</strong></td><td>JavaScript (ECMAScript 2020 subset)</td><td>Python 3 (AST Parser), Java, C++, TypeScript</td><td><span class="status-tag progress">🔄 In Progress</span></td></tr>
-            <tr><td><strong>Code Editor</strong></td><td>Custom Line-Gutter Textarea + Hotkeys</td><td>Monaco Editor / CodeMirror with LSP Autocomplete</td><td><span class="status-tag live">✅ Live MVP</span></td></tr>
-            <tr><td><strong>Data Structures</strong></td><td>Array Visualizer, Call Stack, Scope Tree</td><td>Dynamic Tree Visualizer, Graph Adjacency, Binary Heaps</td><td><span class="status-tag live">✅ Live MVP</span></td></tr>
-            <tr><td><strong>Storage & Sync</strong></td><td>LocalStorage with JSON Export</td><td>PostgreSQL + Redis Cloud Session Sync</td><td><span class="status-tag future">🔮 Planned</span></td></tr>
-            <tr><td><strong>Telemetry & Auth</strong></td><td>Local-first Activity Tracking</td><td>OAuth2, Team Workspaces, Student Performance Analytics</td><td><span class="status-tag future">🔮 Planned</span></td></tr>
+            <tr><td><strong>Execution Engine</strong></td><td>Client-side Acorn AST Virtual Interpreter</td><td>Sandboxed Web Workers + Dockerized Backend Workers</td></tr>
+            <tr><td><strong>Language Coverage</strong></td><td>JavaScript (ECMAScript 2020 subset)</td><td>Python 3 (AST Parser), Java, C++, TypeScript</td></tr>
+            <tr><td><strong>Code Editor</strong></td><td>Custom Line-Gutter Textarea + Hotkeys</td><td>Monaco Editor / CodeMirror with LSP Autocomplete</td></tr>
+            <tr><td><strong>Data Structures</strong></td><td>Array Visualizer, Call Stack, Scope Tree</td><td>Dynamic Tree Visualizer, Graph Adjacency, Binary Heaps</td></tr>
+            <tr><td><strong>Storage & Sync</strong></td><td>LocalStorage with JSON Export</td><td>PostgreSQL + Redis Cloud Session Sync</td></tr>
+            <tr><td><strong>Telemetry & Auth</strong></td><td>Local-first Activity Tracking</td><td>OAuth2, Team Workspaces, Student Performance Analytics</td></tr>
           </tbody>
         </table>
       </div>
@@ -678,19 +599,19 @@ while (low <= high) {
     </div>
   </div>
 
-  <script src="js/storage.js?v=13"></script>
-  <script src="js/state.js?v=13"></script>
-  <script src="js/api.js?v=13"></script>
-  <script src="js/algorithms.js?v=13"></script>
-  <script src="js/interpreter.js?v=13"></script>
-  <script src="js/execution.js?v=13"></script>
-  <script src="js/visualizer.js?v=13"></script>
-  <script src="js/analyzer.js?v=13"></script>
-  <script src="js/history.js?v=13"></script>
-  <script src="js/learning.js?v=13"></script>
-  <script src="js/editor.js?v=13"></script>
-  <script src="js/templates.js?v=13"></script>
-  <script src="js/structures.js?v=13"></script>
-  <script src="script.js?v=13"></script>
+  <script src="js/storage.js?v=11"></script>
+  <script src="js/state.js?v=11"></script>
+  <script src="js/api.js?v=11"></script>
+  <script src="js/algorithms.js?v=11"></script>
+  <script src="js/interpreter.js?v=11"></script>
+  <script src="js/execution.js?v=11"></script>
+  <script src="js/visualizer.js?v=11"></script>
+  <script src="js/analyzer.js?v=11"></script>
+  <script src="js/history.js?v=11"></script>
+  <script src="js/learning.js?v=11"></script>
+  <script src="js/editor.js?v=11"></script>
+  <script src="js/templates.js?v=11"></script>
+  <script src="js/structures.js?v=11"></script>
+  <script src="script.js?v=11"></script>
 </body>
 </html>

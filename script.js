@@ -442,7 +442,6 @@ function renderStep(index) {
   Visualizer.renderCodeTrace(AppState.execution.codeLines, step.line, errorLine, heatmap);
   Visualizer.renderVariables(step.variables);
   Visualizer.renderCallStack(step.callStack);
-  Visualizer.renderMemoryMap(step.variables, step.callStack, step);
   Visualizer.renderStepNote(step);
 
   const fullOutput = AppState.execution?.output || (step.output?.length ? step.output.join('\n') : '(no output)');
