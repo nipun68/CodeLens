@@ -5,6 +5,7 @@ const Storage = (() => {
     LEARNING: 'codelens.learning',
     THEME: 'codelens.theme',
     EXAMPLES: 'codelens.examples',
+    EXEC_COUNTS: 'codelens.exec_counts',
     SESSION: 'codelens.session'
   };
 
@@ -34,6 +35,10 @@ const Storage = (() => {
     saveLearning: (obj) => write(KEYS.LEARNING, obj),
     getTheme: () => read(KEYS.THEME, 'dark'),
     saveTheme: (t) => write(KEYS.THEME, t),
+    getExamples: () => read(KEYS.EXAMPLES, []),
+    saveExamples: (arr) => write(KEYS.EXAMPLES, arr),
+    getExecCounts: () => read(KEYS.EXEC_COUNTS, {}),
+    saveExecCounts: (obj) => write(KEYS.EXEC_COUNTS, obj),
     getSession: () => readSession(KEYS.SESSION, { lastCode:'', lastLang:'javascript' }),
     saveSession: (s) => writeSession(KEYS.SESSION, s),
     clearAll: () => Object.values(KEYS).forEach(remove)

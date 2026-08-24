@@ -29,6 +29,19 @@ const Interpreter = (() => {
       return String(v);
     }
 
+    function formatLogVal(v) {
+      if (v === undefined) return 'undefined';
+      if (v === null) return 'null';
+      if (typeof v === 'string') return v;
+      if (v.__isFunc) return `ƒ ${v.name || 'anonymous'}()`;
+      if (typeof v === 'function') return `ƒ ()`;
+      if (Array.isArray(v)) return '[' + v.map(formatVal).join(', ') + ']';
+      if (typeof v === 'object') {
+        try { return JSON.stringify(v); } catch { return String(v); }
+      }
+      return String(v);
+    }
+
     function snapshot(line, note, eventType = 'STEP') {
       const varSnapshot = {};
       for (const [k, v] of Object.entries(variables)) {
@@ -212,7 +225,8 @@ const Interpreter = (() => {
           for (let i = 0; i < node.quasis.length; i++) {
             str += node.quasis[i].value.cooked;
             if (i < node.expressions.length) {
-              str += formatVal(evalExpr(node.expressions[i]));
+              const exprVal = evalExpr(node.expressions[i]);
+              str += exprVal === undefined ? 'undefined' : (exprVal === null ? 'null' : String(exprVal));
             }
           }
           return str;
@@ -250,9 +264,9 @@ const Interpreter = (() => {
         const methodName = node.callee.computed ? evalExpr(node.callee.property) : node.callee.property.name;
 
         if (objName === 'console') {
-          const msg = flatArgs.map(formatVal).join(' ');
+          const msg = flatArgs.map(formatLogVal).join(' ');
           output.push(msg);
-          snapshot(node.loc.start.line, `console.log(${flatArgs.map(formatVal).join(', ')})`, 'LOG');
+          snapshot(node.loc.start.line, `console.${methodName || 'log'}(${flatArgs.map(formatVal).join(', ')})`, 'LOG');
           return undefined;
         }
 

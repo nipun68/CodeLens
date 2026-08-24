@@ -19,6 +19,7 @@ function switchView(name) {
   if (name === 'history') renderHistory();
   if (name === 'learning') renderLearning();
   if (name === 'algorithms') renderAlgoCards();
+  if (name === 'structures') DataStructuresVisualizer.init();
 }
 const FEATURES = [
   { ic: '⚡', t: 'Line-by-Line Execution', d: 'AST interpreter executes code statement by statement.' },
@@ -33,20 +34,33 @@ function renderDashboard() {
   document.getElementById('featureGrid').innerHTML = FEATURES.map(f => `
     <div class="feature-card"><div class="ic">${f.ic}</div><h4>${f.t}</h4><p>${f.d}</p></div>`).join('');
 
-  document.getElementById('exampleGrid').innerHTML = Editor.META.map(m => `
-    <div class="example-card" data-example="${m.key}">
-      <h5>${m.title} <span class="chip">${m.tag}</span></h5>
-      <pre>${escapeHtml(Editor.EXAMPLES[m.key].slice(0, 140))}…</pre>
-    </div>`).join('');
+  const allTemplates = CodeLensTemplates.getAllTemplates();
+  document.getElementById('exampleGrid').innerHTML = allTemplates.map(m => {
+    const isAuto = m.tag?.includes('Auto');
+    const isCustom = !m.isBuiltIn && !isAuto;
+    const badgeClass = isAuto ? 'badge-auto' : (isCustom ? 'badge-custom' : '');
+    const deleteBtnHtml = !m.isBuiltIn ? `<button class="delete-btn" onclick="event.stopPropagation(); deleteCustomTemplate('${m.id || m.key}')" title="Delete Template">&times;</button>` : '';
 
-  document.querySelectorAll('.example-card').forEach(c => {
+    return `
+    <div class="example-card" data-example="${m.key || m.id}">
+      <div class="card-head">
+        <h5 style="margin:0">${escapeHtml(m.title)} <span class="chip ${badgeClass}">${escapeHtml(m.tag)}</span></h5>
+        ${deleteBtnHtml}
+      </div>
+      <p style="font-size:0.75rem; color:var(--muted); margin:4px 0 8px">${escapeHtml(m.desc || '')}</p>
+      <pre>${escapeHtml((m.code || '').slice(0, 140))}${m.code?.length > 140 ? '…' : ''}</pre>
+    </div>`;
+  }).join('');
+
+  document.querySelectorAll('#exampleGrid .example-card').forEach(c => {
     c.onclick = () => {
       Editor.load(c.dataset.example);
       switchView('workspace');
       const code = Editor.getCode();
       const heatmap = Analyzer.getLineHeatmap(code);
       Visualizer.renderCodeTrace(code.split('\n'), null, null, heatmap);
-      toast('Template loaded: ' + c.dataset.example);
+      const tpl = CodeLensTemplates.getTemplateByKeyOrId(c.dataset.example);
+      toast('Template loaded: ' + (tpl?.title || c.dataset.example));
     };
   });
 
@@ -65,6 +79,15 @@ function renderDashboard() {
       </div>`).join('');
   }
 }
+
+window.deleteCustomTemplate = (idOrKey) => {
+  CodeLensTemplates.removeCustomTemplate(idOrKey);
+  toast('Template removed', 'ok');
+  renderDashboard();
+  if (document.getElementById('templatesModal')?.classList.contains('active')) {
+    renderTemplatesModal();
+  }
+};
 function renderHistory() {
   const search = (document.getElementById('historySearch')?.value || '').toLowerCase();
   let list = CodeLensHistory.getAll();
@@ -289,6 +312,9 @@ function resetWorkspace() {
     errEl.classList.add('hidden');
   }
 
+  const saveAsTplBtn = document.getElementById('saveAsTemplateBtn');
+  if (saveAsTplBtn) saveAsTplBtn.style.display = 'none';
+
   const varsView = document.getElementById('variablesView');
   if (varsView) varsView.innerHTML = '<p class="muted">No variables to display.</p>';
 
@@ -379,6 +405,8 @@ Visualizer.renderCodeTrace(code.split('\n'), null, null, preHeatmap);
     const isSuccess = result.exitCode === 0 && !hasLogicalError;
     CodeLensLearning.recordRun(topic, isSuccess, code);
 
+    const tplExec = CodeLensTemplates.recordExecution(code, isSuccess);
+
     CodeLensHistory.add({
       code, language: 'javascript',
       exitCode: isSuccess ? 0 : 1,
@@ -387,13 +415,23 @@ Visualizer.renderCodeTrace(code.split('\n'), null, null, preHeatmap);
       time: '—', timestamp: Date.now()
     });
 
-    if (result.error) {
+    if (tplExec.autoAdded) {
+      toast(`🎉 Executed 8 times! Added to Quick Start Templates`, 'ok');
+      renderDashboard();
+      if (document.getElementById('templatesModal')?.classList.contains('active')) {
+        renderTemplatesModal();
+      }
+    } else if (result.error) {
       toast(`Error at line ${result.error.line} — check trace`, 'err');
     } else if (hasLogicalError) {
       toast('Logical error detected in output', 'err');
     } else {
       toast(`Execution complete — ${result.steps.length} steps captured`, 'ok');
     }
+
+    // Show "Save as Template" button after any execution
+    const saveBtn = document.getElementById('saveAsTemplateBtn');
+    if (saveBtn) saveBtn.style.display = 'inline-flex';
   } catch (err) {
     console.error("Execution crash:", err);
     toast("An internal error occurred: " + err.message, 'err');
@@ -687,6 +725,235 @@ function initTabs() {
     };
   });
 }
+
+function animateLearningStats(container, reducedMotion) {
+  if (!container) return;
+
+  container.querySelectorAll('.stat-val').forEach(el => {
+    const match = el.textContent.trim().match(/^([^\d-]*)(-?\d+(?:\.\d+)?)(.*)$/);
+    if (!match) return;
+
+    const target = Number(match[2]);
+    const render = value => {
+      el.textContent = `${match[1]}${Math.round(value)}${match[3]}`;
+    };
+
+    if (reducedMotion) {
+      render(target);
+      return;
+    }
+
+    const started = performance.now();
+    const duration = 700;
+    const tick = now => {
+      const progress = Math.min(1, (now - started) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      render(target * eased);
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+
+    requestAnimationFrame(tick);
+  });
+}
+
+function initInteractionLayer() {
+  const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const revealSelector = '.panel, #view-dashboard .feature-grid > *, #view-dashboard .example-grid > *';
+  let revealObserver = null;
+
+  const reveal = target => {
+    if (target.classList.contains('reveal-visible')) return;
+    target.classList.add('reveal-ready');
+
+    if (reducedMotion || !window.IntersectionObserver) {
+      target.classList.add('reveal-visible');
+      return;
+    }
+
+    revealObserver.observe(target);
+  };
+
+  if (window.IntersectionObserver) {
+    revealObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('reveal-visible');
+        revealObserver.unobserve(entry.target);
+      });
+    }, { threshold: .12, rootMargin: '0px 0px -30px' });
+  }
+
+  document.querySelectorAll(revealSelector).forEach(reveal);
+
+  if (window.MutationObserver) {
+    ['featureGrid', 'exampleGrid'].forEach(id => {
+      const grid = document.getElementById(id);
+      if (!grid) return;
+      new MutationObserver(() => grid.querySelectorAll(':scope > *').forEach(reveal))
+        .observe(grid, { childList: true });
+    });
+  }
+
+  const playViewTransition = name => {
+    const view = document.getElementById('view-' + name);
+    if (!view) return;
+
+    requestAnimationFrame(() => {
+      if (!view.classList.contains('active')) return;
+      view.classList.remove('view-transitioning');
+      void view.offsetWidth;
+      view.classList.add('view-transitioning');
+      setTimeout(() => view.classList.remove('view-transitioning'), 460);
+    });
+  };
+
+  document.querySelectorAll('.nav-link, [data-goto]').forEach(trigger => {
+    trigger.addEventListener('click', () => {
+      playViewTransition(trigger.dataset.view || trigger.dataset.goto);
+    });
+  });
+
+  const learningLink = document.querySelector('.nav-link[data-view="learning"]');
+  learningLink?.addEventListener('click', () => {
+    requestAnimationFrame(() => animateLearningStats(document.getElementById('statsView'), reducedMotion));
+  });
+}
+
+let currentTplFilter = 'all';
+
+function openTemplatesModal() {
+  const modal = document.getElementById('templatesModal');
+  if (!modal) return;
+  modal.classList.add('active');
+  renderTemplatesModal();
+}
+
+function closeTemplatesModal() {
+  const modal = document.getElementById('templatesModal');
+  if (modal) modal.classList.remove('active');
+}
+
+function renderTemplatesModal() {
+  const search = (document.getElementById('tplSearchInput')?.value || '').toLowerCase();
+  let list = CodeLensTemplates.getAllTemplates();
+
+  if (currentTplFilter === 'custom') {
+    list = list.filter(t => !t.isBuiltIn && !t.tag?.includes('Auto'));
+  } else if (currentTplFilter === 'auto') {
+    list = list.filter(t => t.tag?.includes('Auto'));
+  } else if (currentTplFilter === 'builtin') {
+    list = list.filter(t => t.isBuiltIn);
+  }
+
+  if (search) {
+    list = list.filter(t =>
+      (t.title || '').toLowerCase().includes(search) ||
+      (t.desc || '').toLowerCase().includes(search) ||
+      (t.tag || '').toLowerCase().includes(search) ||
+      (t.code || '').toLowerCase().includes(search)
+    );
+  }
+
+  const countChip = document.getElementById('tplCountChip');
+  if (countChip) countChip.textContent = `${list.length} Template${list.length !== 1 ? 's' : ''}`;
+
+  const grid = document.getElementById('modalTemplatesGrid');
+  if (!grid) return;
+
+  if (!list.length) {
+    grid.innerHTML = '<p class="muted" style="grid-column:1/-1;text-align:center;padding:24px">No templates found matching filter.</p>';
+    return;
+  }
+
+  grid.innerHTML = list.map(m => {
+    const isAuto = m.tag?.includes('Auto');
+    const isCustom = !m.isBuiltIn && !isAuto;
+    const badgeClass = isAuto ? 'badge-auto' : (isCustom ? 'badge-custom' : '');
+    const deleteBtnHtml = !m.isBuiltIn ? `<button class="delete-btn" onclick="event.stopPropagation(); deleteCustomTemplate('${m.id || m.key}')" title="Delete Template">&times;</button>` : '';
+
+    return `
+    <div class="example-card" data-example="${m.key || m.id}">
+      <div class="card-head">
+        <h5 style="margin:0">${escapeHtml(m.title)} <span class="chip ${badgeClass}">${escapeHtml(m.tag)}</span></h5>
+        ${deleteBtnHtml}
+      </div>
+      <p style="font-size:0.75rem; color:var(--muted); margin:4px 0 8px">${escapeHtml(m.desc || '')}</p>
+      <pre>${escapeHtml((m.code || '').slice(0, 140))}${m.code?.length > 140 ? '…' : ''}</pre>
+    </div>`;
+  }).join('');
+
+  grid.querySelectorAll('.example-card').forEach(c => {
+    c.onclick = () => {
+      Editor.load(c.dataset.example);
+      closeTemplatesModal();
+      switchView('workspace');
+      const code = Editor.getCode();
+      const heatmap = Analyzer.getLineHeatmap(code);
+      Visualizer.renderCodeTrace(code.split('\n'), null, null, heatmap);
+      const tpl = CodeLensTemplates.getTemplateByKeyOrId(c.dataset.example);
+      toast('Loaded template: ' + (tpl?.title || c.dataset.example));
+    };
+  });
+}
+
+function openAddTemplateModal(code) {
+  const modal = document.getElementById('addTemplateModal');
+  if (!modal) return;
+
+  const codeEditor = document.getElementById('tplCodeEditor');
+
+  // Populate code
+  const fillCode = code || '';
+  codeEditor.value = fillCode;
+  codeEditor.readOnly = false;
+  codeEditor.style.opacity = '1';
+  codeEditor.style.cursor = 'text';
+
+  // Auto-derive metadata
+  document.getElementById('tplTitleInput').value = fillCode.trim() ? (CodeLensTemplates.deriveTitle(fillCode) || '') : '';
+  document.getElementById('tplTagInput').value   = '★ Custom';
+  document.getElementById('tplDescInput').value  = '';
+
+  modal.classList.add('active');
+  // Focus title if code is already set, else focus textarea
+  setTimeout(() => {
+    if (fillCode.trim()) {
+      document.getElementById('tplTitleInput').select();
+    } else {
+      codeEditor.focus();
+    }
+  }, 80);
+}
+
+function closeAddTemplateModal() {
+  const modal = document.getElementById('addTemplateModal');
+  if (modal) modal.classList.remove('active');
+}
+
+function confirmAddTemplate() {
+  const codeEditor = document.getElementById('tplCodeEditor');
+  const code = codeEditor ? codeEditor.value : '';
+  if (!code.trim()) {
+    toast('Code cannot be empty — write or paste some code first', 'err');
+    return;
+  }
+  const title = document.getElementById('tplTitleInput').value;
+  const tag   = document.getElementById('tplTagInput').value;
+  const desc  = document.getElementById('tplDescInput').value;
+
+  try {
+    CodeLensTemplates.addCustomTemplate(code, title, tag, desc);
+    toast('⭐ Added to Quick Start Templates!', 'ok');
+    closeAddTemplateModal();
+    renderDashboard();
+    if (document.getElementById('templatesModal')?.classList.contains('active')) {
+      renderTemplatesModal();
+    }
+  } catch (err) {
+    toast(err.message, 'err');
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   applyTheme(Storage.getTheme());
   Editor.init();
@@ -704,15 +971,22 @@ document.addEventListener('DOMContentLoaded', () => {
     toast('Saved to history', 'ok');
   };
   document.getElementById('analyzeBtn').onclick = renderAnalysis;
-  document.getElementById('loadExampleBtn').onclick = () => {
-    const keys = Object.keys(Editor.EXAMPLES);
-    const pick = keys[Math.floor(Math.random() * keys.length)];
-    Editor.load(pick);
-    const code = Editor.getCode();
-    const heatmap = Analyzer.getLineHeatmap(code);
-    Visualizer.renderCodeTrace(code.split('\n'), null, null, heatmap);
-    toast('Loaded: ' + pick);
-  };
+  document.getElementById('dashNewTemplateBtn').onclick = () => openAddTemplateModal();
+  document.getElementById('saveAsTemplateBtn').onclick = () => openAddTemplateModal(Editor.getCode());
+  document.getElementById('closeTemplatesModalBtn').onclick = closeTemplatesModal;
+  document.getElementById('closeAddModalBtn').onclick = closeAddTemplateModal;
+  document.getElementById('cancelAddTplBtn').onclick = closeAddTemplateModal;
+  document.getElementById('confirmAddTplBtn').onclick = confirmAddTemplate;
+  document.getElementById('modalAddCurrentBtn').onclick = () => openAddTemplateModal(Editor.getCode());
+  document.getElementById('tplSearchInput').oninput = renderTemplatesModal;
+  document.querySelectorAll('.tpl-tab').forEach(tab => {
+    tab.onclick = () => {
+      document.querySelectorAll('.tpl-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentTplFilter = tab.dataset.filter;
+      renderTemplatesModal();
+    };
+  });
   document.getElementById('exportReportBtn').onclick = exportReport;
 
   document.getElementById('tracePlay').onclick = playTrace;
@@ -776,6 +1050,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initTabs();
   switchView('dashboard');
+  initInteractionLayer();
 
   Api.fetchPublicFact().then(fact => console.log('[CodeLens] Random fact:', fact));
 });

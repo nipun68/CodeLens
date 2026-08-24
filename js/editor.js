@@ -100,7 +100,7 @@ console.log("10th number:", fib[9]);`
 
   const META = [
     { key: 'binarySearch', title: 'Binary Search', tag: 'O(log n)', desc: 'Divide & conquer search on sorted array' },
-    { key: 'bubbleSort', title: 'Bubble Sort', tag: 'O(n²)', desc: 'Sort by swapping adjacent elements' },
+    { key: 'bubbleSort', title: 'Bubble Sort', tag: 'O(n\u00b2)', desc: 'Sort by swapping adjacent elements' },
     { key: 'factorial', title: 'Factorial (Recursion)', tag: 'O(n)', desc: 'Classic recursive function' },
     { key: 'arraySum', title: 'Array Sum', tag: 'O(n)', desc: 'Loop through array to compute sum' },
     { key: 'errorDemo', title: 'Bug Demo (Error)', tag: 'Debug', desc: 'See how errors are caught and explained' },
@@ -113,6 +113,209 @@ console.log("10th number:", fib[9]);`
   const redoStack = [];
   const MAX_HISTORY = 100;
 
+  // ─── Syntax Tokenizer ────────────────────────────────────────────────────────
+  const KEYWORDS = new Set([
+    'break','case','catch','class','const','continue','debugger','default',
+    'delete','do','else','export','extends','finally','for','function','if',
+    'import','in','instanceof','let','new','of','return','static','super',
+    'switch','throw','try','typeof','var','void','while','with','yield','async','await'
+  ]);
+  const BOOLEANS = new Set([
+    'true','false','null','undefined','NaN','Infinity','this','arguments'
+  ]);
+  const BUILTINS = new Set([
+    'console','Math','Array','Object','String','Number','Boolean','Symbol',
+    'Date','RegExp','Error','Map','Set','WeakMap','WeakSet','Promise','Proxy',
+    'Reflect','JSON','parseInt','parseFloat','isNaN','isFinite','encodeURI',
+    'decodeURI','encodeURIComponent','decodeURIComponent','setTimeout',
+    'clearTimeout','setInterval','clearInterval','fetch','document','window',
+    'navigator','location','history','alert','confirm','prompt','globalThis'
+  ]);
+
+  function escHtml(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function span(cls, text) {
+    return '<span class="syn-' + cls + '">' + escHtml(text) + '</span>';
+  }
+
+  /**
+   * Tokenize a single line of JS source into HTML with syntax spans.
+   * Handles strings, template literals, numbers, identifiers, properties,
+   * operators, and punctuation.
+   */
+  function tokenizeLine(line) {
+    let out = '';
+    let i = 0;
+    const len = line.length;
+
+    while (i < len) {
+      const ch = line[i];
+      const rest = line.slice(i);
+
+      // ── Single-line comment
+      if (ch === '/' && line[i + 1] === '/') {
+        out += span('comment', line.slice(i));
+        break;
+      }
+
+      // ── String literals: " or '
+      if (ch === '"' || ch === "'") {
+        let j = i + 1;
+        while (j < len) {
+          if (line[j] === '\\') { j += 2; continue; }
+          if (line[j] === ch)   { j++; break; }
+          j++;
+        }
+        out += span('string', line.slice(i, j));
+        i = j;
+        continue;
+      }
+
+      // ── Template literal (backtick)
+      if (ch === '`') {
+        let j = i + 1;
+        while (j < len) {
+          if (line[j] === '\\') { j += 2; continue; }
+          if (line[j] === '`')  { j++; break; }
+          j++;
+        }
+        out += span('string', line.slice(i, j));
+        i = j;
+        continue;
+      }
+
+      // ── Numbers
+      if (/[0-9]/.test(ch) || (ch === '.' && /[0-9]/.test(line[i + 1] || ''))) {
+        const m = rest.match(/^(0x[\da-fA-F]+|0b[01]+|0o[0-7]+|\d+\.?\d*([eE][+-]?\d+)?)/);
+        if (m) {
+          out += span('number', m[0]);
+          i += m[0].length;
+          continue;
+        }
+      }
+
+      // ── Identifiers / keywords
+      if (/[a-zA-Z_$]/.test(ch)) {
+        const m = rest.match(/^[a-zA-Z_$][\w$]*/);
+        if (m) {
+          const word = m[0];
+          const afterWord = line.slice(i + word.length).trimStart();
+          const isCall = afterWord[0] === '(';
+          if (KEYWORDS.has(word)) {
+            out += span('keyword', word);
+          } else if (BOOLEANS.has(word)) {
+            out += span('boolean', word);
+          } else if (BUILTINS.has(word)) {
+            out += span('builtin', word);
+          } else if (isCall) {
+            out += span('function', word);
+          } else {
+            out += span('plain', word);
+          }
+          i += word.length;
+          continue;
+        }
+      }
+
+      // ── Property access  .identifier
+      if (ch === '.' && /[a-zA-Z_$]/.test(line[i + 1] || '')) {
+        const m = line.slice(i + 1).match(/^[a-zA-Z_$][\w$]*/);
+        if (m) {
+          const afterProp = line.slice(i + 1 + m[0].length).trimStart();
+          const isCall = afterProp[0] === '(';
+          out += span('punctuation', '.');
+          out += span(isCall ? 'function' : 'property', m[0]);
+          i += 1 + m[0].length;
+          continue;
+        }
+      }
+
+      // ── Operators
+      const opMatch = rest.match(/^(===|!==|==|!=|<=|>=|=>|&&|\|\||>>>=|>>>|>>|<<|\?\?|\?\.|[+\-*/%&|^~!<>=?:])/);
+      if (opMatch) {
+        out += span('operator', opMatch[0]);
+        i += opMatch[0].length;
+        continue;
+      }
+
+      // ── Punctuation
+      if ('{}[]();,'.includes(ch)) {
+        out += span('punctuation', ch);
+        i++;
+        continue;
+      }
+
+      // ── Whitespace and anything else
+      out += escHtml(ch);
+      i++;
+    }
+
+    return out;
+  }
+
+  /**
+   * Multi-line tokenizer — handles block comments (/* ... * /).
+   * Template literals that span lines are left to per-line handling.
+   */
+  function tokenize(code) {
+    const lines = code.split('\n');
+    const result = [];
+    let inBlockComment = false;
+
+    for (let li = 0; li < lines.length; li++) {
+      const line = lines[li];
+
+      if (inBlockComment) {
+        const end = line.indexOf('*/');
+        if (end !== -1) {
+          result.push(span('comment', line.slice(0, end + 2)) + tokenizeLine(line.slice(end + 2)));
+          inBlockComment = false;
+        } else {
+          result.push(span('comment', line));
+        }
+        continue;
+      }
+
+      // Look for /* that isn't inside a string or after //
+      const singleLineCommentIdx = line.indexOf('//');
+      const blockCommentIdx = line.indexOf('/*');
+
+      if (blockCommentIdx !== -1 &&
+          (singleLineCommentIdx === -1 || blockCommentIdx < singleLineCommentIdx)) {
+        const bcEnd = line.indexOf('*/', blockCommentIdx + 2);
+        if (bcEnd !== -1) {
+          // Block comment opens and closes on the same line
+          result.push(
+            tokenizeLine(line.slice(0, blockCommentIdx)) +
+            span('comment', line.slice(blockCommentIdx, bcEnd + 2)) +
+            tokenizeLine(line.slice(bcEnd + 2))
+          );
+        } else {
+          result.push(tokenizeLine(line.slice(0, blockCommentIdx)) + span('comment', line.slice(blockCommentIdx)));
+          inBlockComment = true;
+        }
+        continue;
+      }
+
+      result.push(tokenizeLine(line));
+    }
+
+    return result.join('\n');
+  }
+
+  // ─── Overlay update ──────────────────────────────────────────────────────────
+  function updateSyntaxOverlay() {
+    const ed = document.getElementById('codeEditor');
+    const overlay = document.getElementById('syntaxOverlay');
+    if (!ed || !overlay) return;
+    overlay.innerHTML = tokenize(ed.value);
+    overlay.scrollTop  = ed.scrollTop;
+    overlay.scrollLeft = ed.scrollLeft;
+  }
+
+  // ─── History helpers ─────────────────────────────────────────────────────────
   function pushHistory(value, cursorStart, cursorEnd) {
     if (undoStack.length && undoStack[undoStack.length - 1].value === value) return;
     undoStack.push({ value, cursorStart: cursorStart ?? 0, cursorEnd: cursorEnd ?? 0 });
@@ -135,6 +338,7 @@ console.log("10th number:", fib[9]);`
       ed.selectionEnd = prev.cursorEnd;
       AppState.code = prev.value;
       updateLineNumbers();
+      updateSyntaxOverlay();
       if (!AppState.steps?.length) {
         const heatmap = Analyzer.getLineHeatmap(ed.value);
         Visualizer.renderCodeTrace(ed.value.split('\n'), null, null, heatmap);
@@ -156,6 +360,7 @@ console.log("10th number:", fib[9]);`
     ed.selectionEnd = next.cursorEnd;
     AppState.code = next.value;
     updateLineNumbers();
+    updateSyntaxOverlay();
     if (!AppState.steps?.length) {
       const heatmap = Analyzer.getLineHeatmap(ed.value);
       Visualizer.renderCodeTrace(ed.value.split('\n'), null, null, heatmap);
@@ -165,10 +370,17 @@ console.log("10th number:", fib[9]);`
 
   function load(key) {
     const editor = document.getElementById('codeEditor');
-    editor.value = EXAMPLES[key] || '';
+    let codeToLoad = EXAMPLES[key];
+    if (!codeToLoad && typeof CodeLensTemplates !== 'undefined') {
+      const customTpl = CodeLensTemplates.getTemplateByKeyOrId(key);
+      if (customTpl) codeToLoad = customTpl.code;
+    }
+    if (codeToLoad === undefined) codeToLoad = '';
+    editor.value = codeToLoad;
     AppState.code = editor.value;
     pushHistory(editor.value, 0, 0);
     updateLineNumbers();
+    updateSyntaxOverlay();
     if (!AppState.steps?.length) {
       const heatmap = Analyzer.getLineHeatmap(editor.value);
       Visualizer.renderCodeTrace(editor.value.split('\n'), null, null, heatmap);
@@ -176,12 +388,14 @@ console.log("10th number:", fib[9]);`
   }
 
   function getCode() { return document.getElementById('codeEditor').value; }
+
   function setCode(s) {
     const editor = document.getElementById('codeEditor');
     editor.value = s;
     AppState.code = s;
     pushHistory(editor.value, 0, 0);
     updateLineNumbers();
+    updateSyntaxOverlay();
     if (!AppState.steps?.length) {
       const heatmap = Analyzer.getLineHeatmap(editor.value);
       Visualizer.renderCodeTrace(editor.value.split('\n'), null, null, heatmap);
@@ -194,7 +408,7 @@ console.log("10th number:", fib[9]);`
     if (!editor || !lnEl) return;
     const val = editor.value;
     const lines = val.split('\n').length;
-    
+
     let heatmap = {};
     try {
       heatmap = Analyzer.getLineHeatmap(val) || {};
@@ -212,7 +426,7 @@ console.log("10th number:", fib[9]);`
         title = 'Linear Loop [O(n)]';
       } else if (heatmap[i] === 'red') {
         heatCls = ' heat-red';
-        title = 'Nested Loop [O(n²)+]';
+        title = 'Nested Loop [O(n\u00b2)+]';
       } else if (heatmap[i] === 'green') {
         heatCls = ' heat-green';
         title = 'Branch Condition [O(1)]';
@@ -224,15 +438,15 @@ console.log("10th number:", fib[9]);`
         title = 'Sorting / Linearithmic [O(n log n)]';
       } else if (heatmap[i] === 'magenta') {
         heatCls = ' heat-magenta';
-        title = 'Recursive Branching [O(2ⁿ)]';
+        title = 'Recursive Branching [O(2\u207f)]';
       }
 
-      html += `<span class="ln${bp}${heatCls}" data-line="${i}" title="${title}">${i}</span>`;
+      html += '<span class="ln' + bp + heatCls + '" data-line="' + i + '" title="' + title + '">' + i + '</span>';
     }
     lnEl.innerHTML = html;
 
     lnEl.querySelectorAll('.ln').forEach(ln => {
-      ln.onclick = (e) => {
+      ln.onclick = () => {
         const line = parseInt(ln.dataset.line);
         if (AppState.breakpoints.has(line)) AppState.breakpoints.delete(line);
         else AppState.breakpoints.add(line);
@@ -249,10 +463,12 @@ console.log("10th number:", fib[9]);`
 
     let historyDebounce;
     let heatmapDebounce;
+
     ed.addEventListener('input', () => {
       AppState.code = ed.value;
       updateLineNumbers();
-      
+      updateSyntaxOverlay();
+
       clearTimeout(historyDebounce);
       historyDebounce = setTimeout(() => {
         pushHistory(ed.value, ed.selectionStart, ed.selectionEnd);
@@ -267,13 +483,25 @@ console.log("10th number:", fib[9]);`
       }
     });
 
+    // Keep overlay scroll in sync with textarea scroll
+    ed.addEventListener('scroll', () => {
+      const overlay = document.getElementById('syntaxOverlay');
+      if (overlay) {
+        overlay.scrollTop  = ed.scrollTop;
+        overlay.scrollLeft = ed.scrollLeft;
+      }
+      document.getElementById('lineNumbers').scrollTop = ed.scrollTop;
+    });
+
     ed.addEventListener('keydown', (e) => {
+      // Undo
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) {
         e.preventDefault();
         undo();
         return;
       }
 
+      // Redo
       if (((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') ||
           ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'z')) {
         e.preventDefault();
@@ -281,6 +509,7 @@ console.log("10th number:", fib[9]);`
         return;
       }
 
+      // Tab / Shift-Tab indentation
       if (e.key === 'Tab') {
         e.preventDefault();
         const start = ed.selectionStart, end = ed.selectionEnd;
@@ -309,9 +538,11 @@ console.log("10th number:", fib[9]);`
         }
         AppState.code = ed.value;
         updateLineNumbers();
+        updateSyntaxOverlay();
         return;
       }
 
+      // Ctrl+/ comment toggle
       if ((e.ctrlKey || e.metaKey) && e.key === '/') {
         e.preventDefault();
         const start = ed.selectionStart, end = ed.selectionEnd;
@@ -338,21 +569,25 @@ console.log("10th number:", fib[9]);`
         ed.selectionEnd = lineStart + replacement.length;
         AppState.code = ed.value;
         updateLineNumbers();
+        updateSyntaxOverlay();
         return;
       }
 
+      // Ctrl+Enter → Run
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
         e.preventDefault();
         document.getElementById('runBtn').click();
         return;
       }
 
+      // Ctrl+S → Save
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
         document.getElementById('saveBtn').click();
         return;
       }
 
+      // F9 / Ctrl+B → Breakpoint
       if (e.key === 'F9' || ((e.ctrlKey || e.metaKey) && e.key === 'b')) {
         e.preventDefault();
         const textBefore = ed.value.substring(0, ed.selectionStart);
@@ -368,6 +603,7 @@ console.log("10th number:", fib[9]);`
         return;
       }
 
+      // Alt+Arrow → Move line up/down
       if (e.altKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
         e.preventDefault();
         const start = ed.selectionStart;
@@ -390,19 +626,17 @@ console.log("10th number:", fib[9]);`
         }
         AppState.code = ed.value;
         updateLineNumbers();
+        updateSyntaxOverlay();
         return;
       }
     });
 
-    ed.addEventListener('scroll', () => {
-      document.getElementById('lineNumbers').scrollTop = ed.scrollTop;
-    });
-
     updateLineNumbers();
+    updateSyntaxOverlay();
 
     const initialHeatmap = Analyzer.getLineHeatmap(ed.value);
     Visualizer.renderCodeTrace(ed.value.split('\n'), null, null, initialHeatmap);
   }
 
-  return { EXAMPLES, META, load, getCode, setCode, init, updateLineNumbers };
+  return { EXAMPLES, META, load, getCode, setCode, init, updateLineNumbers, updateSyntaxOverlay };
 })();

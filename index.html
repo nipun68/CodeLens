@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CodeLens AI — Program Intelligence Platform</title>
+  <title>CodeLens — Program Intelligence Platform</title>
   <meta name="description" content="Interactive code execution, line-by-line visualization, debugging & algorithm intelligence platform." />
   <link rel="icon" type="image/svg+xml" href="assets/icons/logo.svg" />
   <link rel="stylesheet" href="style.css" />
@@ -13,24 +13,17 @@
 <body>
   
   <header class="navbar">
-    <div class="brand">
+    <div class="brand" data-goto="dashboard" role="button" tabindex="0" aria-label="Go to CodeLens AI homepage">
       <img src="assets/icons/logo.svg" alt="logo" class="brand-logo" />
       <div>
-        <h1 class="brand-name">CodeLens<span class="accent">AI</span></h1>
+        <h1 class="brand-name">CodeLens<span class="accent"></span></h1>
         <p class="brand-tag">Program Intelligence Platform</p>
       </div>
     </div>
-    <nav class="nav-links">
-      <button class="nav-link active" data-view="dashboard">Dashboard</button>
-      <button class="nav-link" data-view="workspace">Workspace</button>
-      <button class="nav-link" data-view="algorithms">Algorithms</button>
-      <button class="nav-link" data-view="structures">Structures</button>
-      <button class="nav-link" data-view="history">History</button>
-      <button class="nav-link" data-view="learning">Learning</button>
-      <button class="nav-link" data-view="help">Help</button>
-    </nav>
     <div class="nav-actions">
-      <button id="themeToggle" class="icon-btn" title="Toggle theme">🌙</button>
+      <button class="nav-link small" data-view="history">History</button>
+      <button class="nav-link small" data-view="help">Help</button>
+      <button id="themeToggle" class="icon-btn" title="Toggle theme" aria-label="Toggle color theme">🌙</button>
     </div>
   </header>
 
@@ -72,11 +65,33 @@ while (low <= high) {
         </div>
       </div>
 
+      <div class="dashboard-paths" aria-label="Explore CodeLens AI">
+        <button class="dashboard-path-card structures-path" data-goto="structures">
+          <span class="path-icon">◈</span>
+          <span class="path-copy">
+            <strong>Explore Data Structures</strong>
+            <small>Interact with arrays, stacks, queues, and linked lists.</small>
+          </span>
+          <span class="path-arrow">→</span>
+        </button>
+        <button class="dashboard-path-card learning-path" data-goto="learning">
+          <span class="path-icon">✦</span>
+          <span class="path-copy">
+            <strong>Open Learning Dashboard</strong>
+            <small>Track mastery, runtime reliability, and practice progress.</small>
+          </span>
+          <span class="path-arrow">→</span>
+        </button>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
+        <h3 class="section-title" style="margin:0">Quick Start Templates</h3>
+        <button class="btn mini primary" id="dashNewTemplateBtn">➕ Custom Template</button>
+      </div>
+      <div class="example-grid" id="exampleGrid"></div>
+
       <h3 class="section-title">Feature Modules</h3>
       <div class="feature-grid" id="featureGrid"></div>
-
-      <h3 class="section-title">Quick Start Templates</h3>
-      <div class="example-grid" id="exampleGrid"></div>
 
       <h3 class="section-title">Recent Executions</h3>
       <div class="recent-list" id="recentList">
@@ -95,7 +110,6 @@ while (low <= high) {
               <span class="file-label">main.js</span>
             </div>
             <div class="panel-actions">
-              <button class="btn mini" id="loadExampleBtn">📋 Templates</button>
               <button class="btn mini" id="resetBtn">↺ Reset</button>
               <button class="btn mini" id="saveBtn">💾 Save</button>
               <button class="btn primary mini" id="runBtn">▶ Run & Trace</button>
@@ -104,7 +118,10 @@ while (low <= high) {
           </div>
           <div class="editor-wrap">
             <div class="line-numbers" id="lineNumbers"></div>
-            <textarea id="codeEditor" spellcheck="false" placeholder="Write your JavaScript code here..."></textarea>
+            <div class="editor-code-area">
+              <div id="syntaxOverlay" aria-hidden="true"></div>
+              <textarea id="codeEditor" spellcheck="false" placeholder="Write your JavaScript code here..."></textarea>
+            </div>
           </div>
           <div class="editor-hint">
             <span>Tip: <strong>F9</strong> for breakpoints · <strong>Ctrl+Enter</strong> to Run · <strong>Ctrl+/</strong> to comment · <strong>Tab</strong> to indent</span>
@@ -155,6 +172,7 @@ while (low <= high) {
               <div class="output-toolbar">
                 <span class="status" id="execStatus">Idle</span>
                 <span class="meta" id="execMeta"></span>
+                <button class="btn mini" id="saveAsTemplateBtn" style="margin-left:auto;display:none" title="Save this code as a Quick Start Template">⭐ Save as Template</button>
               </div>
               <pre id="outputArea" class="output-area">Output will appear here...</pre>
               <pre id="errorArea" class="error-area hidden"></pre>
@@ -499,7 +517,72 @@ while (low <= high) {
 
   <div id="toast" class="toast"></div>
 
-  
+  <!-- Quick Start Templates Browser Modal -->
+  <div id="templatesModal" class="modal-overlay">
+    <div class="modal-card modal-large">
+      <div class="modal-head">
+        <div style="display:flex; align-items:center; gap:8px">
+          <h3>📋 Quick Start Templates</h3>
+          <span class="chip" id="tplCountChip">0 Templates</span>
+        </div>
+        <button class="modal-close" id="closeTemplatesModalBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="templates-filter-bar">
+          <input type="text" id="tplSearchInput" placeholder="Search templates by title, tag, or code..." class="tpl-search-input">
+          <div class="tpl-tabs">
+            <button class="tpl-tab active" data-filter="all">All</button>
+            <button class="tpl-tab" data-filter="custom">★ Custom</button>
+            <button class="tpl-tab" data-filter="auto">★ Auto (8x)</button>
+            <button class="tpl-tab" data-filter="builtin">Built-in</button>
+          </div>
+          <button class="btn primary mini" id="modalAddCurrentBtn">➕ Add Current Code</button>
+        </div>
+        <div id="modalTemplatesGrid" class="modal-templates-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Direct Add to Quick Start Templates Modal -->
+  <div id="addTemplateModal" class="modal-overlay">
+    <div class="modal-card" style="max-width:600px;width:95%">
+      <div class="modal-head">
+        <h3>⭐ Save as Quick Start Template</h3>
+        <button class="modal-close" id="closeAddModalBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="tplTitleInput">Template Title</label>
+          <input type="text" id="tplTitleInput" placeholder="e.g., QuickSort Helper or My Utility">
+        </div>
+        <div class="form-group">
+          <label for="tplTagInput">Tag / Category</label>
+          <input type="text" id="tplTagInput" placeholder="e.g., ★ Custom, Utility, Algorithm">
+        </div>
+        <div class="form-group">
+          <label for="tplDescInput">Description</label>
+          <input type="text" id="tplDescInput" placeholder="Brief description of what this template does">
+        </div>
+        <div class="form-group">
+          <label for="tplCodeEditor">Code Snippet</label>
+          <textarea
+            id="tplCodeEditor"
+            class="tpl-code-editor"
+            placeholder="// Paste or write your code here…"
+            spellcheck="false"
+            autocorrect="off"
+            autocapitalize="off"
+            rows="10"
+          ></textarea>
+        </div>
+        <div class="modal-actions">
+          <button class="btn ghost" id="cancelAddTplBtn">Cancel</button>
+          <button class="btn primary" id="confirmAddTplBtn">💾 Save Template</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="js/storage.js"></script>
   <script src="js/state.js"></script>
   <script src="js/api.js"></script>
@@ -511,6 +594,8 @@ while (low <= high) {
   <script src="js/history.js"></script>
   <script src="js/learning.js"></script>
   <script src="js/editor.js"></script>
+  <script src="js/templates.js"></script>
+  <script src="js/structures.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
