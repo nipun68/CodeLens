@@ -6210,11 +6210,14 @@ body {
    HELP & SYSTEM ARCHITECTURE WHITEPAPER (#view-help)
    ══════════════════════════════════════════════════════════════════════════════ */
 #view-help {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+#view-help.active {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 #view-help .help-hero {
