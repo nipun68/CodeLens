@@ -267,6 +267,31 @@ console.log("10th number:", fib[9]);`
       }
     });
 
+    // Keep overlay scroll in sync with textarea scroll
+    ed.addEventListener('scroll', () => {
+      const overlay = document.getElementById('syntaxOverlay');
+      if (overlay) {
+        overlay.scrollTop  = ed.scrollTop;
+        overlay.scrollLeft = ed.scrollLeft;
+      }
+      document.getElementById('lineNumbers').scrollTop = ed.scrollTop;
+    });
+
+    ed.addEventListener('paste', () => {
+      setTimeout(() => {
+        AppState.code = ed.value;
+        updateLineNumbers();
+        updateSyntaxOverlay();
+      }, 0);
+    });
+
+    ed.addEventListener('cut', () => {
+      setTimeout(() => {
+        AppState.code = ed.value;
+        updateLineNumbers();
+        updateSyntaxOverlay();
+      }, 0);
+    });
     ed.addEventListener('keydown', (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) {
         e.preventDefault();

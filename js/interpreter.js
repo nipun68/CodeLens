@@ -315,13 +315,41 @@ const Interpreter = (() => {
       return result;
     }
 
+    function assignTarget(targetNode, val, line, prefix = '') {
+      if (!targetNode) return;
+      if (targetNode.type === 'Identifier') {
+        variables[targetNode.name] = val;
+        snapshot(line, `${prefix}${targetNode.name} = ${formatVal(val)}`, 'DECLARATION');
+      } else if (targetNode.type === 'ArrayPattern') {
+        if (Array.isArray(val) || (val && typeof val[Symbol.iterator] === 'function')) {
+          const arr = Array.from(val);
+          targetNode.elements.forEach((elem, idx) => {
+            if (elem) assignTarget(elem, arr[idx], line, prefix);
+          });
+        }
+      } else if (targetNode.type === 'ObjectPattern') {
+        if (val && typeof val === 'object') {
+          targetNode.properties.forEach(prop => {
+            if (prop.type === 'Property') {
+              const key = prop.key.name || evalExpr(prop.key);
+              assignTarget(prop.value, val[key], line, prefix);
+            }
+          });
+        }
+      }
+    }
+
     function execStmt(node) {
       switch (node.type) {
         case 'VariableDeclaration':
           for (const decl of node.declarations) {
             const val = decl.init ? evalExpr(decl.init) : undefined;
-            variables[decl.id.name] = val;
-            snapshot(node.loc.start.line, `${node.kind} ${decl.id.name} = ${formatVal(val)}`, 'DECLARATION');
+            if (decl.id.type === 'Identifier') {
+              variables[decl.id.name] = val;
+              snapshot(node.loc.start.line, `${node.kind} ${decl.id.name} = ${formatVal(val)}`, 'DECLARATION');
+            } else {
+              assignTarget(decl.id, val, node.loc.start.line, `${node.kind} `);
+            }
           }
           break;
 
@@ -357,6 +385,143 @@ const Interpreter = (() => {
             if (iter > 10000) throw new Error('RangeError: Maximum loop iterations exceeded (10000)');
           }
           break;
+        }
+
+        case 'ForOfStatement': {
+          const iterable = evalExpr(node.right);
+          if (iterable == null || typeof iterable[Symbol.iterator] !== 'function') {
+            throw new Error(`TypeError: ${formatVal(iterable)} is not iterable`);
+          }
+          let iter = 0;
+          for (const item of iterable) {
+            snapshot(node.loc.start.line, `for..of iteration ${iter}`, 'LOOP');
+            if (node.left.type === 'VariableDeclaration') {
+              assignTarget(node.left.declarations[0].id, item, node.loc.start.line);
+            } else if (node.left.type === 'Identifier') {
+              variables[node.left.name] = item;
+              snapshot(node.loc.start.line, `${node.left.name} = ${formatVal(item)}`, 'ASSIGNMENT');
+            } else {
+              assignTarget(node.left, item, node.loc.start.line);
+            }
+            try {
+              execStmt(node.body);
+            } catch (e) {
+              if (e instanceof BreakSignal) break;
+              if (e instanceof ContinueSignal) { }
+              else throw e;
+            }
+            iter++;
+            if (iter > 10000) throw new Error('RangeError: Maximum loop iterations exceeded (10000)');
+          }
+          break;
+        }
+
+        case 'ForInStatement': {
+          const obj = evalExpr(node.right);
+          if (obj == null) break;
+          let iter = 0;
+          for (const key in obj) {
+            snapshot(node.loc.start.line, `for..in iteration ${iter} (key: "${key}")`, 'LOOP');
+            if (node.left.type === 'VariableDeclaration') {
+              assignTarget(node.left.declarations[0].id, key, node.loc.start.line);
+            } else if (node.left.type === 'Identifier') {
+              variables[node.left.name] = key;
+              snapshot(node.loc.start.line, `${node.left.name} = "${key}"`, 'ASSIGNMENT');
+            } else {
+              assignTarget(node.left, key, node.loc.start.line);
+            }
+            try {
+              execStmt(node.body);
+            } catch (e) {
+              if (e instanceof BreakSignal) break;
+              if (e instanceof ContinueSignal) { }
+              else throw e;
+            }
+            iter++;
+            if (iter > 10000) throw new Error('RangeError: Maximum loop iterations exceeded (10000)');
+          }
+          break;
+        }
+
+        case 'DoWhileStatement': {
+          let iter = 0;
+          do {
+            snapshot(node.loc.start.line, `do..while iteration ${iter}`, 'LOOP');
+            try {
+              execStmt(node.body);
+            } catch (e) {
+              if (e instanceof BreakSignal) break;
+              if (e instanceof ContinueSignal) { }
+              else throw e;
+            }
+            iter++;
+            if (iter > 10000) throw new Error('RangeError: Maximum loop iterations exceeded (10000)');
+          } while (evalExpr(node.test));
+          break;
+        }
+
+        case 'SwitchStatement': {
+          const discriminant = evalExpr(node.discriminant);
+          let matched = false;
+          let defaultCase = null;
+          try {
+            for (const caseNode of node.cases) {
+              if (!caseNode.test) {
+                defaultCase = caseNode;
+                continue;
+              }
+              if (matched || evalExpr(caseNode.test) === discriminant) {
+                matched = true;
+                for (const stmt of caseNode.consequent) {
+                  execStmt(stmt);
+                }
+              }
+            }
+            if (!matched && defaultCase) {
+              for (const stmt of defaultCase.consequent) {
+                execStmt(stmt);
+              }
+            }
+          } catch (e) {
+            if (e instanceof BreakSignal) { /* break switch */ }
+            else throw e;
+          }
+          break;
+        }
+
+        case 'TryStatement': {
+          try {
+            execBlock(node.block);
+          } catch (e) {
+            if (e instanceof ReturnSignal || e instanceof BreakSignal || e instanceof ContinueSignal) {
+              throw e;
+            }
+            if (node.handler) {
+              const savedParam = node.handler.param ? variables[node.handler.param.name] : undefined;
+              if (node.handler.param) {
+                variables[node.handler.param.name] = e.message || String(e);
+              }
+              snapshot(node.handler.loc?.start?.line || node.loc.start.line, `catch (${e.message || String(e)})`, 'ERROR');
+              execBlock(node.handler.body);
+              if (node.handler.param) {
+                if (savedParam !== undefined) variables[node.handler.param.name] = savedParam;
+                else delete variables[node.handler.param.name];
+              }
+            } else {
+              throw e;
+            }
+          } finally {
+            if (node.finalizer) {
+              execBlock(node.finalizer);
+            }
+          }
+          break;
+        }
+
+        case 'ThrowStatement': {
+          const val = evalExpr(node.argument);
+          if (val instanceof Error) throw val;
+          throw new Error(String(val));
         }
 
         case 'WhileStatement': {
