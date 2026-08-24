@@ -83,23 +83,6 @@ function renderDashboard() {
       };
     });
   }
-
-  const recent = CodeLensHistory.getRecent(3);
-  const rEl = document.getElementById('recentList');
-  if (rEl) {
-    if (!recent.length) {
-      rEl.innerHTML = '<p class="muted">No executions yet. Run something in the Workspace.</p>';
-    } else {
-      rEl.innerHTML = recent.map(r => `
-        <div class="recent-item">
-          <div><strong>${r.language || 'javascript'}</strong> · <small>${new Date(r.timestamp).toLocaleString()}</small></div>
-          <div>
-            <span class="status ${r.exitCode === 0 ? 'ok' : 'err'}">${r.exitCode === 0 ? 'OK' : 'ERR'}</span>
-            <button class="btn mini" onclick="loadHistoryItem(${r.id})">Load</button>
-          </div>
-        </div>`).join('');
-    }
-  }
 }
 function renderHistory() {
   const search = (document.getElementById('historySearch')?.value || '').toLowerCase();
