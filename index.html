@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=6" />
+  <link rel="stylesheet" href="style.css?v=7" />
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/acorn/8.11.0/acorn.min.js"></script>
 </head>
@@ -229,11 +229,30 @@ while (low <= high) {
             <div class="tab-pane" data-pane="algorithm">
               <div class="algo-controls">
                 <select id="algoSelect" class="select">
-                  <option value="binarySearch">Binary Search</option>
-                  <option value="linearSearch">Linear Search</option>
-                  <option value="bubbleSort">Bubble Sort</option>
-                  <option value="selectionSort">Selection Sort</option>
-                  <option value="insertionSort">Insertion Sort</option>
+                  <optgroup label="Searching">
+                    <option value="binarySearch">Binary Search</option>
+                    <option value="linearSearch">Linear Search</option>
+                    <option value="jumpSearch">Jump Search</option>
+                    <option value="exponentialSearch">Exponential Search</option>
+                  </optgroup>
+                  <optgroup label="Sorting">
+                    <option value="bubbleSort">Bubble Sort</option>
+                    <option value="selectionSort">Selection Sort</option>
+                    <option value="insertionSort">Insertion Sort</option>
+                    <option value="mergeSort">Merge Sort</option>
+                    <option value="quickSort">Quick Sort</option>
+                    <option value="heapSort">Heap Sort</option>
+                    <option value="dutchFlag">Dutch National Flag (3-Way)</option>
+                  </optgroup>
+                  <optgroup label="Pointers & Arrays">
+                    <option value="twoSum">Two Pointer Search</option>
+                    <option value="kadane">Kadane's Max Subarray</option>
+                    <option value="slidingWindow">Sliding Window Max</option>
+                  </optgroup>
+                  <optgroup label="Dynamic & Math">
+                    <option value="fibonacci">Fibonacci Sequence (DP)</option>
+                    <option value="countPrimes">Sieve of Eratosthenes</option>
+                  </optgroup>
                 </select>
                 <input type="text" id="algoInput" class="input" placeholder="Array e.g. 10,20,30,40,50" />
                 <input type="number" id="algoTarget" class="input" placeholder="Target" />
@@ -584,19 +603,19 @@ while (low <= high) {
     </div>
   </div>
 
-  <script src="js/storage.js?v=6"></script>
-  <script src="js/state.js?v=6"></script>
-  <script src="js/api.js?v=6"></script>
-  <script src="js/algorithms.js?v=6"></script>
-  <script src="js/interpreter.js?v=6"></script>
-  <script src="js/execution.js?v=6"></script>
-  <script src="js/visualizer.js?v=6"></script>
-  <script src="js/analyzer.js?v=6"></script>
-  <script src="js/history.js?v=6"></script>
-  <script src="js/learning.js?v=6"></script>
-  <script src="js/editor.js?v=6"></script>
-  <script src="js/templates.js?v=6"></script>
-  <script src="js/structures.js?v=6"></script>
-  <script src="script.js?v=6"></script>
+  <script src="js/storage.js?v=7"></script>
+  <script src="js/state.js?v=7"></script>
+  <script src="js/api.js?v=7"></script>
+  <script src="js/algorithms.js?v=7"></script>
+  <script src="js/interpreter.js?v=7"></script>
+  <script src="js/execution.js?v=7"></script>
+  <script src="js/visualizer.js?v=7"></script>
+  <script src="js/analyzer.js?v=7"></script>
+  <script src="js/history.js?v=7"></script>
+  <script src="js/learning.js?v=7"></script>
+  <script src="js/editor.js?v=7"></script>
+  <script src="js/templates.js?v=7"></script>
+  <script src="js/structures.js?v=7"></script>
+  <script src="script.js?v=7"></script>
 </body>
 </html>

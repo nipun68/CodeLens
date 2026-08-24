@@ -170,18 +170,27 @@ const Visualizer = (() => {
     const arr = step.array || [];
     el.innerHTML = arr.map((v, i) => {
       let cls = 'algo-cell';
-      if (type.endsWith('Sort')) {
-        if (step.done) cls += ' sorted';
-        if (step.i === i) cls += ' pointer';
-        if (step.j === i || step.j === i + 1) cls += step.swapped ? ' swap' : ' compare';
-        if (type === 'selectionSort' && step.minIdx === i) cls += ' compare';
-      } else {
-        if (step.found === i) cls += ' found';
-        else if (step.mid === i) cls += ' compare';
-        else if (i < step.low || i > step.high) cls += ' sorted';
+      
+      if (step.done) {
+        cls += ' sorted';
+      } else if (step.found === i || (Array.isArray(step.foundIndices) && step.foundIndices.includes(i))) {
+        cls += ' found';
+      } else if (step.swapped && (step.j === i || step.j === i + 1 || (Array.isArray(step.swappedIndices) && step.swappedIndices.includes(i)))) {
+        cls += ' swap';
+      } else if (step.pivot === i) {
+        cls += ' pointer';
+      } else if (step.mid === i || step.minIdx === i || step.j === i || (Array.isArray(step.comparing) && step.comparing.includes(i))) {
+        cls += ' compare';
+      } else if (Array.isArray(step.window) && step.window.includes(i)) {
+        cls += ' compare';
+      } else if (step.low === i || step.high === i || step.i === i || step.left === i || step.right === i) {
+        cls += ' pointer';
+      } else if (step.low !== undefined && step.high !== undefined && (i < step.low || i > step.high) && (type === 'binarySearch' || type === 'jumpSearch' || type === 'exponentialSearch')) {
+        cls += ' sorted';
       }
+
       return `<div class="${cls}">${v}<span class="idx">${i}</span></div>`;
-    }).join('') + `<div style="width:100%;text-align:center;margin-top:24px;color:var(--muted);font-size:.85rem">${step.note || ''}</div>`;
+    }).join('') + `<div style="width:100%;text-align:center;margin-top:24px;color:var(--muted);font-size:.88rem;line-height:1.5">${step.note || ''}</div>`;
   }
 
   function renderAlgoStats(step, type) {

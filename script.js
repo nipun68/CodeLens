@@ -26,7 +26,7 @@ const FEATURES = [
   { ic: '⚡', t: 'Line-by-Line Execution', d: 'AST interpreter executes code statement by statement.', goto: 'workspace' },
   { ic: '🎯', t: 'Runtime Visualization', d: 'See variables, output, and call stack at every step.', goto: 'workspace' },
   { ic: '🐛', t: 'Error Debugging', d: 'Execution stops at error line. All prior steps preserved.', goto: 'workspace' },
-  { ic: '🔍', t: 'Algorithm Visualizer', d: 'Binary/Linear Search, Bubble/Selection/Insertion Sort.', goto: 'algorithms' },
+  { ic: '🔍', t: 'Algorithm Visualizer', d: '16 algorithms: Binary/Jump Search, Quick/Merge/Heap Sort, Kadane, 3-Way Partition.', goto: 'algorithms' },
   { ic: '📦', t: 'Data Structure Visualizer', d: 'Interactive Arrays, Stacks, Queues, and Linked Lists.', goto: 'structures' },
   { ic: '⏱️', t: 'Complexity & Big-O', d: 'Estimate O(1)→O(2ⁿ) with 6-tier heatmap gutter accents.', goto: 'workspace' },
   { ic: '🛡️', t: 'Code Quality & Health Audit', d: 'Maintainability Index, Halstead Metrics & Cyclomatic (M).', goto: 'workspace' },
@@ -221,19 +221,26 @@ window.loadPracticeTemplate = (key) => {
   toast('Loaded practice module: ' + key, 'ok');
 };
 function renderAlgoCards() {
-  document.getElementById('algoCards').innerHTML = Object.entries(Algorithms.META).map(([key, m]) => `
-    <div class="algo-card" data-algo="${key}">
+  const container = document.getElementById('algoCards');
+  if (!container) return;
+  container.innerHTML = Object.entries(Algorithms.META).map(([key, m]) => `
+    <div class="algo-card" data-algo="${key}" title="Visualize ${m.name}">
       <h4>${m.name}</h4>
       <p>${m.desc}</p>
       <span class="tag">${m.time} · ${m.space}</span>
     </div>`).join('');
-  document.querySelectorAll('.algo-card').forEach(c => {
+  container.querySelectorAll('.algo-card').forEach(c => {
     c.onclick = () => {
+      const algoKey = c.dataset.algo;
       switchView('workspace');
-      document.querySelector('.tab[data-tab="algorithm"]').click();
-      document.getElementById('algoSelect').value = c.dataset.algo;
-      AppState.algorithm.type = c.dataset.algo;
-      toast('Selected: ' + Algorithms.META[c.dataset.algo].name);
+      const tab = document.querySelector('.tab[data-tab="algorithm"]');
+      if (tab) tab.click();
+      const select = document.getElementById('algoSelect');
+      if (select) {
+        select.value = algoKey;
+        select.dispatchEvent(new Event('change'));
+      }
+      toast('Loaded: ' + (Algorithms.META[algoKey]?.name || algoKey), 'ok');
     };
   });
 }
@@ -897,6 +904,46 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (e.key === 'Home' || (e.key === 'ArrowLeft' && e.shiftKey)) { e.preventDefault(); traceFirst(); }
     else if (e.key === 'End' || (e.key === 'ArrowRight' && e.shiftKey)) { e.preventDefault(); traceLast(); }
   });
+
+  const algoSelect = document.getElementById('algoSelect');
+  if (algoSelect) {
+    algoSelect.onchange = () => {
+      const type = algoSelect.value;
+      const inputEl = document.getElementById('algoInput');
+      const targetEl = document.getElementById('algoTarget');
+      if (inputEl && targetEl) {
+        if (type === 'binarySearch' || type === 'jumpSearch' || type === 'exponentialSearch') {
+          inputEl.value = '10, 20, 30, 40, 50, 60, 70, 80';
+          targetEl.value = '50';
+        } else if (type === 'linearSearch') {
+          inputEl.value = '42, 18, 93, 27, 65, 34';
+          targetEl.value = '27';
+        } else if (type === 'twoSum') {
+          inputEl.value = '10, 20, 30, 40, 50';
+          targetEl.value = '50';
+        } else if (type === 'kadane') {
+          inputEl.value = '-2, 1, -3, 4, -1, 2, 1, -5, 4';
+          targetEl.value = '';
+        } else if (type === 'dutchFlag') {
+          inputEl.value = '2, 0, 2, 1, 1, 0, 2, 1, 0';
+          targetEl.value = '';
+        } else if (type === 'slidingWindow') {
+          inputEl.value = '2, 1, 5, 1, 3, 2, 8, 4, 6';
+          targetEl.value = '3';
+        } else if (type === 'fibonacci') {
+          inputEl.value = '10';
+          targetEl.value = '10';
+        } else if (type === 'countPrimes') {
+          inputEl.value = '30';
+          targetEl.value = '30';
+        } else {
+          inputEl.value = '64, 34, 25, 12, 22, 11, 90';
+          targetEl.value = '';
+        }
+      }
+      buildAlgoSteps();
+    };
+  }
 
   const algoBuild = document.getElementById('algoBuild');
   if (algoBuild) algoBuild.onclick = buildAlgoSteps;
