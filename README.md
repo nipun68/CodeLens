@@ -2,8 +2,8 @@
 
 <div align="center">
   
+  [![Live Demo - Vercel](https://img.shields.io/badge/Live%20Demo-Vercel-000000?style=for-the-badge&logo=vercel)](https://code-lens-xi.vercel.app/)
   [![Live Demo - Netlify](https://img.shields.io/badge/Live%20Demo-Netlify-00C7B7?style=for-the-badge&logo=netlify)](https://codelens-platform.netlify.app)
-  [![Live Demo - Vercel](https://img.shields.io/badge/Live%20Demo-Vercel-000000?style=for-the-badge&logo=vercel)](https://codelens-platform.vercel.app)
   [![Architecture](https://img.shields.io/badge/Architecture-AST%20Virtual%20Machine-blueviolet?style=for-the-badge)](https://github.com/nipun68/CodeLens)
   [![Language](https://img.shields.io/badge/Core-Vanilla%20JS%20(ES2020)-yellow?style=for-the-badge&logo=javascript)](https://github.com/nipun68/CodeLens)
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
@@ -15,8 +15,8 @@
 ## 🌐 Production Deployment
 
 The project is deployed and accessible online:
+* 🚀 **Live Production (Vercel)**: 👉 **[https://code-lens-xi.vercel.app/](https://code-lens-xi.vercel.app/)**
 * 🚀 **Live Production (Netlify)**: 👉 **[https://codelens-platform.netlify.app](https://codelens-platform.netlify.app)**
-* 🚀 **Live Production (Vercel)**: 👉 **[https://codelens-platform.vercel.app](https://codelens-platform.vercel.app)**
 * 📁 **Official GitHub Repository**: 👉 **[https://github.com/nipun68/CodeLens](https://github.com/nipun68/CodeLens)**
 
 ---
