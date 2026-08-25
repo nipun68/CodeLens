@@ -13,56 +13,75 @@ function applyTheme(theme) {
 function switchView(name) {
   AppState.currentView = name;
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById('view-' + name).classList.add('active');
+  const target = document.getElementById('view-' + name);
+  if (target) target.classList.add('active');
   document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.view === name));
   if (name === 'dashboard') renderDashboard();
   if (name === 'history') renderHistory();
   if (name === 'learning') renderLearning();
   if (name === 'algorithms') renderAlgoCards();
+  if (name === 'structures' && typeof DataStructuresVisualizer !== 'undefined') DataStructuresVisualizer.init();
 }
 const FEATURES = [
-  { ic: '⚡', t: 'Line-by-Line Execution', d: 'AST interpreter executes code statement by statement.' },
-  { ic: '🎯', t: 'Runtime Visualization', d: 'See variables, output, and call stack at every step.' },
-  { ic: '🐛', t: 'Error Debugging', d: 'Execution stops at error line. All prior steps preserved.' },
-  { ic: '🔍', t: 'Algorithm Visualizer', d: 'Binary/Linear Search, Bubble/Selection/Insertion Sort.' },
-  { ic: '📊', t: 'Complexity & Quality', d: 'Estimate O(1)→O(n²) and score code quality heuristics.' },
-  { ic: '💾', t: 'LocalStorage History', d: 'Save, search, reload, and delete executions.' },
-  { ic: '🏆', t: 'Learning Dashboard', d: 'Track mastery, earn achievements, get recommendations.' }
+  { ic: '⚡', t: 'Line-by-Line Execution', d: 'AST interpreter executes code statement by statement.', goto: 'workspace' },
+  { ic: '🎯', t: 'Runtime Visualization', d: 'See variables, output, and call stack at every step.', goto: 'workspace' },
+  { ic: '🐛', t: 'Error Debugging', d: 'Execution stops at error line. All prior steps preserved.', goto: 'workspace' },
+  { ic: '🔍', t: 'Algorithm Visualizer', d: '16 algorithms: Binary/Jump Search, Quick/Merge/Heap Sort, Kadane, 3-Way Partition.', goto: 'algorithms' },
+  { ic: '📦', t: 'Data Structure Visualizer', d: 'Interactive Arrays, Stacks, Queues, and Linked Lists.', goto: 'structures' },
+  { ic: '⏱️', t: 'Complexity & Big-O', d: 'Estimate O(1)→O(2ⁿ) with 6-tier heatmap gutter accents.', goto: 'workspace' },
+  { ic: '🛡️', t: 'Code Quality & Health Audit', d: 'Maintainability Index, Halstead Metrics & Cyclomatic (M).', goto: 'workspace' },
+  { ic: '🏆', t: 'Learning Dashboard', d: 'Track mastery, earn achievements, get recommendations.', goto: 'learning' },
+  { ic: '💾', t: 'LocalStorage History', d: 'Save, search, reload, and delete past executions.', goto: 'history' },
+  { ic: '🧩', t: 'Deterministic AST Sandbox', d: 'Zero-eval ECMAScript 2020 parser with scoped frames.', goto: 'help' },
+  { ic: '📸', t: 'Time-Travel & Breakpoints', d: 'Step rewind, jump to frame, and non-blocking F9 breakpoints.', goto: 'workspace' },
+  { ic: '📤', t: 'Export & Report Studio', d: 'Download complete structured JSON execution & telemetry audit.', goto: 'workspace' }
 ];
 function renderDashboard() {
-  document.getElementById('featureGrid').innerHTML = FEATURES.map(f => `
-    <div class="feature-card"><div class="ic">${f.ic}</div><h4>${f.t}</h4><p>${f.d}</p></div>`).join('');
-
-  document.getElementById('exampleGrid').innerHTML = Editor.META.map(m => `
-    <div class="example-card" data-example="${m.key}">
-      <h5>${m.title} <span class="chip">${m.tag}</span></h5>
-      <pre>${escapeHtml(Editor.EXAMPLES[m.key].slice(0, 140))}…</pre>
-    </div>`).join('');
-
-  document.querySelectorAll('.example-card').forEach(c => {
-    c.onclick = () => {
-      Editor.load(c.dataset.example);
-      switchView('workspace');
-      const code = Editor.getCode();
-      const heatmap = Analyzer.getLineHeatmap(code);
-      Visualizer.renderCodeTrace(code.split('\n'), null, null, heatmap);
-      toast('Template loaded: ' + c.dataset.example);
-    };
-  });
-
-  const recent = CodeLensHistory.getRecent(3);
-  const rEl = document.getElementById('recentList');
-  if (!recent.length) {
-    rEl.innerHTML = '<p class="muted">No executions yet. Run something in the Workspace.</p>';
-  } else {
-    rEl.innerHTML = recent.map(r => `
-      <div class="recent-item">
-        <div><strong>${r.language || 'javascript'}</strong> · <small>${new Date(r.timestamp).toLocaleString()}</small></div>
-        <div>
-          <span class="status ${r.exitCode === 0 ? 'ok' : 'err'}">${r.exitCode === 0 ? 'OK' : 'ERR'}</span>
-          <button class="btn mini" onclick="loadHistoryItem(${r.id})">Load</button>
-        </div>
+  const fGrid = document.getElementById('featureGrid');
+  if (fGrid) {
+    fGrid.innerHTML = FEATURES.map(f => `
+      <div class="feature-card" data-goto="${f.goto || 'workspace'}" title="Open ${escapeHtml(f.t)}">
+        <div class="ic">${f.ic}</div>
+        <h4>${escapeHtml(f.t)}</h4>
+        <p>${escapeHtml(f.d)}</p>
       </div>`).join('');
+
+    fGrid.querySelectorAll('.feature-card').forEach(c => {
+      c.onclick = () => {
+        const goto = c.dataset.goto;
+        if (goto) {
+          switchView(goto);
+          toast('Navigated to ' + c.querySelector('h4').textContent);
+        }
+      };
+    });
+  }
+
+  const exGrid = document.getElementById('exampleGrid');
+  if (exGrid) {
+    const allTemplates = typeof CodeLensTemplates !== 'undefined' ? CodeLensTemplates.getAllTemplates() : Editor.META.map(m => ({ ...m, code: Editor.EXAMPLES[m.key] }));
+    exGrid.innerHTML = allTemplates.map(m => `
+      <div class="example-card" data-example="${m.key || m.id}" title="Load ${escapeHtml(m.title)}">
+        <h5>${escapeHtml(m.title)} <span class="chip">${escapeHtml(m.tag || 'JS')}</span></h5>
+        <pre>${typeof Visualizer !== 'undefined' ? Visualizer.highlightSyntax((m.code || Editor.EXAMPLES[m.key] || '').slice(0, 140)) : escapeHtml((m.code || Editor.EXAMPLES[m.key] || '').slice(0, 140))}…</pre>
+      </div>`).join('');
+
+    exGrid.querySelectorAll('.example-card').forEach(c => {
+      c.onclick = () => {
+        const key = c.dataset.example;
+        const tpl = typeof CodeLensTemplates !== 'undefined' ? CodeLensTemplates.getTemplateByKeyOrId(key) : null;
+        if (tpl && tpl.code) {
+          Editor.setCode(tpl.code);
+        } else if (Editor.EXAMPLES[key]) {
+          Editor.load(key);
+        }
+        switchView('workspace');
+        const code = Editor.getCode();
+        const heatmap = Analyzer.getLineHeatmap(code);
+        Visualizer.renderCodeTrace(code.split('\n'), null, null, heatmap);
+        toast('Template loaded: ' + (tpl ? tpl.title : key));
+      };
+    });
   }
 }
 function renderHistory() {
@@ -185,19 +204,26 @@ window.loadPracticeTemplate = (key) => {
   toast('Loaded practice module: ' + key, 'ok');
 };
 function renderAlgoCards() {
-  document.getElementById('algoCards').innerHTML = Object.entries(Algorithms.META).map(([key, m]) => `
-    <div class="algo-card" data-algo="${key}">
+  const container = document.getElementById('algoCards');
+  if (!container) return;
+  container.innerHTML = Object.entries(Algorithms.META).map(([key, m]) => `
+    <div class="algo-card" data-algo="${key}" title="Visualize ${m.name}">
       <h4>${m.name}</h4>
       <p>${m.desc}</p>
       <span class="tag">${m.time} · ${m.space}</span>
     </div>`).join('');
-  document.querySelectorAll('.algo-card').forEach(c => {
+  container.querySelectorAll('.algo-card').forEach(c => {
     c.onclick = () => {
+      const algoKey = c.dataset.algo;
       switchView('workspace');
-      document.querySelector('.tab[data-tab="algorithm"]').click();
-      document.getElementById('algoSelect').value = c.dataset.algo;
-      AppState.algorithm.type = c.dataset.algo;
-      toast('Selected: ' + Algorithms.META[c.dataset.algo].name);
+      const tab = document.querySelector('.tab[data-tab="algorithm"]');
+      if (tab) tab.click();
+      const select = document.getElementById('algoSelect');
+      if (select) {
+        select.value = algoKey;
+        select.dispatchEvent(new Event('change'));
+      }
+      toast('Loaded: ' + (Algorithms.META[algoKey]?.name || algoKey), 'ok');
     };
   });
 }
@@ -352,10 +378,8 @@ Visualizer.renderCodeTrace(code.split('\n'), null, null, preHeatmap);
     const maxStep = AppState.steps.length - 1;
     document.getElementById('traceSlider').max = maxStep;
     document.getElementById('traceSlider').value = 0;
-    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-    document.querySelector('.tab[data-tab="output"]').classList.add('active');
-    document.querySelector('.tab-pane[data-pane="output"]').classList.add('active');
+    
+    showOutputTab();
 
     if (AppState.steps.length > 0) {
       renderStep(0);
@@ -503,7 +527,7 @@ function playTrace() {
       pauseTrace();
       return;
     }
-    traceNext();
+    renderStep(nextStep);
   }, 600);
 }
 function pauseTrace() {
@@ -687,41 +711,138 @@ function initTabs() {
     };
   });
 }
+
+function initTemplatesUI() {
+  const addModal = document.getElementById('addTemplateModal');
+  const closeAddBtn = document.getElementById('closeAddModalBtn');
+  const cancelAddBtn = document.getElementById('cancelAddTplBtn');
+  const confirmAddBtn = document.getElementById('confirmAddTplBtn');
+  const newTplBtn = document.getElementById('dashNewTemplateBtn');
+  const saveAsTplBtn = document.getElementById('saveAsTemplateBtn');
+
+  function openAddModal(prefillCode = '') {
+    if (!addModal) return;
+    const code = prefillCode || Editor.getCode() || '';
+    const codeInput = document.getElementById('tplCodeEditor');
+    const titleInput = document.getElementById('tplTitleInput');
+    const tagInput = document.getElementById('tplTagInput');
+    const descInput = document.getElementById('tplDescInput');
+    if (codeInput) codeInput.value = code;
+    if (titleInput) titleInput.value = code ? CodeLensTemplates.deriveTitle(code) : '';
+    if (tagInput) tagInput.value = '★ Custom';
+    if (descInput) descInput.value = '';
+    addModal.classList.add('active');
+  }
+
+  function closeAddModal() {
+    if (addModal) addModal.classList.remove('active');
+  }
+
+  if (newTplBtn) newTplBtn.onclick = () => openAddModal('');
+  if (saveAsTplBtn) {
+    saveAsTplBtn.style.display = 'inline-block';
+    saveAsTplBtn.onclick = () => openAddModal(Editor.getCode());
+  }
+  if (closeAddBtn) closeAddBtn.onclick = closeAddModal;
+  if (cancelAddBtn) cancelAddBtn.onclick = closeAddModal;
+
+  if (addModal) {
+    addModal.onclick = (e) => {
+      if (e.target === addModal) closeAddModal();
+    };
+  }
+
+  if (confirmAddBtn) {
+    confirmAddBtn.onclick = () => {
+      const code = document.getElementById('tplCodeEditor')?.value || '';
+      const title = document.getElementById('tplTitleInput')?.value || '';
+      const tag = document.getElementById('tplTagInput')?.value || '';
+      const desc = document.getElementById('tplDescInput')?.value || '';
+
+      if (!code.trim()) {
+        toast('Please enter code for the template', 'err');
+        return;
+      }
+
+      try {
+        CodeLensTemplates.addCustomTemplate(code, title, tag, desc);
+        closeAddModal();
+        renderDashboard();
+        toast('Template saved to Quick Start Templates! ⭐', 'ok');
+      } catch (err) {
+        toast(err.message || 'Failed to save template', 'err');
+      }
+    };
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   applyTheme(Storage.getTheme());
   Editor.init();
 
   document.querySelectorAll('.nav-link').forEach(l => l.onclick = () => switchView(l.dataset.view));
   document.querySelectorAll('[data-goto]').forEach(b => b.onclick = () => switchView(b.dataset.goto));
-  document.getElementById('themeToggle').onclick = () => applyTheme(AppState.theme === 'dark' ? 'light' : 'dark');
+  
+  const themeToggle = document.getElementById('themeToggle');
+  if (themeToggle) {
+    themeToggle.onclick = () => applyTheme(AppState.theme === 'dark' ? 'light' : 'dark');
+  }
 
-  document.getElementById('runBtn').onclick = handleRun;
-  document.getElementById('resetBtn').onclick = resetWorkspace;
-  document.getElementById('saveBtn').onclick = () => {
-    const code = Editor.getCode();
-    if (!code.trim()) { toast('Nothing to save', 'err'); return; }
-    CodeLensHistory.add({ code, language: 'javascript', exitCode: 0, stdout: '(saved)', stderr: '', steps: 0, time: 'manual', timestamp: Date.now() });
-    toast('Saved to history', 'ok');
-  };
-  document.getElementById('analyzeBtn').onclick = renderAnalysis;
-  document.getElementById('loadExampleBtn').onclick = () => {
-    const keys = Object.keys(Editor.EXAMPLES);
-    const pick = keys[Math.floor(Math.random() * keys.length)];
-    Editor.load(pick);
-    const code = Editor.getCode();
-    const heatmap = Analyzer.getLineHeatmap(code);
-    Visualizer.renderCodeTrace(code.split('\n'), null, null, heatmap);
-    toast('Loaded: ' + pick);
-  };
-  document.getElementById('exportReportBtn').onclick = exportReport;
+  const runBtn = document.getElementById('runBtn');
+  if (runBtn) runBtn.onclick = handleRun;
 
-  document.getElementById('tracePlay').onclick = playTrace;
-  document.getElementById('traceNext').onclick = traceNext;
-  document.getElementById('tracePrev').onclick = tracePrev;
-  document.getElementById('traceFirst').onclick = traceFirst;
-  document.getElementById('traceLast').onclick = traceLast;
-  document.getElementById('traceReset').onclick = traceReset;
-  document.getElementById('traceSlider').oninput = (e) => renderStep(parseInt(e.target.value));
+  const resetBtn = document.getElementById('resetBtn');
+  if (resetBtn) resetBtn.onclick = resetWorkspace;
+
+  const saveBtn = document.getElementById('saveBtn');
+  if (saveBtn) {
+    saveBtn.onclick = () => {
+      const code = Editor.getCode();
+      if (!code.trim()) { toast('Nothing to save', 'err'); return; }
+      CodeLensHistory.add({ code, language: 'javascript', exitCode: 0, stdout: '(saved)', stderr: '', steps: 0, time: 'manual', timestamp: Date.now() });
+      toast('Saved to history', 'ok');
+    };
+  }
+
+  const analyzeBtn = document.getElementById('analyzeBtn');
+  if (analyzeBtn) analyzeBtn.onclick = renderAnalysis;
+
+  const loadExBtn = document.getElementById('loadExampleBtn');
+  if (loadExBtn) {
+    loadExBtn.onclick = () => {
+      const keys = Object.keys(Editor.EXAMPLES);
+      const pick = keys[Math.floor(Math.random() * keys.length)];
+      Editor.load(pick);
+      const code = Editor.getCode();
+      const heatmap = Analyzer.getLineHeatmap(code);
+      Visualizer.renderCodeTrace(code.split('\n'), null, null, heatmap);
+      toast('Loaded: ' + pick);
+    };
+  }
+
+  const exportBtn = document.getElementById('exportReportBtn');
+  if (exportBtn) exportBtn.onclick = exportReport;
+
+  const tracePlayBtn = document.getElementById('tracePlay');
+  if (tracePlayBtn) tracePlayBtn.onclick = playTrace;
+
+  const traceNextBtn = document.getElementById('traceNext');
+  if (traceNextBtn) traceNextBtn.onclick = traceNext;
+
+  const tracePrevBtn = document.getElementById('tracePrev');
+  if (tracePrevBtn) tracePrevBtn.onclick = tracePrev;
+
+  const traceFirstBtn = document.getElementById('traceFirst');
+  if (traceFirstBtn) traceFirstBtn.onclick = traceFirst;
+
+  const traceLastBtn = document.getElementById('traceLast');
+  if (traceLastBtn) traceLastBtn.onclick = traceLast;
+
+  const traceResetBtn = document.getElementById('traceReset');
+  if (traceResetBtn) traceResetBtn.onclick = traceReset;
+
+  const traceSlider = document.getElementById('traceSlider');
+  if (traceSlider) traceSlider.oninput = (e) => renderStep(parseInt(e.target.value));
 
   document.addEventListener('keydown', (e) => {
     if (AppState.currentView === 'workspace') {
@@ -761,20 +882,76 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (e.key === 'End' || (e.key === 'ArrowRight' && e.shiftKey)) { e.preventDefault(); traceLast(); }
   });
 
-  document.getElementById('algoBuild').onclick = buildAlgoSteps;
-  document.getElementById('algoNext').onclick = algoNext;
-  document.getElementById('algoPrev').onclick = algoPrev;
-  document.getElementById('algoPlay').onclick = algoPlay;
-  document.getElementById('algoReset').onclick = algoReset;
-  document.getElementById('algoSlider').oninput = (e) => { AppState.algorithm.current = parseInt(e.target.value); renderAlgoStep(); };
+  const algoSelect = document.getElementById('algoSelect');
+  if (algoSelect) {
+    algoSelect.onchange = () => {
+      const type = algoSelect.value;
+      const inputEl = document.getElementById('algoInput');
+      const targetEl = document.getElementById('algoTarget');
+      if (inputEl && targetEl) {
+        if (type === 'binarySearch' || type === 'jumpSearch' || type === 'exponentialSearch') {
+          inputEl.value = '10, 20, 30, 40, 50, 60, 70, 80';
+          targetEl.value = '50';
+        } else if (type === 'linearSearch') {
+          inputEl.value = '42, 18, 93, 27, 65, 34';
+          targetEl.value = '27';
+        } else if (type === 'twoSum') {
+          inputEl.value = '10, 20, 30, 40, 50';
+          targetEl.value = '50';
+        } else if (type === 'kadane') {
+          inputEl.value = '-2, 1, -3, 4, -1, 2, 1, -5, 4';
+          targetEl.value = '';
+        } else if (type === 'dutchFlag') {
+          inputEl.value = '2, 0, 2, 1, 1, 0, 2, 1, 0';
+          targetEl.value = '';
+        } else if (type === 'slidingWindow') {
+          inputEl.value = '2, 1, 5, 1, 3, 2, 8, 4, 6';
+          targetEl.value = '3';
+        } else if (type === 'fibonacci') {
+          inputEl.value = '10';
+          targetEl.value = '10';
+        } else if (type === 'countPrimes') {
+          inputEl.value = '30';
+          targetEl.value = '30';
+        } else {
+          inputEl.value = '64, 34, 25, 12, 22, 11, 90';
+          targetEl.value = '';
+        }
+      }
+      buildAlgoSteps();
+    };
+  }
 
-  document.getElementById('clearHistoryBtn').onclick = () => {
-    if (confirm('Clear all history?')) { CodeLensHistory.clear(); renderHistory(); toast('History cleared'); }
-  };
+  const algoBuild = document.getElementById('algoBuild');
+  if (algoBuild) algoBuild.onclick = buildAlgoSteps;
+
+  const algoNextBtn = document.getElementById('algoNext');
+  if (algoNextBtn) algoNextBtn.onclick = algoNext;
+
+  const algoPrevBtn = document.getElementById('algoPrev');
+  if (algoPrevBtn) algoPrevBtn.onclick = algoPrev;
+
+  const algoPlayBtn = document.getElementById('algoPlay');
+  if (algoPlayBtn) algoPlayBtn.onclick = algoPlay;
+
+  const algoResetBtn = document.getElementById('algoReset');
+  if (algoResetBtn) algoResetBtn.onclick = algoReset;
+
+  const algoSlider = document.getElementById('algoSlider');
+  if (algoSlider) algoSlider.oninput = (e) => { AppState.algorithm.current = parseInt(e.target.value); renderAlgoStep(); };
+
+  const clearHistBtn = document.getElementById('clearHistoryBtn');
+  if (clearHistBtn) {
+    clearHistBtn.onclick = () => {
+      if (confirm('Clear all history?')) { CodeLensHistory.clear(); renderHistory(); toast('History cleared'); }
+    };
+  }
+
   const searchInput = document.getElementById('historySearch');
   if (searchInput) searchInput.oninput = renderHistory;
 
   initTabs();
+  initTemplatesUI();
   switchView('dashboard');
 
   Api.fetchPublicFact().then(fact => console.log('[CodeLens] Random fact:', fact));

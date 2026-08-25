@@ -80,7 +80,7 @@ const Analyzer = (() => {
     let ast;
     let parseOk = true;
     try {
-      ast = acorn.parse(source, { ecmaVersion: 2020 });
+      ast = acorn.parse(source, { ecmaVersion: 2020, locations: true });
     } catch { parseOk = false; }
 
     let fnCount = 0, maxFnLength = 0, maxDepth = 0;
@@ -115,6 +115,11 @@ const Analyzer = (() => {
           decisionPoints++;
           cognitiveComplexity += (1 + structuralNesting);
           maxDepth = Math.max(maxDepth, structuralNesting + 1);
+        }
+
+        if (node.type === 'BinaryExpression' && (node.operator === '==' || node.operator === '!=')) {
+          const lineNum = node.loc ? ` on line ${node.loc.start.line}` : '';
+          smells.push(`Loose Equality ('${node.operator}')${lineNum} — Prefer strict equality ('${node.operator === '==' ? '===' : '!=='}') to prevent unexpected type coercion bugs.`);
         }
 
         if (node.type === 'LogicalExpression' && (node.operator === '&&' || node.operator === '||' || node.operator === '??')) {
