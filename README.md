@@ -2,15 +2,24 @@
 
 <div align="center">
 
+[![Live Demo - GitHub Pages](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-brightgreen?style=for-the-badge&logo=github)](https://nipun68.github.io/CodeLens/)
 [![Architecture](https://img.shields.io/badge/Architecture-AST%20Virtual%20Machine-blueviolet?style=for-the-badge)](https://github.com/nipun68/CodeLens)
 [![Language](https://img.shields.io/badge/Core-Vanilla%20JS%20(ES2020)-yellow?style=for-the-badge&logo=javascript)](https://github.com/nipun68/CodeLens)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 **A high-performance, client-side JavaScript execution engine, AST virtual machine, and real-time algorithmic telemetry platform engineered in pure Vanilla ECMAScript 2020.**
 
-[Repository Code](https://github.com/nipun68/CodeLens) • [Report Bug](https://github.com/nipun68/CodeLens/issues) • [Request Feature](https://github.com/nipun68/CodeLens/issues)
+[Explore Live Demo](https://nipun68.github.io/CodeLens/) • [Report Bug](https://github.com/nipun68/CodeLens/issues) • [Request Feature](https://github.com/nipun68/CodeLens/issues)
 
 </div>
+
+---
+
+## 🌐 Production Deployment
+
+The project is deployed and accessible online:
+* 🚀 **Live Application (GitHub Pages):** 👉 **[https://nipun68.github.io/CodeLens/](https://nipun68.github.io/CodeLens/)**
+* 📁 **Official Repository:** 👉 **[https://github.com/nipun68/CodeLens](https://github.com/nipun68/CodeLens)**
 
 ---
 
