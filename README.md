@@ -57,7 +57,7 @@ Traditional code sandboxes treat execution as a black box: source code → stdou
  │ • 6‑Tier Asymptotic Heatmap  │                          │ • Statement Evaluator Loop   │
  │ • Cyclomatic Complexity (M)  │                          │ • Lexical Scope Chain Tree   │
  │ • Cognitive Load Penalty     │                          │ • Breakpoint Interceptor(F9) │
- │ • SEI Maintainability Index │                          │ • Step Snapshot Generator    │
+ │ • SEI Maintainability Index  │                          │ • Step Snapshot Generator    │
  │ • SonarQube Code Smell Audit │                          │ • Execution Timeout Guard    │
  └──────────────┬───────────────┘                          └──────────────┬───────────────┘
                 │                                                         │
