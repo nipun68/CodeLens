@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: codelens-api
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MONGODB_URI
+        sync: false
+      - key: APP_URL
+        sync: false
+      - key: EMAIL_FROM
+        value: codelens044@gmail.com
+      - key: GMAIL_APP_PASSWORD
+        sync: false
+      - key: DEMO_BILLING
+        value: "true"

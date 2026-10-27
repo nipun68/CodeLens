@@ -1,0 +1,44 @@
+{
+  "name": "codelens",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c green,cyan \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "node --watch server/index.js",
+    "dev:client": "vite client --host 0.0.0.0",
+    "build": "vite build client",
+    "start": "node server/index.js",
+    "test": "node --test tests/analyze.test.js tests/api.test.js tests/execution.test.js tests/multi-language.test.js tests/hybrid-tracing.test.js tests/auth-otp.test.js tests/auth-password.test.js tests/auth-oauth.test.js tests/api-not-found.test.js tests/upload.test.js",
+    "test:api": "node tests/postman-runner.js"
+  },
+  "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
+    "acorn": "^8.15.0",
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.468.0",
+    "mongoose": "^8.19.1",
+    "nodemailer": "^10.2.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "stripe": "^19.1.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@vitejs/plugin-react": "^5.0.4",
+    "concurrently": "^9.2.1",
+    "tailwindcss": "^4.3.3",
+    "vite": "^7.1.10",
+    "vite-plugin-static-copy": "^4.1.1"
+  }
+}

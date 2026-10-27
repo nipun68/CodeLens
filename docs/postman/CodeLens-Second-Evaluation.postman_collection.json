@@ -1,0 +1,524 @@
+{
+  "info": {
+    "_postman_id": "codelens-second-eval-collection-v2",
+    "name": "CodeLens — Second Project Evaluation Suite",
+    "description": "Comprehensive automated API evaluation suite for CodeLens: Program Intelligence Platform.\nCovers health check, session initialization, user authentication, profile mutation, resource persistence, error boundaries, and code execution.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. System Health & DB Connectivity",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "health"]
+        },
+        "description": "Verifies that the backend server is running and returns storage and database connectivity diagnostics."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Health response indicates service is operational\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.ok).to.eql(true);",
+              "    pm.expect(jsonData).to.have.property('storage');",
+              "    pm.expect(jsonData).to.have.property('mongoConnected');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Session Initialization (Guest Workspace)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/session",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "session"]
+        },
+        "description": "Initializes a secure guest workspace and sets session cookie."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Workspace state is initialized\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('id');",
+              "    pm.expect(jsonData.isGuest).to.eql(true);",
+              "    pm.environment.set(\"accountId\", jsonData.id);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. User Registration & OTP Dispatch",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Evaluator User\",\n  \"email\": \"{{testEmail}}\",\n  \"password\": \"{{testPassword}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/register",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "register"]
+        },
+        "description": "Registers a new user and triggers an OTP verification challenge."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Registration succeeds or acknowledges user\", function () {",
+              "    pm.expect([200, 409]).to.include(pm.response.code);",
+              "    if (pm.response.code === 200) {",
+              "        var jsonData = pm.response.json();",
+              "        pm.expect(jsonData.email).to.eql(pm.environment.get(\"testEmail\"));",
+              "        pm.expect(jsonData.emailVerified).to.eql(false);",
+              "    }",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Authentication Failure (Invalid Password)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{testEmail}}\",\n  \"password\": \"intentionally-incorrect-password\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "login"]
+        },
+        "description": "Verifies security boundary: wrong credentials return 401 Unauthorized."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 401 Unauthorized\", function () {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "pm.test(\"Meaningful error message returned\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('error');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Update User Profile (Auth Protected)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Evaluator Updated\",\n  \"handle\": \"evaluator_pro\",\n  \"bio\": \"Testing CodeLens MVC Architecture\",\n  \"avatar\": \"\",\n  \"goals\": [\"Pass Evaluation\", \"Verify MVC Architecture\"]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/profile",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "profile"]
+        },
+        "description": "Updates authenticated profile with input validation."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Profile fields are updated\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.profile.name).to.eql(\"Evaluator Updated\");",
+              "    pm.expect(jsonData.profile.handle).to.eql(\"@evaluator_pro\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Daily Reflection & Check-in",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"reflection\": \"Audited MVC architecture and MongoDB models.\",\n  \"mood\": \"inspired\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/checkins",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "checkins"]
+        },
+        "description": "Submits a daily check-in, awarding XP and updating streaks."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK or 409 Conflict if already checked in\", function () {",
+              "    pm.expect([200, 409]).to.include(pm.response.code);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Create Snippet (Resource Creation)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Binary Search Algorithm\",\n  \"code\": \"function binarySearch(arr, val) { return 0; }\",\n  \"language\": \"javascript\",\n  \"tags\": [\"algorithms\", \"search\"]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/snippets",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "snippets"]
+        },
+        "description": "Creates a new code snippet and stores it in the user's workspace."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201 Created\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "pm.test(\"Snippet is saved and assigned an ID\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.snippets.length).to.be.at.least(1);",
+              "    pm.environment.set(\"snippetId\", jsonData.snippets[0].id);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Confirm Snippet Persistence",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/session",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "session"]
+        },
+        "description": "Retrieves workspace to verify the newly created snippet is persisted."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Persisted snippet is present in session\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    var targetId = pm.environment.get(\"snippetId\");",
+              "    var found = jsonData.snippets.some(function(s) { return s.id === targetId; });",
+              "    pm.expect(found).to.eql(true);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Delete Snippet",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/snippets/{{snippetId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "snippets", "{{snippetId}}"]
+        },
+        "description": "Deletes the snippet created in previous step."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Snippet is removed from workspace\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    var targetId = pm.environment.get(\"snippetId\");",
+              "    var found = jsonData.snippets.some(function(s) { return s.id === targetId; });",
+              "    pm.expect(found).to.eql(false);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Static Code Analysis (Valid Request)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"code\": \"function calculateTotal(items) {\\n  let total = 0;\\n  for (const item of items) {\\n    total += item.price;\\n  }\\n  return total;\\n}\",\n  \"language\": \"javascript\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/analyze",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "analyze"]
+        },
+        "description": "Runs static AST analysis on code and returns quality score and findings."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Analysis result contains score and findings\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('analysis');",
+              "    pm.expect(jsonData.analysis).to.have.property('score');",
+              "    pm.expect(jsonData.analysis).to.have.property('findings');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "11. Validation Error - Invalid Language (4xx Request)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"code\": \"print('hello')\",\n  \"language\": \"unsupported_lang_xyz\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/analyze",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "analyze"]
+        },
+        "description": "Verifies request validation boundary for unsupported language options."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400 Bad Request\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "pm.test(\"Error describes invalid language choice\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('error');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "12. Code Execution & Tracing Endpoint",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"source\": \"def main():\\n    print('CodeLens Test Execution')\\nif __name__ == '__main__':\\n    main()\",\n  \"language\": \"python\",\n  \"mode\": \"run\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/execution",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "execution"]
+        },
+        "description": "Submits code to CodeLens execution engine and returns execution diagnostics."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Response status is 200 OK or 503 if Judge0 unconfigured\", function () {",
+              "    pm.expect([200, 503]).to.include(pm.response.code);",
+              "});",
+              "if (pm.response.code === 200) {",
+              "    pm.test(\"Execution payload has execution metadata\", function () {",
+              "        var jsonData = pm.response.json();",
+              "        pm.expect(jsonData).to.have.property('execution');",
+              "    });",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "13. Unknown API Endpoint (JSON 404)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/nonexistent-endpoint-xyz",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "nonexistent-endpoint-xyz"]
+        },
+        "description": "Tests consistent JSON 404 error handler across nonexistent API routes."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404 Not Found\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});",
+              "pm.test(\"Structured error object returned\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.eql(false);",
+              "    pm.expect(jsonData.error.code).to.eql('NOT_FOUND');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "14. Demo Pro Subscription Checkout",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"interval\": \"monthly\",\n  \"confirmDemo\": true\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/billing/checkout",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "billing", "checkout"]
+        },
+        "description": "Activates demo Pro subscription plan without third-party payment dependencies."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Subscription is updated to Pro\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.demo).to.eql(true);",
+              "    pm.expect(jsonData.account.subscription.plan).to.eql('pro');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    }
+  ]
+}

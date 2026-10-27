@@ -1,0 +1,275 @@
+{
+  "version": 1,
+  "skills": {
+    "activitykit": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "activitykit/SKILL.md",
+      "computedHash": "fe9123ee512413c0c9441ae40ba8fcc18395730232a40cc6127b8777ec3063e4"
+    },
+    "apple-developer": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "apple-developer/SKILL.md",
+      "computedHash": "2977cd2b185057e003bc9f64e4f1e3ba6c9c61c49d79e70b356068385001a3c9"
+    },
+    "artifact-template-likeminded-profile-and-soulmate": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "artifact-template-likeminded-profile-and-soulmate/SKILL.md",
+      "computedHash": "36cdeb25238df7efddffadc5d6e5c2edfe415c06a94d928970ee5729aa8864da"
+    },
+    "banner-design": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/banner-design/SKILL.md",
+      "computedHash": "1bb85d0bfec06e23578739a476c181b17c4db694c341da4e603e43183a4b42d3"
+    },
+    "brand": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/brand/SKILL.md",
+      "computedHash": "5c99d65bec448b3dda25049f6437a1d8d8777a705a2c597fbe5516dfeeb0a487"
+    },
+    "cli-for-agents": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "cli-for-agents/SKILL.md",
+      "computedHash": "2796147e50c2923afa5303baeee65d036b241822d66d262a60b107ed491369f7"
+    },
+    "cloudkit": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "cloudkit/SKILL.md",
+      "computedHash": "c72de5c107034f1eb6d8b0212bee503386a2b3725c4816ae7bec483dcea6d1f6"
+    },
+    "code-quality-audit": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "code-quality-audit/SKILL.md",
+      "computedHash": "34c61aa9d1beacf19e338653d69318acc2897d4306de6a747adf52e8b40fafb2"
+    },
+    "codex-efficient-delegation": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "codex-efficient-delegation/SKILL.md",
+      "computedHash": "c78ffce07f13e1f237045fb08b0c3e246bd20935a8d3ab961bda142f3abf93d9"
+    },
+    "create-design-md": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "create-design-md/SKILL.md",
+      "computedHash": "9b5cd6793995688074751ef7dc31257abfc125d168865072be4e533dd502829e"
+    },
+    "create-skill": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "create-skill/SKILL.md",
+      "computedHash": "65414c7d8631f54246f072bce0f1f3cc1cef7e9ce047405f2871251f749fba6a"
+    },
+    "design": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/design/SKILL.md",
+      "computedHash": "63b2e20bf06d4e9347ad1d3f3c8f72e3618db2f1f3de922992b72ca640b5a648"
+    },
+    "design-system": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/design-system/SKILL.md",
+      "computedHash": "c50a1a77394e988b2593ed97f95ae28b5167eb8a826385b5996d67e398d15b6a"
+    },
+    "determinism": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "determinism/SKILL.md",
+      "computedHash": "c0cd7b7ddfa36e93092f0bdc9319f388f2a9383ab54d23606659a398b35406af"
+    },
+    "enforcement": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "enforcement/SKILL.md",
+      "computedHash": "93a29c6cb6dedc9a87ca39f1beb32a9413a00c2693cd43895a320816ea3f5120"
+    },
+    "execplan": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "execplan/SKILL.md",
+      "computedHash": "2736e254a209525d14787ceb84ecf8803cefe9d79bddb89a791ab694043ed5f8"
+    },
+    "frontend-design": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-design/SKILL.md",
+      "computedHash": "89496d5dd00f4810205f351759594fc2742bf8eea85a2f2b2d1de59f4bd91576"
+    },
+    "gravitas": {
+      "source": "udaysharmadev/Gravitas",
+      "sourceType": "github",
+      "skillPath": "skills/gravitas/SKILL.md",
+      "computedHash": "32b13f79b3aa3b8259ebc96192f7c16678ccec6c1db6cce170675c7fa33bc21d"
+    },
+    "integration-testing": {
+      "source": "elastic/integration-skills",
+      "sourceType": "github",
+      "skillPath": "skills/integration-testing/SKILL.md",
+      "computedHash": "02f2b843cc8eb291504fc0002c0b6edd2298928d26cdee1d599c6cbfacc5f3b6"
+    },
+    "knowledge-base": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "knowledge-base/SKILL.md",
+      "computedHash": "5450fcfc3b92b371df29a5746fd0335c56c458dee33c68718d5660082ef6f04d"
+    },
+    "macos-widget-reinstall": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "macos-widget-reinstall/SKILL.md",
+      "computedHash": "d8c705851c5ba00afb675ef9e69df84556bd3354257ef7be0fc6b06b7f2d7a81"
+    },
+    "mcp-setup": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "mcp-setup/SKILL.md",
+      "computedHash": "348b1431cf59d173f77fd9681b589006f865f814b30f10b4d897bd3d99bcdae6"
+    },
+    "playwright": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "playwright/SKILL.md",
+      "computedHash": "595a334de3bd5335f442a33d1bdefb01207c88c99fe43e3bd99b0d5435f230de"
+    },
+    "product-sites": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "product-sites/SKILL.md",
+      "computedHash": "0a799b25ab505a90b3316dfdfc01a30e8a0447248182e2c4774434eaa54decc5"
+    },
+    "project-context-installer": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "project-context-installer/SKILL.md",
+      "computedHash": "62a802a5ad4dbf232c70d8ab14d99672fc4bba3f4ec14ee8c60be7ecca944c08"
+    },
+    "remotion-best-practices": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "remotion-best-practices/SKILL.md",
+      "computedHash": "304c0b44569e6a4f6b91ce83311298ac0364cd0f8ce54832e8b8f1a071bc00ad"
+    },
+    "remotion-create": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "remotion-create/SKILL.md",
+      "computedHash": "83301b034941f280f994f8b576f97dc064db1da62b6d984e1ea5130eb22e89d0"
+    },
+    "remotion-render": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "remotion-render/SKILL.md",
+      "computedHash": "bd39f1f2a03ce91f764a518a994ee8a6201256f9e161b99e1230323bd501f752"
+    },
+    "repo-readiness-bootstrap": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "repo-readiness-bootstrap/SKILL.md",
+      "computedHash": "10a49333fa4e8b63d349788d7739d69a982931a8cf9860ebaf73c96e6c21e452"
+    },
+    "resume-session": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "resume-session/SKILL.md",
+      "computedHash": "559df8fe3f79c212ebb5190de5743fc078149cd7ff3fe83c503997ae24a57459"
+    },
+    "save-session": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "save-session/SKILL.md",
+      "computedHash": "c7ff5e5b27b4f9fe800de022d460e173cd234d8e215bde124a5885d4f21e5651"
+    },
+    "screenshot": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "screenshot/SKILL.md",
+      "computedHash": "2dc50b3537ea27a1020a660ff17f12860f6ad05bcf40539165eb4655e5010d73"
+    },
+    "session-introspection": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "session-introspection/SKILL.md",
+      "computedHash": "62fa7deae23ed097e10f2f19016167e0d664d6f4b54d39f13092fd7fff65c6db"
+    },
+    "session-orchestrate": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "session-orchestrate/SKILL.md",
+      "computedHash": "ab6083aa4e89ce67f744bab8b5985ebca00b706bd7942a47a4a1d5ffe357586c"
+    },
+    "slides": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/slides/SKILL.md",
+      "computedHash": "9c012d14e94b734b324f859d64da3b47762b8cdee47515ce83bce4366222f885"
+    },
+    "speech": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "speech/SKILL.md",
+      "computedHash": "767adf188f0beb4b45f4b60cfe1945f1f104884ff3d1597e09825dadcea5f7fa"
+    },
+    "swiftui-animation": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "swiftui-animation/SKILL.md",
+      "computedHash": "af57bc4f78457178fdadb7a78728baf55aa88d12fcfa0b5bd25cbdbc8dcee3b0"
+    },
+    "swiftui-pro": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "swiftui-pro/SKILL.md",
+      "computedHash": "2544ac9c2307dd929ed4259d84e9a18bb27b42a2460a7b4c0b523b95cea28efa"
+    },
+    "transcribe": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "transcribe/SKILL.md",
+      "computedHash": "0391b3fba28374df131946e0b515e62f5e2a9b51013d05a35791944ca6853dff"
+    },
+    "ui-styling": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/ui-styling/SKILL.md",
+      "computedHash": "39ad392c96adab936d8d057b66d1d632dd9c3d2b2397ec11bfe0e2a7c1fc975a"
+    },
+    "ui-ux-pro-max": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/ui-ux-pro-max/SKILL.md",
+      "computedHash": "27b1e8c953e26f962e3314281601959b04787edf3fd7fccadce176ff844c688d"
+    },
+    "verify": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "verify/SKILL.md",
+      "computedHash": "1312ec8bf6035fc41455f3147ee070ac7f85d77663d3f8ffcfcc66c02d7a20a0"
+    },
+    "web-design-guidelines": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/web-design-guidelines/SKILL.md",
+      "computedHash": "a6a44d5498f7e8f68289902f3dedfc6f38ae0cee1e96527c80724cf27f727c2a"
+    },
+    "widgetkit": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "widgetkit/SKILL.md",
+      "computedHash": "bd3a9576acce241e3d6c94c4d9c8f22dced54ec7b732c6b38b125c429889e1d8"
+    },
+    "xcode-cloud": {
+      "source": "ingpoc/skills",
+      "sourceType": "github",
+      "skillPath": "xcode-cloud/SKILL.md",
+      "computedHash": "476e3df98779c132966514836e2f6f52fabb6a06c4d591f7193d12ac04bc45ca"
+    }
+  }
+}
