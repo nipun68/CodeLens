@@ -462,15 +462,8 @@ export default function Landing({ onAuth }) {
             </a>
           </nav>
 
-          {/* Action Buttons: Sign In + Primary Get Started + Mobile Hamburger */}
+          {/* Action Button: Single unified Get Started + Mobile Hamburger */}
           <div className="landing-nav-actions">
-            <button 
-              onClick={() => onAuth?.('login')}
-              className="hidden sm:inline-flex px-3.5 py-1.5 rounded-xl border border-transparent hover:border-white/10 text-xs font-mono font-medium text-[#c9ced8] hover:text-[#f4f5f7] transition"
-              aria-label="Sign in to your account"
-            >
-              Sign In
-            </button>
             <button 
               onClick={() => onAuth?.('register')}
               className="landing-nav-cta"
@@ -551,24 +544,16 @@ export default function Landing({ onAuth }) {
               >
                 FAQ
               </a>
-              <div className="pt-3 flex flex-col gap-2.5">
+              <div className="pt-3">
                 <button 
                   onClick={() => {
                     setMobileNavOpen(false);
                     onAuth?.('register');
                   }}
-                  className="w-full py-3 rounded-xl bg-[#ff951f] text-[#07090e] font-mono text-xs font-bold text-center transition shadow-lg"
+                  className="w-full py-3 rounded-xl bg-[#ff951f] hover:bg-[#ffaa40] text-[#07090e] font-mono text-xs font-bold text-center transition shadow-lg flex items-center justify-center gap-2"
                 >
-                  Get started
-                </button>
-                <button 
-                  onClick={() => {
-                    setMobileNavOpen(false);
-                    onAuth?.('login');
-                  }}
-                  className="w-full py-2.5 rounded-xl border border-white/10 hover:border-white/20 text-center text-xs font-mono font-medium transition text-[#c9ced8]"
-                >
-                  Sign in
+                  <span>Get started</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
             </nav>
@@ -812,40 +797,44 @@ export default function Landing({ onAuth }) {
       {/* ==================================================== */}
       {/* 3. PRODUCT INTRODUCTION: ABOUT CODELENS */}
       {/* ==================================================== */}
-      <section id="about" className="relative z-10 py-24 max-w-6xl mx-auto px-4 sm:px-6">
+      <section id="about" className="relative z-10 py-16 max-w-6xl mx-auto px-4 sm:px-6">
         
         {/* Sleek gradient divider line */}
-        <div className="w-full h-px bg-gradient-to-r from-transparent via-[#303139] to-transparent mb-20" />
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-[#303139] to-transparent mb-14" />
 
-        <div className="relative text-center max-w-3xl mx-auto mb-16 space-y-4">
+        <div className="relative flex flex-col items-center text-center max-w-3xl mx-auto mb-16 space-y-4">
           {/* Subtle Ambient Glow */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[220px] bg-[#ff951f]/6 blur-[120px] rounded-full pointer-events-none -z-10" />
 
           {/* Refined Pill Badge with animated indicator */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono uppercase tracking-widest border text-[#ff951f] bg-[#ff951f]/10 border-[#ff951f]/30 shadow-[0_0_20px_rgba(255,149,31,0.12)]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#ff951f] animate-ping" />
-            CALM WORKSPACE
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs font-mono uppercase tracking-widest border text-[#ff951f] bg-[#ff951f]/10 border-[#ff951f]/30 shadow-[0_0_20px_rgba(255,149,31,0.12)]">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff951f] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ff951f]" />
+            </span>
+            <span>CALM WORKSPACE</span>
           </div>
 
           {/* Main Heading with bold typography and orange-to-gold gradient */}
-          <h2 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-white leading-tight">
-            Your coding practice, <br />
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight [text-wrap:balance]">
+            Your coding practice,{' '}
+            <br className="hidden sm:inline" />
             <span className="bg-gradient-to-r from-[#ff951f] via-[#edcd8c] to-[#ff951f] bg-clip-text text-transparent drop-shadow-sm">
               all in one place.
             </span>
           </h2>
 
           {/* Supporting text with comfortable line height and optimal reading width */}
-          <p className="text-sm sm:text-base md:text-lg font-normal max-w-xl mx-auto leading-relaxed text-[#c9ced8]">
+          <p className="text-base sm:text-lg font-normal max-w-xl mx-auto leading-relaxed text-[#c9ced8] [text-wrap:balance]">
             Turn small coding sessions into a sustainable practice. Keep your work organized, recognize what you learn, and return to your next step with clarity.
           </p>
         </div>
 
         {/* 3 Dynamic Interactive Bento Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
           
           {/* Bento Card 1: Multi-language Interactive Sandbox */}
-          <div className="group relative p-7 rounded-3xl transition-all duration-300 flex flex-col justify-between border bg-[#10141c] border-[#303139] hover:border-[#ff951f]/50 shadow-[0_15px_35px_rgba(0,0,0,0.7)]">
+          <div className="group relative p-7 rounded-3xl transition-all duration-300 flex flex-col justify-between border bg-[#10141c] border-[#303139] hover:border-[#ff951f]/50 shadow-[0_15px_35px_rgba(0,0,0,0.7)] h-full">
             <div>
               <div className="flex items-center justify-between mb-5">
                 <div className="w-12 h-12 rounded-2xl bg-[#ff951f]/10 border border-[#ff951f]/30 flex items-center justify-center text-[#ff951f] group-hover:scale-110 transition shadow-sm">
@@ -857,7 +846,7 @@ export default function Landing({ onAuth }) {
               <h3 className="text-lg font-bold transition text-white group-hover:text-[#ff951f]">
                 A calmer coding workspace
               </h3>
-              <p className="text-sm mt-2 leading-relaxed text-[#c9ced8]">
+              <p className="text-base mt-2.5 leading-relaxed text-[#c9ced8]">
                 Edit Python, Java, JavaScript, and C++. Run code through a configured isolated provider; use static checks to learn as you build.
               </p>
 
@@ -879,22 +868,25 @@ export default function Landing({ onAuth }) {
               </div>
 
               {/* Dynamic Live Preview Box */}
-              <div className="mt-3 p-3 rounded-xl border font-mono text-[11px] overflow-x-auto leading-relaxed bg-black/60 border-white/5 text-slate-300">
-                <pre>{codeSnippets[selectedLang]}</pre>
+              <div className="mt-3 p-3 rounded-xl border font-mono text-[11px] overflow-x-auto leading-relaxed bg-black/60 border-white/5 text-slate-300 min-h-[120px] flex items-center">
+                <pre className="w-full">{codeSnippets[selectedLang]}</pre>
               </div>
             </div>
 
             <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-xs font-mono text-[#ff951f]">
-              <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#ff951f] animate-ping" />
-                Isolated provider
+              <span className="flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff951f] opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ff951f]" />
+                </span>
+                <span>Isolated provider</span>
               </span>
               <span className="text-slate-500">Static Checks</span>
             </div>
           </div>
 
           {/* Bento Card 2: Interactive Habit Streak Calendar */}
-          <div className="group relative p-7 rounded-3xl transition-all duration-300 flex flex-col justify-between border bg-[#10141c] border-[#303139] hover:border-[#ff951f]/50 shadow-[0_15px_35px_rgba(0,0,0,0.7)]">
+          <div className="group relative p-7 rounded-3xl transition-all duration-300 flex flex-col justify-between border bg-[#10141c] border-[#303139] hover:border-[#ff951f]/50 shadow-[0_15px_35px_rgba(0,0,0,0.7)] h-full">
             <div>
               <div className="flex items-center justify-between mb-5">
                 <div className="w-12 h-12 rounded-2xl bg-[#ff951f]/10 border border-[#ff951f]/30 flex items-center justify-center text-[#ff951f] group-hover:scale-110 transition shadow-sm">
@@ -906,7 +898,7 @@ export default function Landing({ onAuth }) {
               <h3 className="text-lg font-bold transition text-white group-hover:text-[#ff951f]">
                 Small steps that stick
               </h3>
-              <p className="text-sm mt-2 leading-relaxed text-[#c9ced8]">
+              <p className="text-base mt-2.5 leading-relaxed text-[#c9ced8]">
                 Build a daily practice, track your momentum, and celebrate progress that is genuinely yours.
               </p>
 
@@ -936,16 +928,19 @@ export default function Landing({ onAuth }) {
             </div>
 
             <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-xs font-mono text-[#ff951f]">
-              <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#ff951f] animate-ping" />
-                Gentle momentum
+              <span className="flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff951f] opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ff951f]" />
+                </span>
+                <span>Gentle momentum</span>
               </span>
               <span className="text-slate-500">6 / 7 active</span>
             </div>
           </div>
 
           {/* Bento Card 3: Animated Circuit Cable Node Tree */}
-          <div className="group relative p-7 rounded-3xl transition-all duration-300 flex flex-col justify-between border bg-[#10141c] border-[#303139] hover:border-[#ff951f]/50 shadow-[0_15px_35px_rgba(0,0,0,0.7)]">
+          <div className="group relative p-7 rounded-3xl transition-all duration-300 flex flex-col justify-between border bg-[#10141c] border-[#303139] hover:border-[#ff951f]/50 shadow-[0_15px_35px_rgba(0,0,0,0.7)] h-full">
             <div>
               <div className="flex items-center justify-between mb-5">
                 <div className="w-12 h-12 rounded-2xl bg-[#ff951f]/10 border border-[#ff951f]/30 flex items-center justify-center text-[#ff951f] group-hover:scale-110 transition shadow-sm">
@@ -957,7 +952,7 @@ export default function Landing({ onAuth }) {
               <h3 className="text-lg font-bold transition text-white group-hover:text-[#ff951f]">
                 A path that grows with you
               </h3>
-              <p className="text-sm mt-2 leading-relaxed text-[#c9ced8]">
+              <p className="text-base mt-2.5 leading-relaxed text-[#c9ced8]">
                 Follow guided learning paths, save useful snippets, and keep your next goal in sight.
               </p>
 
@@ -991,9 +986,12 @@ export default function Landing({ onAuth }) {
             </div>
 
             <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-xs font-mono text-[#ff951f]">
-              <span className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#ff951f] animate-ping" />
-                Saved snippets
+              <span className="flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff951f] opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ff951f]" />
+                </span>
+                <span>Saved snippets</span>
               </span>
               <span className="text-slate-500">Reusable vault</span>
             </div>
@@ -1006,17 +1004,21 @@ export default function Landing({ onAuth }) {
       {/* 4. FEATURES SECTION: 4 PRIMARY CAPABILITIES */}
       {/* ==================================================== */}
       <section id="features" className="features-section-container">
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-          <span className="inline-block text-xs font-mono uppercase tracking-widest px-3.5 py-1.5 rounded-full border text-[#ff951f] bg-[#ff951f]/10 border-[#ff951f]/25">
-            CORE CAPABILITIES
-          </span>
-          <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
-            Everything you need <br />
-            <span className="bg-gradient-to-r from-[#ff951f] via-[#edcd8c] to-[#ff951f] bg-clip-text text-transparent">
+        <div className="relative flex flex-col items-center text-center max-w-3xl mx-auto mb-16 space-y-4">
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs font-mono uppercase tracking-widest border text-[#ff951f] bg-[#ff951f]/10 border-[#ff951f]/30 shadow-[0_0_20px_rgba(255,149,31,0.12)]">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff951f] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ff951f]" />
+            </span>
+            <span>CORE CAPABILITIES</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight [text-wrap:balance]">
+            Everything you need <br className="hidden sm:inline" />
+            <span className="bg-gradient-to-r from-[#ff951f] via-[#edcd8c] to-[#ff951f] bg-clip-text text-transparent drop-shadow-sm">
               to keep moving.
             </span>
           </h2>
-          <p className="text-sm sm:text-base font-normal max-w-xl mx-auto leading-relaxed text-[#c9ced8]">
+          <p className="text-base sm:text-lg font-normal max-w-xl mx-auto leading-relaxed text-[#c9ced8] [text-wrap:balance]">
             Designed from the ground up for deliberate developer practice, calm reflection, and continuous momentum.
           </p>
         </div>
@@ -1035,16 +1037,16 @@ export default function Landing({ onAuth }) {
               Help you begin with a manageable task, work through a problem in an isolated sandbox, and receive immediate static feedback.
             </p>
             <ul className="feature-box-list">
-              <li>
-                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0" />
+              <li className="feature-box-list-item">
+                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0 mt-0.5" />
                 <span>Multi-language workspace (JS, Python, Java, C++)</span>
               </li>
-              <li>
-                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0" />
+              <li className="feature-box-list-item">
+                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0 mt-0.5" />
                 <span>In-browser static linting & instant feedback</span>
               </li>
-              <li>
-                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0" />
+              <li className="feature-box-list-item">
+                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0 mt-0.5" />
                 <span>Isolated sandbox execution when configured</span>
               </li>
             </ul>
@@ -1063,16 +1065,16 @@ export default function Landing({ onAuth }) {
               Capture what you learned at the end of each session, record insights, and build genuine practice streaks that stay with you.
             </p>
             <ul className="feature-box-list">
-              <li>
-                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0" />
+              <li className="feature-box-list-item">
+                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0 mt-0.5" />
                 <span>Post-session takeaway check-in prompts</span>
               </li>
-              <li>
-                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0" />
+              <li className="feature-box-list-item">
+                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0 mt-0.5" />
                 <span>Daily momentum calendar tracking</span>
               </li>
-              <li>
-                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0" />
+              <li className="feature-box-list-item">
+                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0 mt-0.5" />
                 <span>Recognize progress on your own terms</span>
               </li>
             </ul>
@@ -1091,16 +1093,16 @@ export default function Landing({ onAuth }) {
               Follow curated lessons, track your completion, achieve milestones, and pick up right where you stopped without getting overwhelmed.
             </p>
             <ul className="feature-box-list">
-              <li>
-                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0" />
+              <li className="feature-box-list-item">
+                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0 mt-0.5" />
                 <span>Structured roadmap with bite-sized lessons</span>
               </li>
-              <li>
-                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0" />
+              <li className="feature-box-list-item">
+                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0 mt-0.5" />
                 <span>Milestone checks and progress indicators</span>
               </li>
-              <li>
-                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0" />
+              <li className="feature-box-list-item">
+                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0 mt-0.5" />
                 <span>Seamless session state preservation</span>
               </li>
             </ul>
@@ -1119,16 +1121,16 @@ export default function Landing({ onAuth }) {
               Save, organize, search, and instantly reuse verified code patterns, algorithms, and session notes from your workspace.
             </p>
             <ul className="feature-box-list">
-              <li>
-                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0" />
+              <li className="feature-box-list-item">
+                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0 mt-0.5" />
                 <span>Categorized by language, topic, and tags</span>
               </li>
-              <li>
-                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0" />
+              <li className="feature-box-list-item">
+                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0 mt-0.5" />
                 <span>Instant editor search and one-click insertion</span>
               </li>
-              <li>
-                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0" />
+              <li className="feature-box-list-item">
+                <Check className="w-3.5 h-3.5 text-[#ff951f] shrink-0 mt-0.5" />
                 <span>Private, secure, and safely stored</span>
               </li>
             </ul>
@@ -1150,14 +1152,14 @@ export default function Landing({ onAuth }) {
                 A LITTLE PROGRESS, OFTEN
               </span>
 
-              <h2 className="text-4xl sm:text-5xl font-black tracking-tight leading-tight mt-4 text-white">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight mt-4 text-white [text-wrap:balance]">
                 A rhythm you can <br />
                 <span className="bg-gradient-to-r from-[#ff951f] via-[#edcd8c] to-[#ff951f] bg-clip-text text-transparent">
                   actually keep.
                 </span>
               </h2>
 
-              <p className="text-sm leading-relaxed mt-4 max-w-md text-[#c9ced8]">
+              <p className="text-base sm:text-lg leading-relaxed mt-4 max-w-md text-[#c9ced8] [text-wrap:balance]">
                 Learning doesn’t need a perfect plan. Just a place to return to, and a next step that feels doable.
               </p>
 
@@ -1192,8 +1194,11 @@ export default function Landing({ onAuth }) {
                 })}
               </div>
 
-              <div className="pt-6 flex items-center gap-3 text-xs font-mono text-[#ff951f]">
-                <span className="w-2 h-2 rounded-full bg-[#ff951f] animate-ping" />
+              <div className="pt-6 flex items-center gap-2.5 text-xs font-mono text-[#ff951f]">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff951f] opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ff951f]" />
+                </span>
                 <span>4-stage continuous sequence</span>
               </div>
             </div>
@@ -1215,8 +1220,8 @@ export default function Landing({ onAuth }) {
                   CALM EDIT
                 </span>
               </div>
-              <h3 className="text-2xl font-bold text-white tracking-tight">Start with the code in front of you.</h3>
-              <p className="text-sm mt-2 leading-relaxed text-[#c9ced8]">
+              <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Start with the code in front of you.</h3>
+              <p className="text-base mt-2.5 leading-relaxed text-[#c9ced8]">
                 Bring a small problem into the workspace. Get clear, practical feedback without losing your flow.
               </p>
 
@@ -1276,8 +1281,8 @@ export default function Landing({ onAuth }) {
                   REFLECTION ENGINE
                 </span>
               </div>
-              <h3 className="text-2xl font-bold text-white tracking-tight">Make consistency feel lighter.</h3>
-              <p className="text-sm mt-2 leading-relaxed text-[#c9ced8]">
+              <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Make consistency feel lighter.</h3>
+              <p className="text-base mt-2.5 leading-relaxed text-[#c9ced8]">
                 Check in, name what you learned, and watch small sessions add up over time—without chasing someone else’s pace.
               </p>
 
@@ -1337,8 +1342,8 @@ export default function Landing({ onAuth }) {
                   LEARNING PATH
                 </span>
               </div>
-              <h3 className="text-2xl font-bold text-white tracking-tight">Keep learning pointed somewhere.</h3>
-              <p className="text-sm mt-2 leading-relaxed text-[#c9ced8]">
+              <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Keep learning pointed somewhere.</h3>
+              <p className="text-base mt-2.5 leading-relaxed text-[#c9ced8]">
                 Follow a learning path, save the snippets you’ll reuse, and pick up right where you left off.
               </p>
 
@@ -1405,8 +1410,8 @@ export default function Landing({ onAuth }) {
                   SNIPPET VAULT
                 </span>
               </div>
-              <h3 className="text-2xl font-bold text-white tracking-tight">Capture what works in your personal vault.</h3>
-              <p className="text-sm mt-2 leading-relaxed text-[#c9ced8]">
+              <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Capture what works in your personal vault.</h3>
+              <p className="text-base mt-2.5 leading-relaxed text-[#c9ced8]">
                 Never lose a pattern you solved. Keep verified snippets, notes, and lessons ready to plug into tomorrow's workspace.
               </p>
 
@@ -1461,18 +1466,22 @@ export default function Landing({ onAuth }) {
         onMouseEnter={() => setIsOrbitalPaused(true)}
         onMouseLeave={() => setIsOrbitalPaused(false)}
       >
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-          <span className="inline-block text-xs font-mono uppercase tracking-widest px-3.5 py-1.5 rounded-full border text-[#ff951f] bg-[#ff951f]/10 border-[#ff951f]/25">
-            CODE. TRACE. UNDERSTAND.
-          </span>
-          <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
-            Turn every coding session <br />
+        <div className="relative flex flex-col items-center text-center max-w-3xl mx-auto mb-16 space-y-4">
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs font-mono uppercase tracking-widest border text-[#ff951f] bg-[#ff951f]/10 border-[#ff951f]/30 shadow-[0_0_20px_rgba(255,149,31,0.12)]">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff951f] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ff951f]" />
+            </span>
+            <span>CODE. TRACE. UNDERSTAND.</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight [text-wrap:balance]">
+            Turn every coding session <br className="hidden sm:inline" />
             into{' '}
-            <span className="bg-gradient-to-r from-[#ff951f] via-[#edcd8c] to-[#ff951f] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#ff951f] via-[#edcd8c] to-[#ff951f] bg-clip-text text-transparent drop-shadow-sm">
               real progress.
             </span>
           </h2>
-          <p className="text-sm sm:text-base font-normal max-w-xl mx-auto leading-relaxed text-[#c9ced8]">
+          <p className="text-base sm:text-lg font-normal max-w-xl mx-auto leading-relaxed text-[#c9ced8] [text-wrap:balance]">
             Write code, trace its execution, and understand your algorithms—one step at a time.
           </p>
         </div>
@@ -1514,10 +1523,10 @@ export default function Landing({ onAuth }) {
                   <span className="text-[11px] font-mono tracking-widest uppercase mb-2 block text-[#ff951f] font-semibold">
                     {step.tag}
                   </span>
-                  <h3 className="text-xl font-bold mb-3 text-white">
+                  <h3 className="text-base sm:text-lg font-bold mb-2 text-white">
                     {step.title}
                   </h3>
-                  <p className="text-sm leading-relaxed text-[#c9ced8]">
+                  <p className="text-base sm:text-lg leading-relaxed text-[#c9ced8]">
                     {step.desc}
                   </p>
                 </div>
@@ -1540,17 +1549,21 @@ export default function Landing({ onAuth }) {
       {/* 6. DESIGNED FOR CONSISTENT PRACTICE (BENEFITS) */}
       {/* ==================================================== */}
       <section id="benefits" className="benefits-section-container">
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-          <span className="inline-block text-xs font-mono uppercase tracking-widest px-3.5 py-1.5 rounded-full border text-[#ff951f] bg-[#ff951f]/10 border-[#ff951f]/25">
-            DESIGNED FOR CONSISTENT PRACTICE
-          </span>
-          <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
-            Built for clarity, <br />
-            <span className="bg-gradient-to-r from-[#ff951f] via-[#edcd8c] to-[#ff951f] bg-clip-text text-transparent">
+        <div className="relative flex flex-col items-center text-center max-w-3xl mx-auto mb-16 space-y-4">
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs font-mono uppercase tracking-widest border text-[#ff951f] bg-[#ff951f]/10 border-[#ff951f]/30 shadow-[0_0_20px_rgba(255,149,31,0.12)]">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff951f] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ff951f]" />
+            </span>
+            <span>DESIGNED FOR CONSISTENT PRACTICE</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight [text-wrap:balance]">
+            Built for clarity, <br className="hidden sm:inline" />
+            <span className="bg-gradient-to-r from-[#ff951f] via-[#edcd8c] to-[#ff951f] bg-clip-text text-transparent drop-shadow-sm">
               not hype.
             </span>
           </h2>
-          <p className="text-sm sm:text-base font-normal max-w-xl mx-auto leading-relaxed text-[#c9ced8]">
+          <p className="text-base sm:text-lg font-normal max-w-xl mx-auto leading-relaxed text-[#c9ced8] [text-wrap:balance]">
             CodeLens is engineered to respect your focus and eliminate friction at every step of your learning routine.
           </p>
         </div>
@@ -1595,17 +1608,21 @@ export default function Landing({ onAuth }) {
       {/* 7. FREQUENTLY ASKED QUESTIONS ACCORDION */}
       {/* ==================================================== */}
       <section id="faq" className="faq-section-container">
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-          <span className="inline-block text-xs font-mono uppercase tracking-widest px-3.5 py-1.5 rounded-full border text-[#ff951f] bg-[#ff951f]/10 border-[#ff951f]/25">
-            FREQUENTLY ASKED QUESTIONS
-          </span>
-          <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
-            Common questions <br />
-            <span className="bg-gradient-to-r from-[#ff951f] via-[#edcd8c] to-[#ff951f] bg-clip-text text-transparent">
+        <div className="relative flex flex-col items-center text-center max-w-3xl mx-auto mb-16 space-y-4">
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs font-mono uppercase tracking-widest border text-[#ff951f] bg-[#ff951f]/10 border-[#ff951f]/30 shadow-[0_0_20px_rgba(255,149,31,0.12)]">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff951f] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ff951f]" />
+            </span>
+            <span>FREQUENTLY ASKED QUESTIONS</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight [text-wrap:balance]">
+            Common questions <br className="hidden sm:inline" />
+            <span className="bg-gradient-to-r from-[#ff951f] via-[#edcd8c] to-[#ff951f] bg-clip-text text-transparent drop-shadow-sm">
               about CodeLens.
             </span>
           </h2>
-          <p className="text-sm sm:text-base font-normal max-w-xl mx-auto leading-relaxed text-[#c9ced8]">
+          <p className="text-base sm:text-lg font-normal max-w-xl mx-auto leading-relaxed text-[#c9ced8] [text-wrap:balance]">
             Everything you need to know about the workspace, learning paths, and progress tracking.
           </p>
         </div>
@@ -1614,7 +1631,7 @@ export default function Landing({ onAuth }) {
           {faqItems.map((item, idx) => {
             const isOpen = openFaq === idx;
             return (
-              <div key={idx} className="faq-item">
+              <div key={idx} className={`faq-item ${isOpen ? 'is-open' : ''}`}>
                 <button
                   type="button"
                   className="faq-trigger"
@@ -1623,8 +1640,13 @@ export default function Landing({ onAuth }) {
                   aria-controls={`faq-answer-${idx}`}
                   id={`faq-question-${idx}`}
                 >
-                  <span className="text-left font-medium text-white">{item.q}</span>
-                  <ChevronDown className={`faq-trigger-icon ${isOpen ? 'open' : ''}`} />
+                  <div className="faq-trigger-left">
+                    <span className="faq-item-number">0{idx + 1}</span>
+                    <span className="faq-item-question">{item.q}</span>
+                  </div>
+                  <div className="faq-trigger-icon-wrap">
+                    <ChevronDown className={`faq-trigger-icon ${isOpen ? 'open' : ''}`} />
+                  </div>
                 </button>
                 <div
                   id={`faq-answer-${idx}`}
@@ -1632,7 +1654,9 @@ export default function Landing({ onAuth }) {
                   aria-labelledby={`faq-question-${idx}`}
                   className={`faq-content ${isOpen ? 'open' : ''}`}
                 >
-                  <p>{item.a}</p>
+                  <div className="faq-answer-inner">
+                    <p>{item.a}</p>
+                  </div>
                 </div>
               </div>
             );
@@ -1643,48 +1667,45 @@ export default function Landing({ onAuth }) {
       {/* ==================================================== */}
       {/* 8. CENTERED CALL TO ACTION PANEL */}
       {/* ==================================================== */}
-      <section id="cta" className="relative z-10 py-24 max-w-5xl mx-auto px-4 sm:px-6">
-        <div className="relative rounded-3xl p-10 sm:p-20 text-center overflow-hidden border bg-[#10141c] border-[#303139] shadow-[0_0_80px_rgba(255,149,31,0.08)]">
-          
-          {/* Subtle orange ambient glow */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[#ff951f]/10 blur-[140px] rounded-full pointer-events-none" />
+      <section id="cta" className="relative z-10 py-20 sm:py-24 max-w-3xl mx-auto px-4 sm:px-6 flex flex-col items-center text-center">
+        
+        {/* Subtle orange ambient glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[280px] bg-[#ff951f]/10 blur-[140px] rounded-full pointer-events-none -z-10" />
 
-          {/* Small orange-accented badge above the heading */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono mb-6 border bg-[#ff951f]/10 border-[#ff951f]/30 text-[#ff951f]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#ff951f] animate-ping" />
-            BUILD YOUR CODING HABIT
-          </div>
-
-          {/* Heading */}
-          <h2 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight max-w-3xl mx-auto leading-tight text-white">
-            Make a little room <br />
-            <span className="bg-gradient-to-r from-[#ff951f] via-[#edcd8c] to-[#ff951f] bg-clip-text text-transparent drop-shadow-sm">
-              to begin.
-            </span>
-          </h2>
-
-          {/* Supporting caption beneath heading */}
-          <p className="mt-6 text-sm sm:text-base font-normal max-w-2xl mx-auto leading-relaxed text-[#c9ced8]">
-            Your next coding session does not have to be perfect. Start small, keep learning, and build a practice you can return to.
-          </p>
-
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button 
-              onClick={() => onAuth?.('register')}
-              className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-[#ff951f] to-[#ffaa40] hover:from-[#ffaa40] hover:to-[#ff951f] text-[#07090e] font-mono text-sm font-bold flex items-center justify-center gap-2.5 shadow-[0_0_25px_rgba(255,149,31,0.3)] transition transform hover:-translate-y-0.5 active:translate-y-0"
-            >
-              <span>Get Started for Free</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-            <button 
-              onClick={() => onAuth?.('login')}
-              className="w-full sm:w-auto px-7 py-3.5 rounded-2xl border border-white/10 hover:border-white/20 bg-white/[0.03] hover:bg-white/[0.06] text-[#c9ced8] hover:text-white font-mono text-sm font-medium transition"
-            >
-              Sign In
-            </button>
-          </div>
-
+        {/* Enhanced orange-accented badge above the heading */}
+        <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs font-mono uppercase tracking-widest mb-6 border bg-[#ff951f]/10 border-[#ff951f]/30 text-[#ff951f] shadow-[0_0_20px_rgba(255,149,31,0.12)]">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff951f] opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ff951f]" />
+          </span>
+          <span className="font-semibold tracking-wider">BUILD YOUR CODING HABIT</span>
         </div>
+
+        {/* Calibrated heading that fits gracefully */}
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight max-w-2xl mx-auto leading-tight text-white [text-wrap:balance]">
+          Make a little room{' '}
+          <br className="hidden sm:inline" />
+          <span className="bg-gradient-to-r from-[#ff951f] via-[#edcd8c] to-[#ff951f] bg-clip-text text-transparent drop-shadow-sm">
+            to begin.
+          </span>
+        </h2>
+
+        {/* Generous, comfortable supporting caption */}
+        <p className="mt-4 text-base sm:text-lg font-normal max-w-xl mx-auto leading-relaxed text-[#c9ced8] [text-wrap:balance]">
+          Your next coding session does not have to be perfect. Start small, keep learning, and build a practice you can return to.
+        </p>
+
+        <div className="mt-8 flex items-center justify-center w-full">
+          <button 
+            onClick={() => onAuth?.('register')}
+            className="cta-primary-btn"
+            aria-label="Get started for free with CodeLens"
+          >
+            <span>Get started for free</span>
+            <ArrowRight className="w-5 h-5" />
+          </button>
+        </div>
+
       </section>
 
       {/* ==================================================== */}
@@ -1699,7 +1720,7 @@ export default function Landing({ onAuth }) {
               <a href="#landing" className="landing-nav-brand" aria-label="CodeLens Home">
                 <Brand />
               </a>
-              <p className="text-xs leading-relaxed max-w-sm font-normal text-[#c9ced8]">
+              <p className="text-sm leading-relaxed max-w-sm font-normal text-[#c9ced8]">
                 Developer education platform for deliberate coding practice, static code analysis, and continuous learning momentum. Built for learners and engineers.
               </p>
             </div>
@@ -1802,11 +1823,6 @@ export default function Landing({ onAuth }) {
                     Get started for free →
                   </button>
                 </li>
-                <li>
-                  <button onClick={() => onAuth?.('login')}>
-                    Sign in to account
-                  </button>
-                </li>
               </ul>
             </div>
           </div>
@@ -1817,7 +1833,10 @@ export default function Landing({ onAuth }) {
               © {new Date().getFullYear()} CodeLens — Learn, Debug, and Ship. All rights reserved.
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#ff951f]" />
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff951f] opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ff951f]" />
+              </span>
               <span>Workspace engine active</span>
             </div>
           </div>
