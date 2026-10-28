@@ -180,11 +180,10 @@ export async function sendOtpEmail({ to, name = 'Learner', otp }) {
                 <td height="4" bgcolor="#ff951f" style="background: linear-gradient(90deg, #ff951f 0%, #ffaa40 50%, #ea7200 100%); line-height: 4px; font-size: 4px;">&nbsp;</td>
               </tr>
               <tr>
-                <td style="padding: 36px 32px 32px;">
+                <td style="padding: 36px 32px 32px; text-align: left;">
                   <!-- Brand Header -->
-                  <div style="margin-bottom: 26px;">
-                    <span style="font-size: 21px; font-weight: 800; color: #ff951f; letter-spacing: -0.3px;">✦ CodeLens</span>
-                    <span style="font-size: 13px; font-weight: 600; color: #717d96; font-family: 'JetBrains Mono', Consolas, Courier, monospace; margin-left: 6px;">// Program Intelligence</span>
+                  <div style="margin-bottom: 24px;">
+                    <span style="font-size: 22px; font-weight: 800; color: #ff951f; letter-spacing: -0.3px;">✦ CodeLens</span>
                   </div>
 
                   <!-- Greeting -->
@@ -282,11 +281,10 @@ export async function sendWelcomeEmail({ to, name = 'Learner', appUrl = APP_URL,
                 <td height="4" bgcolor="#ff951f" style="background: linear-gradient(90deg, #ff951f 0%, #ffaa40 50%, #ea7200 100%); line-height: 4px; font-size: 4px;">&nbsp;</td>
               </tr>
               <tr>
-                <td style="padding: 38px 34px 34px;">
+                <td style="padding: 38px 34px 34px; text-align: left;">
                   <!-- Brand Header -->
-                  <div style="margin-bottom: 26px;">
-                    <span style="font-size: 21px; font-weight: 800; color: #ff951f; letter-spacing: -0.3px;">✦ CodeLens</span>
-                    <span style="font-size: 13px; font-weight: 600; color: #717d96; font-family: 'JetBrains Mono', Consolas, Courier, monospace; margin-left: 6px;">// Program Intelligence</span>
+                  <div style="margin-bottom: 24px;">
+                    <span style="font-size: 22px; font-weight: 800; color: #ff951f; letter-spacing: -0.3px;">✦ CodeLens</span>
                   </div>
 
                   <!-- Hero Title -->
@@ -396,10 +394,10 @@ export async function sendPasswordResetEmail({ to, name = 'Learner', resetUrl, c
                 <td height="4" bgcolor="#ff951f" style="background: linear-gradient(90deg, #ff951f 0%, #ffaa40 50%, #ea7200 100%); line-height: 4px; font-size: 4px;">&nbsp;</td>
               </tr>
               <tr>
+                <td style="padding: 36px 32px 32px; text-align: left;">
                   <!-- Brand Header -->
-                  <div style="margin-bottom: 26px;">
-                    <span style="font-size: 21px; font-weight: 800; color: #ff951f; letter-spacing: -0.3px;">✦ CodeLens</span>
-                    <span style="font-size: 13px; font-weight: 600; color: #717d96; font-family: 'JetBrains Mono', Consolas, Courier, monospace; margin-left: 6px;">// Security &amp; Access</span>
+                  <div style="margin-bottom: 24px;">
+                    <span style="font-size: 22px; font-weight: 800; color: #ff951f; letter-spacing: -0.3px;">✦ CodeLens</span>
                   </div>
 
                   <!-- Greeting -->
@@ -487,10 +485,10 @@ export async function sendPasswordChangedEmail({ to, name = 'Learner' }) {
                 <td height="4" bgcolor="#ff951f" style="background: linear-gradient(90deg, #ff951f 0%, #ffaa40 50%, #ea7200 100%); line-height: 4px; font-size: 4px;">&nbsp;</td>
               </tr>
               <tr>
+                <td style="padding: 36px 32px 32px; text-align: left;">
                   <!-- Brand Header -->
-                  <div style="margin-bottom: 26px;">
-                    <span style="font-size: 21px; font-weight: 800; color: #ff951f; letter-spacing: -0.3px;">✦ CodeLens</span>
-                    <span style="font-size: 13px; font-weight: 600; color: #717d96; font-family: 'JetBrains Mono', Consolas, Courier, monospace; margin-left: 6px;">// Security &amp; Access</span>
+                  <div style="margin-bottom: 24px;">
+                    <span style="font-size: 22px; font-weight: 800; color: #ff951f; letter-spacing: -0.3px;">✦ CodeLens</span>
                   </div>
 
                   <!-- Greeting -->
