@@ -319,8 +319,7 @@ export async function sendWelcomeEmail({ to, name = 'Learner', appUrl = APP_URL 
                   <!-- Footer -->
                   <div style="font-size: 12px; color: #64748b; margin-top: 32px; border-top: 1px solid #1f2636; padding-top: 18px; text-align: center; line-height: 1.6;">
                     Need assistance or have feedback? Contact us directly at <a href="mailto:${DEFAULT_SENDER}" style="color: #ffaa40; text-decoration: none;">${DEFAULT_SENDER}</a>.<br>
-                    <strong style="color: #94a3b8;">CodeLens</strong> — Made for the process. Not just the progress.<br>
-                    Sent from <code style="color: #ffaa40; background: rgba(255, 149, 31, 0.08); padding: 2px 6px; border-radius: 4px; font-family: monospace;">${DEFAULT_SENDER}</code>
+                    <strong style="color: #94a3b8;">CodeLens</strong> — Made for the process. Not just the progress.
                   </div>
                 </td>
               </tr>
