@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
-  Play, Pause, SkipBack, SkipForward, ChevronLeft, ChevronRight,
+  Play, Pause, SkipBack, SkipForward, ChevronLeft, ChevronRight, ChevronDown,
   RotateCcw, Save, Search, Sun, Moon, HelpCircle, History,
   Star, FileJson, CheckCircle2, Code2, Layers, Cpu, Check,
   ArrowLeft, Terminal, Activity, Sparkles, BookOpen, FastForward,
@@ -12,6 +12,13 @@ import { reconstructStateAtStep, createEmptyTrace, normalizeTreeModel, normalize
 import { BUILTIN_TEMPLATES } from '../templates.js';
 import { Brand } from '../components.jsx';
 import { api } from '../api.js';
+
+export const SPEED_OPTIONS = [
+  { label: '0.5x', speed: 1200, title: 'Slow (1.2s / step)', desc: 'Slow' },
+  { label: '1x', speed: 650, title: 'Normal (0.65s / step)', desc: 'Normal' },
+  { label: '1.5x', speed: 350, title: 'Fast (0.35s / step)', desc: 'Fast' },
+  { label: '2x', speed: 150, title: 'Turbo (0.15s / step)', desc: 'Turbo' }
+];
 
 const DEFAULT_CODE = `let arr = [5, 2, 9, 1, 5, 6];
 let n = arr.length;
@@ -155,6 +162,8 @@ export default function StudioWorkspace({
   const [activeTab, setActiveTab] = useState('Code Trace');
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(650); // Comfortable educational pace (650ms/step)
+  const [isSpeedMenuOpen, setIsSpeedMenuOpen] = useState(false);
+  const speedMenuRef = useRef(null);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [executionHistory, setExecutionHistory] = useState([
@@ -806,6 +815,25 @@ export default function StudioWorkspace({
     return () => clearInterval(timerRef.current);
   }, [isPlaying, playbackSpeed, trace.steps, breakpoints, notify]);
 
+  // Close speed popup on click outside or escape key
+  useEffect(() => {
+    if (!isSpeedMenuOpen) return;
+    const handleClickOutside = (e) => {
+      if (speedMenuRef.current && !speedMenuRef.current.contains(e.target)) {
+        setIsSpeedMenuOpen(false);
+      }
+    };
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setIsSpeedMenuOpen(false);
+    };
+    document.addEventListener('pointerdown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isSpeedMenuOpen]);
+
   const reconstructed = useMemo(() => {
     return reconstructStateAtStep(trace, currentStepIndex);
   }, [trace, currentStepIndex]);
@@ -1340,27 +1368,54 @@ export default function StudioWorkspace({
               </button>
             </div>
 
-            {/* Speed Control Selector */}
-            <div className="stepper-speed-control">
-              <span className="speed-label">Speed:</span>
-              <div className="speed-pills">
-                {[
-                  { label: '0.5x', speed: 1200, title: 'Slow (1.2s / step)' },
-                  { label: '1x', speed: 650, title: 'Normal (0.65s / step)' },
-                  { label: '1.5x', speed: 350, title: 'Fast (0.35s / step)' },
-                  { label: '2x', speed: 150, title: 'Turbo (0.15s / step)' }
-                ].map(opt => (
-                  <button
-                    key={opt.label}
-                    type="button"
-                    className={`speed-pill-btn ${playbackSpeed === opt.speed ? 'active' : ''}`}
-                    onClick={() => setPlaybackSpeed(opt.speed)}
-                    title={opt.title}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
+            {/* Single Speed Button with Dropdown Popup */}
+            <div className="stepper-speed-dropdown-wrap" ref={speedMenuRef}>
+              <button
+                type="button"
+                className={`stepper-btn speed-trigger-btn ${isSpeedMenuOpen ? 'active' : ''}`}
+                onClick={() => setIsSpeedMenuOpen(prev => !prev)}
+                title="Adjust execution playback speed"
+                aria-haspopup="true"
+                aria-expanded={isSpeedMenuOpen}
+              >
+                <Zap size={14} className="speed-icon" />
+                <span className="speed-label-text">
+                  {SPEED_OPTIONS.find(o => o.speed === playbackSpeed)?.label || '1x'}
+                </span>
+                <ChevronDown size={13} className={`speed-chevron ${isSpeedMenuOpen ? 'open' : ''}`} />
+              </button>
+
+              {isSpeedMenuOpen && (
+                <div className="speed-popup-menu" role="menu">
+                  <div className="speed-popup-header">
+                    <span>Playback Speed</span>
+                  </div>
+                  <div className="speed-popup-list">
+                    {SPEED_OPTIONS.map(opt => {
+                      const isSelected = playbackSpeed === opt.speed;
+                      return (
+                        <button
+                          key={opt.label}
+                          type="button"
+                          className={`speed-option-item ${isSelected ? 'is-selected' : ''}`}
+                          onClick={() => {
+                            setPlaybackSpeed(opt.speed);
+                            setIsSpeedMenuOpen(false);
+                          }}
+                          title={opt.title}
+                          role="menuitem"
+                        >
+                          <div className="speed-option-info">
+                            <span className="speed-option-label">{opt.label}</span>
+                            <span className="speed-option-desc">{opt.desc}</span>
+                          </div>
+                          {isSelected && <Check size={14} className="speed-check-icon" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Gradient Scrubber Bar */}
