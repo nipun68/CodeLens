@@ -1,0 +1,105 @@
+import { test, expect } from '@playwright/test';
+
+async function navigate(page, label) {
+  if (await page.getByRole('button', { name: 'Open navigation', exact: true }).isVisible()) await page.getByRole('button', { name: 'Open navigation', exact: true }).click();
+  await page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: label }).click();
+  const headings = { Workspace: 'Make the bug', 'Daily check-in': 'Show up.', 'My progress': 'Build your', 'Saved snippets': 'Save the good bits.', 'Learning roadmap': 'Not a race.', 'Plans & billing': 'Invest in your' };
+  await expect(page.getByRole('heading', { level: 1 })).toContainText(headings[label]);
+  await expect(page.locator('.sidebar')).not.toHaveClass(/mobile-open/);
+}
+
+test('Core workflows work together and persist on desktop and mobile', async ({ page }, testInfo) => {
+  const errors = []; page.on('pageerror', error => errors.push(error.message));
+  await page.goto('/#workspace');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Make the bug');
+  await expect(page.locator('.monaco-editor .view-lines')).toBeVisible();
+  await page.getByRole('button', { name: /Analyze code/ }).click();
+  await expect(page.getByRole('heading', { name: 'Collection item vs. collection' })).toBeVisible();
+  await page.getByRole('button', { name: 'Run code' }).click();
+  await page.getByRole('tab', { name: 'Output', exact: true }).click();
+  await expect(page.getByText(/JUDGE0_URL/)).toBeVisible();
+  await page.getByRole('tab', { name: 'Fixes', exact: true }).click();
+  await page.getByRole('button', { name: 'Apply suggested fix' }).click();
+  await expect(page.locator('.monaco-editor')).toContainText('numbers.length === 0');
+  await page.getByRole('button', { name: /Analyze code/ }).click();
+  await expect(page.getByRole('heading', { name: 'Looking good at first glance.' })).toBeVisible();
+  await page.getByRole('button', { name: 'Save snippet', exact: true }).click();
+  await page.getByLabel('Snippet name').fill('My working average');
+  await page.getByLabel('Tags (comma separated, up to 5)').fill('arrays, tested');
+  await page.getByRole('dialog').getByRole('button', { name: 'Save snippet', exact: true }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await navigate(page, 'Saved snippets');
+  await expect(page.getByRole('heading', { name: 'My working average' })).toBeVisible();
+  await page.getByRole('textbox', { name: 'Search snippets' }).fill('does-not-exist');
+  await expect(page.getByRole('heading', { name: 'No breadcrumbs here. Yet.' })).toBeVisible();
+  await page.getByRole('button', { name: 'Clear filters' }).click();
+  await navigate(page, 'Daily check-in');
+  await page.getByRole('button', { name: 'Claim +10 XP' }).click();
+  await page.getByLabel('Your learning moment').fill('I learned the difference between an item and its collection.');
+  await page.getByRole('button', { name: 'Inspired', exact: true }).click();
+  await page.getByRole('button', { name: 'Save & claim +10 XP' }).click();
+  await expect(page.getByRole('button', { name: 'Checked in', exact: true })).toBeDisabled();
+  await expect(page.getByText('I learned the difference between an item and its collection.')).toBeVisible();
+  await navigate(page, 'My progress');
+  await page.getByRole('button', { name: 'Edit profile', exact: true }).click();
+  await page.getByLabel('Display name').fill('Nikhil Builder');
+  await page.getByLabel('Handle', { exact: true }).fill('@nikhilbuilds');
+  await page.getByRole('button', { name: 'Save changes' }).click();
+  await expect(page.getByRole('heading', { name: 'Nikhil Builder', exact: true })).toBeVisible();
+  await navigate(page, 'Plans & billing');
+  await page.getByRole('button', { name: /Yearly/ }).click();
+  await expect(page.getByText('$96 billed yearly. Save $48 each year.')).toBeVisible();
+  await page.getByRole('button', { name: 'Explore Pro · demo' }).click();
+  await expect(page.getByRole('dialog')).toContainText('No card, no Stripe subscription, no recurring charge.');
+  await page.getByRole('button', { name: 'Activate demo Pro' }).click();
+  await expect(page.getByRole('heading', { name: /You’re on CodeLens Pro/ })).toBeVisible();
+  await navigate(page, 'Learning roadmap');
+  await page.getByRole('button', { name: 'Add a topic', exact: true }).click();
+  await page.getByLabel('Topic name').fill('Accessibility');
+  await page.getByLabel('Milestones — one per line (1–12)').fill('Semantic HTML\nKeyboard navigation');
+  await page.getByRole('button', { name: 'Create learning path' }).click();
+  await expect(page.getByRole('heading', { name: 'Accessibility', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: /Variables & types/ }).click();
+  await page.getByRole('button', { name: 'Mark complete · +25 XP' }).click();
+  await expect(page.getByText('1 of 18 lessons completed')).toBeVisible();
+  await navigate(page, 'Plans & billing');
+  await page.getByRole('button', { name: 'Manage demo plan' }).click();
+  await page.getByRole('button', { name: 'Return to Free' }).click();
+  await expect(page.getByRole('heading', { name: 'You’re on the Free plan' })).toBeVisible();
+  await page.getByRole('button', { name: 'Switch to dark theme' }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await page.getByRole('button', { name: 'Switch to light theme' }).click();
+  await navigate(page, 'My progress');
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Nikhil Builder', exact: true })).toBeVisible();
+  await navigate(page, 'Workspace');
+  await page.screenshot({ path: testInfo.outputPath('workspace.png'), fullPage: true, animations: 'disabled' });
+  expect(errors).toEqual([]);
+});
+
+test('All pages fit the viewport and dialogs work with the keyboard', async ({ page }, testInfo) => {
+  await page.goto('/#workspace');
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  for (const label of ['Workspace', 'Daily check-in', 'My progress', 'Saved snippets', 'Learning roadmap', 'Plans & billing']) {
+    await navigate(page, label);
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(overflow, `${label} should not overflow horizontally`).toBeLessThanOrEqual(1);
+    if (label === 'Plans & billing') await page.screenshot({ path: testInfo.outputPath('subscription.png'), fullPage: true, animations: 'disabled' });
+  }
+  await page.keyboard.press('Control+k');
+  await expect(page.getByRole('dialog', { name: 'Find your next move.' })).toBeVisible();
+  await page.getByRole('textbox', { name: 'Search pages and snippets' }).fill('snippet');
+  await expect(page.getByRole('dialog').getByRole('button', { name: 'Saved snippets', exact: true })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Account menu' }).click();
+  await page.getByRole('button', { name: 'Save with an account' }).click();
+  await page.getByLabel('Your name').fill('Test Builder');
+  await page.getByLabel('Email address').fill(`builder-${testInfo.project.name}-${Date.now()}@example.com`);
+  await page.getByLabel('Password', { exact: true }).fill('safe-test-password');
+  await page.getByRole('button', { name: 'Create my account' }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Account menu' }).click();
+  await expect(page.getByRole('button', { name: 'Sign out', exact: true })).toBeVisible();
+});
