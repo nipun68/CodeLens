@@ -196,4 +196,21 @@ test('Email OTP Verification, Resend Cooldowns, Security Rate Limits & Welcome E
     assert.match(welcome.text, /reversible execution tracing/i);
     assert.match(welcome.text, /Binary Tree, Graph, Stack, Queue/);
   });
+
+  await t.test('8. Subsequent logins do NOT re-send welcome email (welcome email dispatched strictly once)', async () => {
+    const beforeCount = (await carol('/test/emails')).data.filter(e => e.to === 'carol@example.com' && e.subject.includes('Welcome to CodeLens')).length;
+    assert.equal(beforeCount, 1, 'Exactly one welcome email should exist after registration');
+
+    // Perform repeated logins
+    const login1 = await carol('/auth/login', 'POST', { email: 'carol@example.com', password: 'super-secure-password-123' });
+    assert.equal(login1.status, 200);
+
+    const login2 = await carol('/auth/login', 'POST', { email: 'carol@example.com', password: 'super-secure-password-123' });
+    assert.equal(login2.status, 200);
+
+    const afterCount = (await carol('/test/emails')).data.filter(e => e.to === 'carol@example.com' && e.subject.includes('Welcome to CodeLens')).length;
+    assert.equal(afterCount, 1, 'Welcome email must NOT be re-sent during or after logins');
+  });
 });
+
+

@@ -885,7 +885,7 @@ function AuthModal({ setAccount, onClose, notify, initialMode = 'register', onSu
           method: 'POST',
           body: { email: form.email, password: form.password }
         });
-        if (res.requiresEmailVerification) {
+        if (res.requiresEmailVerification || res.pendingVerification) {
           if (onOpenOtp) {
             onOpenOtp({ email: form.email.trim().toLowerCase(), maskedEmail: res.maskedEmail || form.email });
           }

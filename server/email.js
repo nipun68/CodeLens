@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { findAccount, mutateAccount } from './store.js';
 
 const APP_URL = process.env.APP_URL || 'http://localhost:5173';
 
@@ -215,8 +216,8 @@ export async function sendOtpEmail({ to, name = 'Learner', otp }) {
 
                   <!-- Footer -->
                   <div style="font-size: 12px; color: #64748b; margin-top: 32px; border-top: 1px solid #1f2636; padding-top: 18px; text-align: center; line-height: 1.6;">
-                    <strong style="color: #94a3b8;">CodeLens Platform</strong> • Intelligent Tracing & Program Architecture<br>
-                    Sent from <code style="color: #ffaa40; background: rgba(255, 149, 31, 0.08); padding: 2px 6px; border-radius: 4px; font-family: monospace;">${DEFAULT_SENDER}</code>
+                    Need assistance or have questions? Contact us at <a href="mailto:${DEFAULT_SENDER}" style="color: #ffaa40; text-decoration: none;">${DEFAULT_SENDER}</a>.<br>
+                    <strong style="color: #94a3b8;">CodeLens Platform</strong> • Intelligent Tracing &amp; Program Architecture
                   </div>
                 </td>
               </tr>
@@ -235,7 +236,20 @@ export async function sendOtpEmail({ to, name = 'Learner', otp }) {
 /**
  * Welcome Email to Newly Registered Clients
  */
-export async function sendWelcomeEmail({ to, name = 'Learner', appUrl = APP_URL }) {
+export async function sendWelcomeEmail({ to, name = 'Learner', appUrl = APP_URL, force = false }) {
+  const normalizedTo = (to || '').toLowerCase().trim();
+
+  // Guard: Ensure welcome email is only dispatched ONCE upon registration and NEVER repeatedly on login
+  try {
+    const existing = await findAccount('email', normalizedTo);
+    if (existing && existing.welcomeSent && !force) {
+      console.log(`[Welcome Email Skipped]: ${normalizedTo} has already received welcome email.`);
+      return { success: true, skipped: true, reason: 'already_sent' };
+    }
+  } catch (err) {
+    // If store lookup fails in test or disconnected state, proceed safely
+  }
+
   const subject = 'Welcome to CodeLens — Your Coding Journey Starts Here';
   const cleanAppUrl = appUrl.replace(/\/+$/, '');
   const workspaceUrl = `${cleanAppUrl}/#workspace`;
@@ -270,8 +284,9 @@ export async function sendWelcomeEmail({ to, name = 'Learner', appUrl = APP_URL 
               <tr>
                 <td style="padding: 38px 34px 34px;">
                   <!-- Brand Header -->
-                  <div style="font-size: 21px; font-weight: 800; color: #ff951f; margin-bottom: 24px; letter-spacing: -0.3px;">
-                    ✦ CodeLens
+                  <div style="margin-bottom: 26px;">
+                    <span style="font-size: 21px; font-weight: 800; color: #ff951f; letter-spacing: -0.3px;">✦ CodeLens</span>
+                    <span style="font-size: 13px; font-weight: 600; color: #717d96; font-family: 'JetBrains Mono', Consolas, Courier, monospace; margin-left: 6px;">// Program Intelligence</span>
                   </div>
 
                   <!-- Hero Title -->
@@ -332,7 +347,22 @@ export async function sendWelcomeEmail({ to, name = 'Learner', appUrl = APP_URL 
   `;
 
   const text = `Welcome to CodeLens, ${name}!\n\nYour email has been successfully verified.\n\nCodeLens features ready for you:\n- Multi-language sandbox execution (Python, Java, C++, JS)\n- Step-by-step reversible execution tracing\n- Real-time Binary Tree, Graph, Stack, Queue, and Array visualizers\n- Static Big-O time & space complexity analysis\n\nOpen your workspace: ${workspaceUrl}\n\nSupport: ${DEFAULT_SENDER}\nCodeLens Platform`;
-  return sendEmail({ to, subject, html, text });
+  const result = await sendEmail({ to, subject, html, text });
+
+  // Persist welcomeSent = true so future logins or actions never re-send welcome email
+  try {
+    const existing = await findAccount('email', normalizedTo);
+    if (existing && !existing.welcomeSent) {
+      await mutateAccount(existing._id, a => {
+        a.welcomeSent = true;
+        a.welcomeSentAt = new Date();
+      });
+    }
+  } catch (err) {
+    // Ignore store mutation failure in disconnected test mode
+  }
+
+  return result;
 }
 
 /**
@@ -366,37 +396,51 @@ export async function sendPasswordResetEmail({ to, name = 'Learner', resetUrl, c
                 <td height="4" bgcolor="#ff951f" style="background: linear-gradient(90deg, #ff951f 0%, #ffaa40 50%, #ea7200 100%); line-height: 4px; font-size: 4px;">&nbsp;</td>
               </tr>
               <tr>
-                <td style="padding: 36px 32px 32px;">
-                  <div style="font-size: 21px; font-weight: 800; color: #ff951f; margin-bottom: 22px; letter-spacing: -0.3px;">
-                    ✦ CodeLens Security
+                  <!-- Brand Header -->
+                  <div style="margin-bottom: 26px;">
+                    <span style="font-size: 21px; font-weight: 800; color: #ff951f; letter-spacing: -0.3px;">✦ CodeLens</span>
+                    <span style="font-size: 13px; font-weight: 600; color: #717d96; font-family: 'JetBrains Mono', Consolas, Courier, monospace; margin-left: 6px;">// Security &amp; Access</span>
                   </div>
-                  <div style="font-size: 19px; font-weight: 700; color: #ffffff; margin-bottom: 12px; letter-spacing: -0.2px;">
+
+                  <!-- Greeting -->
+                  <div style="font-size: 20px; font-weight: 800; color: #ffffff; margin-bottom: 12px; letter-spacing: -0.3px;">
                     Hello ${escapeHtml(name)},
                   </div>
-                  <p style="font-size: 14.5px; line-height: 1.6; color: #cbd5e1; margin: 0 0 20px;">
-                    We received a request to reset the password for your CodeLens account. You can reset your password using the link or 6-digit recovery code below:
+
+                  <!-- Instruction Text -->
+                  <p style="font-size: 14.5px; line-height: 1.6; color: #cbd5e1; margin: 0 0 24px;">
+                    We received a request to reset the password for your CodeLens account. Click the button below to choose a new password, or enter the 6-digit verification code:
                   </p>
                   
-                  <div style="text-align: center; margin: 24px 0;">
-                    <a href="${resetUrl}" style="display: inline-block; background: linear-gradient(135deg, #ff951f 0%, #ea7200 100%); background-color: #ff951f; color: #07090e; text-decoration: none; font-weight: 800; font-size: 14px; padding: 13px 28px; border-radius: 8px; box-shadow: 0 4px 18px rgba(255, 149, 31, 0.4);">
+                  <!-- Primary CTA Button -->
+                  <div style="text-align: center; margin: 26px 0 22px;">
+                    <a href="${resetUrl}" style="display: inline-block; background: linear-gradient(135deg, #ff951f 0%, #ea7200 100%); background-color: #ff951f; color: #07090e; text-decoration: none; font-weight: 800; font-size: 14.5px; padding: 14px 32px; border-radius: 8px; box-shadow: 0 4px 18px rgba(255, 149, 31, 0.45); letter-spacing: 0.2px;">
                       Reset My Password →
                     </a>
                   </div>
 
-                  <p style="text-align: center; font-size: 13px; color: #94a3b8; margin: 18px 0 8px;">Or enter this verification code directly:</p>
-                  <div style="background-color: #090c13; border: 1px solid #1f2636; padding: 16px; border-radius: 8px; font-family: 'JetBrains Mono', Consolas, Courier, monospace; font-size: 26px; font-weight: 800; letter-spacing: 6px; text-align: center; color: #ffaa40; margin: 12px 0 20px;">
-                    ${code}
+                  <!-- Code Option -->
+                  <p style="text-align: center; font-size: 13px; color: #94a3b8; margin: 22px 0 10px;">Or enter this verification code directly:</p>
+                  <div style="background-color: #090c13; border: 2px dashed #ff951f; border-radius: 10px; padding: 18px 16px; text-align: center; margin: 0 0 24px; box-shadow: inset 0 0 20px rgba(255, 149, 31, 0.08);">
+                    <div style="font-family: 'JetBrains Mono', 'SF Mono', Consolas, Courier, monospace; font-size: 34px; font-weight: 800; letter-spacing: 8px; color: #ffaa40; text-shadow: 0 0 16px rgba(255, 149, 31, 0.35); padding-left: 8px;">
+                      ${code}
+                    </div>
                   </div>
 
-                  <div style="font-size: 13px; color: #ffbe6b; background-color: rgba(255, 149, 31, 0.1); border-left: 3px solid #ff951f; padding: 10px 14px; border-radius: 6px; margin: 18px 0; line-height: 1.5;">
-                    ⏱ <strong>This link and code will expire in 15 minutes.</strong> For your protection, each reset code is single-use and invalidates immediately after use.
+                  <!-- Expiry Alert Callout -->
+                  <div style="font-size: 13px; color: #ffbe6b; background-color: rgba(255, 149, 31, 0.1); border-left: 3px solid #ff951f; padding: 10px 14px; border-radius: 6px; margin: 22px 0; line-height: 1.5;">
+                    ⏱ <strong>This link and code expire in 15 minutes.</strong> For your protection, each reset code is single-use and invalidates immediately after use.
                   </div>
 
-                  <p style="font-size: 13px; line-height: 1.5; color: #64748b; margin: 16px 0 0;">
-                    If you did not request a password reset, please ignore this email. Your existing password remains unchanged.
+                  <!-- Notice -->
+                  <p style="font-size: 13px; line-height: 1.5; color: #64748b; margin: 20px 0 0;">
+                    If you did not request a password reset, you can safely disregard this email. Your existing password and account remain fully secure.
                   </p>
-                  <div style="font-size: 12px; color: #64748b; margin-top: 28px; border-top: 1px solid #1f2636; padding-top: 16px; text-align: center; line-height: 1.6;">
-                    CodeLens Platform Security • Sent from <code style="color: #ffaa40; background: rgba(255, 149, 31, 0.08); padding: 2px 6px; border-radius: 4px; font-family: monospace;">${DEFAULT_SENDER}</code>
+
+                  <!-- Footer -->
+                  <div style="font-size: 12px; color: #64748b; margin-top: 32px; border-top: 1px solid #1f2636; padding-top: 18px; text-align: center; line-height: 1.6;">
+                    Need assistance? Contact support at <a href="mailto:${DEFAULT_SENDER}" style="color: #ffaa40; text-decoration: none;">${DEFAULT_SENDER}</a>.<br>
+                    <strong style="color: #94a3b8;">CodeLens Platform</strong> • Security &amp; Access Control
                   </div>
                 </td>
               </tr>
@@ -443,24 +487,35 @@ export async function sendPasswordChangedEmail({ to, name = 'Learner' }) {
                 <td height="4" bgcolor="#ff951f" style="background: linear-gradient(90deg, #ff951f 0%, #ffaa40 50%, #ea7200 100%); line-height: 4px; font-size: 4px;">&nbsp;</td>
               </tr>
               <tr>
-                <td style="padding: 36px 32px 32px;">
-                  <div style="font-size: 21px; font-weight: 800; color: #ff951f; margin-bottom: 22px; letter-spacing: -0.3px;">
-                    ✦ CodeLens Security
+                  <!-- Brand Header -->
+                  <div style="margin-bottom: 26px;">
+                    <span style="font-size: 21px; font-weight: 800; color: #ff951f; letter-spacing: -0.3px;">✦ CodeLens</span>
+                    <span style="font-size: 13px; font-weight: 600; color: #717d96; font-family: 'JetBrains Mono', Consolas, Courier, monospace; margin-left: 6px;">// Security &amp; Access</span>
                   </div>
-                  <div style="font-size: 19px; font-weight: 700; color: #ffffff; margin-bottom: 12px; letter-spacing: -0.2px;">
+
+                  <!-- Greeting -->
+                  <div style="font-size: 20px; font-weight: 800; color: #ffffff; margin-bottom: 12px; letter-spacing: -0.3px;">
                     Hello ${escapeHtml(name)},
                   </div>
-                  <div style="background-color: rgba(255, 149, 31, 0.1); border-left: 3px solid #ff951f; padding: 12px 14px; border-radius: 6px; font-size: 13.5px; color: #ffbe6b; margin: 18px 0; line-height: 1.5;">
-                    ✓ Your account password was successfully updated on ${new Date().toUTCString()}.
+
+                  <!-- Confirmed Notification Callout -->
+                  <div style="background-color: rgba(255, 149, 31, 0.1); border-left: 3px solid #ff951f; padding: 12px 14px; border-radius: 6px; font-size: 13.5px; color: #ffbe6b; margin: 20px 0; line-height: 1.5;">
+                    ✓ <strong>Password Updated:</strong> Your CodeLens account password was successfully updated on ${new Date().toUTCString()}.
                   </div>
+
                   <p style="font-size: 14px; line-height: 1.6; color: #cbd5e1; margin: 0 0 16px;">
-                    All existing sessions on other browsers have been invalidated according to our account security policy. You can now sign in with your new password.
+                    In accordance with our account security policy, all previous browser sessions have been invalidated. You can now sign in across your devices with your new password.
                   </p>
-                  <p style="color: #f87171; font-size: 13px; line-height: 1.5; margin: 16px 0 0;">
-                    ⚠️ If you did not make this change, please contact us immediately at <a href="mailto:${DEFAULT_SENDER}" style="color: #f87171; text-decoration: underline;">${DEFAULT_SENDER}</a> to secure your account.
-                  </p>
-                  <div style="font-size: 12px; color: #64748b; margin-top: 28px; border-top: 1px solid #1f2636; padding-top: 16px; text-align: center; line-height: 1.6;">
-                    CodeLens Security Team • Sent from <code style="color: #ffaa40; background: rgba(255, 149, 31, 0.08); padding: 2px 6px; border-radius: 4px; font-family: monospace;">${DEFAULT_SENDER}</code>
+
+                  <!-- Urgent Alert Callout if Unauthorized -->
+                  <div style="font-size: 13px; color: #fca5a5; background-color: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; padding: 12px 14px; border-radius: 6px; margin: 20px 0; line-height: 1.5;">
+                    ⚠️ <strong>Did not make this change?</strong> Please contact us immediately at <a href="mailto:${DEFAULT_SENDER}" style="color: #f87171; font-weight: 700; text-decoration: underline;">${DEFAULT_SENDER}</a> to protect and freeze your account.
+                  </div>
+
+                  <!-- Footer -->
+                  <div style="font-size: 12px; color: #64748b; margin-top: 32px; border-top: 1px solid #1f2636; padding-top: 18px; text-align: center; line-height: 1.6;">
+                    Need assistance? Contact support at <a href="mailto:${DEFAULT_SENDER}" style="color: #ffaa40; text-decoration: none;">${DEFAULT_SENDER}</a>.<br>
+                    <strong style="color: #94a3b8;">CodeLens Platform</strong> • Security &amp; Access Control
                   </div>
                 </td>
               </tr>

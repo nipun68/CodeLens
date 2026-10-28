@@ -230,12 +230,13 @@ export function createAuthRouter({ secret, production, appUrl, publicAccount, to
         }
       });
 
-      // Send CodeLens Welcome Email (idempotent, only once per user)
+      // Send CodeLens Welcome Email (idempotent, only once per user upon registration)
       if (sendWelcome) {
         sendWelcomeEmail({
           to: email,
           name: updatedAccount.state?.profile?.name || 'Learner',
-          appUrl
+          appUrl,
+          force: true
         }).catch(err => console.error('[Welcome Email Background Error]:', err.message));
       }
 
@@ -631,7 +632,7 @@ export function createAuthRouter({ secret, production, appUrl, publicAccount, to
       }
 
       if (isNew) {
-        sendWelcomeEmail({ to: email, name, appUrl }).catch(() => {});
+        sendWelcomeEmail({ to: email, name, appUrl, force: true }).catch(() => {});
       }
 
       token(res, account._id);
@@ -767,7 +768,7 @@ export function createAuthRouter({ secret, production, appUrl, publicAccount, to
       }
 
       if (isNew) {
-        sendWelcomeEmail({ to: email, name, appUrl }).catch(() => {});
+        sendWelcomeEmail({ to: email, name, appUrl, force: true }).catch(() => {});
       }
 
       token(res, account._id);
@@ -891,7 +892,7 @@ export function createAuthRouter({ secret, production, appUrl, publicAccount, to
       }
 
       if (isNew) {
-        sendWelcomeEmail({ to: email, name, appUrl }).catch(() => {});
+        sendWelcomeEmail({ to: email, name, appUrl, force: true }).catch(() => {});
       }
 
       token(res, account._id);
